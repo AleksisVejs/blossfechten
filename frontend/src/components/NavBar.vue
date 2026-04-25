@@ -112,12 +112,13 @@ const accountButtonClass =
         isScrolled ? 'h-14' : 'h-16',
       ]"
     >
-      <router-link :to="{ name: 'home' }" class="group flex shrink-0 items-center gap-3" @click="closeMenu">
+      <router-link :to="{ name: 'home' }" class="group flex shrink-0 items-center gap-2 sm:gap-3" @click="closeMenu">
         <img
           src="/img/logo.png"
           alt="Blossfechten Riga"
           :class="['w-10 object-contain transition-all duration-200', isScrolled ? 'h-8' : 'h-10']"
         />
+        <div class="font-display text-base leading-none text-ink-900 sm:hidden">Blossfechten Riga</div>
         <div class="hidden sm:block">
           <div class="font-display leading-none text-xl text-ink-900">{{ $t('brand') }}</div>
           <div class="hidden text-xs uppercase tracking-[0.2em] text-ink-500 lg:block">Schola Meyeri</div>
