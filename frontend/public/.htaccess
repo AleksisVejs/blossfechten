@@ -1,6 +1,7 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+  Options -MultiViews
 
   # Allow existing files and directories to be served directly.
   RewriteCond %{REQUEST_FILENAME} -f [OR]
@@ -9,4 +10,8 @@
 
   # Fallback all other routes to the SPA entrypoint.
   RewriteRule ^ index.html [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+  FallbackResource /index.html
 </IfModule>
