@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +20,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Required for older MySQL/MariaDB setups (common on cPanel)
+        // where utf8mb4 indexed columns can exceed max key length.
+        Schema::defaultStringLength(191);
     }
 }
