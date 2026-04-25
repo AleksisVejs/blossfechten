@@ -49,17 +49,25 @@ cd "$FRONTEND_DIR"
 npm ci
 npm run build
 
+DIST_DIR="$FRONTEND_DIR/dist"
+DIST_REALPATH="$(cd "$DIST_DIR" && pwd)"
+
 if [ ! -d "$FRONTEND_PUBLIC_PATH" ]; then
   echo "[deploy] ERROR: Frontend publish path '$FRONTEND_PUBLIC_PATH' does not exist"
   exit 1
 fi
 
-echo "[deploy] Publishing frontend dist to $FRONTEND_PUBLIC_PATH"
-if command -v rsync >/dev/null 2>&1; then
-  rsync -a --delete "$FRONTEND_DIR/dist/" "$FRONTEND_PUBLIC_PATH/"
+TARGET_REALPATH="$(cd "$FRONTEND_PUBLIC_PATH" && pwd)"
+if [ "$TARGET_REALPATH" = "$DIST_REALPATH" ]; then
+  echo "[deploy] Frontend publish path is dist; skipping copy step."
 else
-  rm -rf "$FRONTEND_PUBLIC_PATH"/*
-  cp -a "$FRONTEND_DIR/dist/." "$FRONTEND_PUBLIC_PATH/"
+  echo "[deploy] Publishing frontend dist to $FRONTEND_PUBLIC_PATH"
+  if command -v rsync >/dev/null 2>&1; then
+    rsync -a --delete "$DIST_DIR/" "$FRONTEND_PUBLIC_PATH/"
+  else
+    rm -rf "$FRONTEND_PUBLIC_PATH"/*
+    cp -a "$DIST_DIR/." "$FRONTEND_PUBLIC_PATH/"
+  fi
 fi
 
 if [ -d "$BACKEND_DIR/public/storage" ]; then
