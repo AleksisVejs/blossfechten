@@ -3,6 +3,8 @@ export default {
   tagline: 'Die freie, ritterliche und adelige Kunst des Fechtens — wiedergeboren in Riga.',
   nav: {
     home: 'Start',
+    main: 'Hauptmenü',
+    account: 'Konto',
     about: 'Über uns',
     meyer: 'Die Kunst',
     schedule: 'Training',

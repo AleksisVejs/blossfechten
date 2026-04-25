@@ -1,9 +1,12 @@
 <script setup>
-import { ref, computed, defineAsyncComponent } from 'vue'
+import { ref, computed, defineAsyncComponent, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
 
 const AdminTrainings = defineAsyncComponent(() => import('./admin/AdminTrainings.vue'))
 const AdminUsers = defineAsyncComponent(() => import('./admin/AdminUsers.vue'))
@@ -16,6 +19,29 @@ const tabs = computed(() => [
   { key: 'members', label: t('admin.members_content'), comp: AdminMembers },
   { key: 'users', label: t('admin.users'), comp: AdminUsers },
 ])
+
+const validTabs = computed(() => tabs.value.map((tItem) => tItem.key))
+
+function normalizeTab(tabValue) {
+  return validTabs.value.includes(tabValue) ? tabValue : 'trainings'
+}
+
+watch(
+  () => route.query.tab,
+  (queryTab) => {
+    const nextTab = normalizeTab(typeof queryTab === 'string' ? queryTab : 'trainings')
+    if (tab.value !== nextTab) {
+      tab.value = nextTab
+    }
+  },
+  { immediate: true },
+)
+
+watch(tab, (nextTab) => {
+  if (route.query.tab !== nextTab) {
+    router.replace({ query: { ...route.query, tab: nextTab } })
+  }
+})
 
 useHead({
   title: () => `${t('admin.title')} — Blossfechten Riga`,

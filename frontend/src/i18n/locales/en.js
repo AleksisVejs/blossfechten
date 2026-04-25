@@ -3,6 +3,8 @@ export default {
   tagline: 'The free, chivalric, and noble art of fencing — reborn in Riga.',
   nav: {
     home: 'Home',
+    main: 'Main',
+    account: 'Account',
     about: 'About',
     meyer: 'The Art',
     schedule: 'Training',

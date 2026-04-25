@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
@@ -9,6 +9,8 @@ const auth = useAuthStore()
 const router = useRouter()
 const route = useRoute()
 const open = ref(false)
+const isScrolled = ref(false)
+const accountMenuOpen = ref(false)
 
 const mainLinks = [
   { name: 'about', label: 'nav.about' },
@@ -38,16 +40,54 @@ function closeMenu() {
   open.value = false
 }
 
+function closeAccountMenu() {
+  accountMenuOpen.value = false
+}
+
 function isActive(name) {
   return route.name === name
 }
 
+function onWindowScroll() {
+  isScrolled.value = window.scrollY > 8
+}
+
+onMounted(() => {
+  onWindowScroll()
+  window.addEventListener('scroll', onWindowScroll, { passive: true })
+  window.addEventListener('click', onWindowClick)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onWindowScroll)
+  window.removeEventListener('click', onWindowClick)
+})
+
+watch(
+  () => route.fullPath,
+  () => {
+    closeMenu()
+    closeAccountMenu()
+  },
+)
+
+function onWindowClick(event) {
+  const target = event.target
+  if (!(target instanceof Element)) {
+    return
+  }
+
+  if (!target.closest('[data-account-menu]')) {
+    closeAccountMenu()
+  }
+}
+
 function navItemClass(name) {
   return [
-    'rounded-full px-3 py-2 text-[13px] uppercase tracking-wide transition-colors duration-150',
+    'rounded-full border border-transparent px-3 py-2 text-[13px] uppercase tracking-wide transition-all duration-150',
     isActive(name)
-      ? 'bg-oxblood-500 text-white'
-      : 'text-ink-700 hover:bg-parchment-200 hover:text-oxblood-500',
+      ? 'border-oxblood-500/40 bg-oxblood-500 text-white shadow-sm'
+      : 'text-ink-700 hover:border-parchment-300 hover:bg-parchment-200 hover:text-oxblood-500',
   ]
 }
 
@@ -59,13 +99,25 @@ const utilityButtonPrimaryClass =
 
 const utilityButtonLogoutClass =
   'hidden sm:inline-flex rounded-full border border-oxblood-300/70 bg-parchment-100 px-3 py-2 text-[13px] uppercase tracking-wide text-oxblood-600 transition-colors duration-150 hover:bg-parchment-200 hover:text-oxblood-700'
+
+const accountButtonClass =
+  'hidden lg:inline-flex items-center gap-1 rounded-full border border-parchment-300 bg-parchment-100 px-3 py-2 text-[13px] uppercase tracking-wide text-ink-800 transition-colors duration-150 hover:bg-parchment-200'
 </script>
 
 <template>
   <header class="sticky top-0 z-40 border-b border-parchment-300/60 bg-parchment-50/85 backdrop-blur-md">
-    <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4">
+    <div
+      :class="[
+        'mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 transition-all duration-200',
+        isScrolled ? 'h-14' : 'h-16',
+      ]"
+    >
       <router-link :to="{ name: 'home' }" class="group flex shrink-0 items-center gap-3" @click="closeMenu">
-        <img src="/img/logo.png" alt="Blossfechten Riga" class="h-10 w-10 object-contain" />
+        <img
+          src="/img/logo.png"
+          alt="Blossfechten Riga"
+          :class="['w-10 object-contain transition-all duration-200', isScrolled ? 'h-8' : 'h-10']"
+        />
         <div class="hidden sm:block">
           <div class="font-display leading-none text-xl text-ink-900">{{ $t('brand') }}</div>
           <div class="hidden text-xs uppercase tracking-[0.2em] text-ink-500 lg:block">Schola Meyeri</div>
@@ -85,17 +137,40 @@ const utilityButtonLogoutClass =
 
       <div class="flex shrink-0 items-center gap-2">
         <template v-if="auth.isAuthenticated">
-          <router-link
-            v-for="link in utilityLinks"
-            :key="link.name"
-            :to="{ name: link.name }"
-            :class="['hidden lg:inline-flex', navItemClass(link.name)]"
-          >
-            {{ $t(link.label) }}
-          </router-link>
-          <button :class="utilityButtonLogoutClass" @click="doLogout">
-            {{ $t('nav.logout') }}
-          </button>
+          <div class="relative hidden lg:block" data-account-menu>
+            <button :class="accountButtonClass" :aria-expanded="accountMenuOpen" aria-haspopup="menu" @click.stop="accountMenuOpen = !accountMenuOpen">
+              {{ $t('nav.account') }}
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-150" :class="accountMenuOpen ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div
+              v-if="accountMenuOpen"
+              class="absolute right-0 top-11 z-50 min-w-48 rounded-xl border border-parchment-300/80 bg-parchment-50 p-2 shadow-lg"
+              role="menu"
+            >
+              <router-link
+                v-for="link in utilityLinks"
+                :key="link.name"
+                :to="{ name: link.name }"
+                :class="[
+                  'block rounded-lg px-3 py-2 text-xs uppercase tracking-wide transition-colors duration-150',
+                  isActive(link.name) ? 'bg-oxblood-500 text-white' : 'text-ink-700 hover:bg-parchment-200 hover:text-oxblood-500',
+                ]"
+                role="menuitem"
+                @click="closeAccountMenu"
+              >
+                {{ $t(link.label) }}
+              </router-link>
+              <button
+                class="mt-1 block w-full rounded-lg border border-oxblood-300/70 bg-parchment-100 px-3 py-2 text-left text-xs uppercase tracking-wide text-oxblood-600 transition-colors duration-150 hover:bg-parchment-200 hover:text-oxblood-700"
+                role="menuitem"
+                @click="() => { closeAccountMenu(); doLogout() }"
+              >
+                {{ $t('nav.logout') }}
+              </button>
+            </div>
+          </div>
         </template>
         <template v-else>
           <router-link :to="{ name: 'login' }" :class="utilityButtonClass">
@@ -124,6 +199,7 @@ const utilityButtonLogoutClass =
       id="mobile-menu"
       class="border-t border-parchment-300/60 bg-parchment-50 px-4 pb-4 pt-3 lg:hidden"
     >
+      <p class="px-1 pb-2 text-xs font-medium uppercase tracking-[0.16em] text-ink-500">{{ $t('nav.main') }}</p>
       <div class="flex flex-col gap-1 rounded-xl border border-parchment-300/70 bg-parchment-100/80 p-2 font-sans text-sm uppercase tracking-wide">
         <router-link
           v-for="link in mainLinks"
@@ -140,6 +216,7 @@ const utilityButtonLogoutClass =
       </div>
       <template v-if="auth.isAuthenticated">
         <div class="mt-3 flex flex-col gap-1 border-t border-parchment-300/60 pt-3 font-sans text-sm uppercase tracking-wide">
+          <p class="px-1 pb-2 text-xs font-medium uppercase tracking-[0.16em] text-ink-500">{{ $t('nav.account') }}</p>
           <router-link
             v-for="link in utilityLinks"
             :key="link.name"

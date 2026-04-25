@@ -3,6 +3,8 @@ export default {
   tagline: 'Brīvā, bruņnieciskā un cēlā paukošanās māksla — atdzimusi Rīgā.',
   nav: {
     home: 'Sākums',
+    main: 'Galvenā izvēlne',
+    account: 'Konts',
     about: 'Par mums',
     meyer: 'Māksla',
     schedule: 'Treniņi',

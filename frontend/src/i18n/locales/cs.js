@@ -3,6 +3,8 @@ export default {
   tagline: 'Svobodné, rytířské a ušlechtilé umění šermu — znovuzrozené v Rize.',
   nav: {
     home: 'Domů',
+    main: 'Hlavní menu',
+    account: 'Účet',
     about: 'O klubu',
     meyer: 'Umění',
     schedule: 'Tréninky',
