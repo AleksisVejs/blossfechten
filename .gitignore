@@ -25,6 +25,7 @@ backend/.env
 backend/.env.backup
 backend/.env.production
 backend/error_log
+backend/public/error_log
 backend/storage/*.key
 backend/storage/pail
 backend/public/build
