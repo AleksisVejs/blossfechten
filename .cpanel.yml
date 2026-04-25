@@ -2,4 +2,6 @@
 deployment:
   tasks:
     - export REPO_ROOT="$(pwd)"
+    - export FRONTEND_PUBLIC_PATH="/home2/riginspe/blossfechten/frontend/dist"
+    - export API_SYMLINK_PATH="/home2/riginspe/blossfechten/api"
     - /bin/bash "$REPO_ROOT/scripts/cpanel-deploy.sh"
