@@ -23,6 +23,7 @@ const utilityLinks = computed(() => {
   }
 
   return [
+    { name: 'profile', label: 'nav.profile' },
     { name: 'dashboard', label: 'nav.dashboard' },
     ...(auth.isAdmin ? [{ name: 'admin', label: 'nav.admin' }] : []),
   ]

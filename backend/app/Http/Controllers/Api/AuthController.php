@@ -67,4 +67,19 @@ class AuthController extends Controller
     {
         return response()->json(['user' => $request->user()]);
     }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:120'],
+            'phone' => ['nullable', 'string', 'max:32'],
+            'locale' => ['required', Rule::in(['lv', 'en', 'ru', 'cs', 'de'])],
+        ]);
+
+        $user->update($data);
+
+        return response()->json(['user' => $user->fresh()]);
+    }
 }

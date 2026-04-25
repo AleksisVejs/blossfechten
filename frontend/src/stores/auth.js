@@ -43,5 +43,16 @@ export const useAuthStore = defineStore('auth', {
     async logout() {
       try { await api.post('/api/auth/logout') } finally { this.user = null }
     },
+    async updateProfile(payload) {
+      this.loading = true; this.error = null
+      try {
+        const { data } = await api.put('/api/auth/profile', payload)
+        this.user = data.user
+        return data.user
+      } catch (e) {
+        this.error = e.response?.data?.message || 'Profile update failed'
+        throw e
+      } finally { this.loading = false }
+    },
   },
 })

@@ -11,6 +11,7 @@ const routes = [
   { path: '/login', name: 'login', component: () => import('@/pages/Login.vue'), meta: { guest: true } },
   { path: '/register', name: 'register', component: () => import('@/pages/Register.vue'), meta: { guest: true } },
   { path: '/dashboard', name: 'dashboard', component: () => import('@/pages/Dashboard.vue'), meta: { auth: true } },
+  { path: '/profile', name: 'profile', component: () => import('@/pages/Profile.vue'), meta: { auth: true } },
   { path: '/admin', name: 'admin', component: () => import('@/pages/Admin.vue'), meta: { auth: true, admin: true } },
   { path: '/:pathMatch(.*)*', component: () => import('@/pages/NotFound.vue') },
 ]

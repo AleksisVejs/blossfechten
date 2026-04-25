@@ -28,6 +28,7 @@ Route::get('/trainings/{training}', [TrainingController::class, 'show']);
 // Authenticated
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::put('/auth/profile', [AuthController::class, 'updateProfile']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
     Route::post('/trainings/{training}/register', [TrainingController::class, 'register']);
