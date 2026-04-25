@@ -17,13 +17,22 @@ const uploadingPhoto = ref(false)
 const confirmingDelete = ref(null)
 const deletingNow = ref(false)
 
+const langs = ['lv', 'en', 'ru', 'cs', 'de']
+
+function emptyBio() {
+  return { lv: '', en: '', ru: '', cs: '', de: '' }
+}
+
 function emptyForm() {
   return {
     id: null,
     full_name: '',
+    role_title: '',
+    rank: '',
     photo_url: '',
     is_instructor: false,
     sort_order: 0,
+    bio: emptyBio(),
   }
 }
 
@@ -43,7 +52,11 @@ onMounted(load)
 function edit(m) {
   editing.value = m.id
   form.value = {
+    ...emptyForm(),
     ...m,
+    role_title: m.role_title || '',
+    rank: m.rank || '',
+    bio: { ...emptyBio(), ...(m.bio || {}) },
   }
 }
 function newOne() { editing.value = 'new'; form.value = emptyForm() }
@@ -53,9 +66,6 @@ async function save() {
   saving.value = true
   try {
     const payload = { ...form.value }
-    delete payload.bio
-    delete payload.role_title
-    delete payload.rank
 
     if (editing.value === 'new') await api.post('/api/admin/members', payload)
     else await api.put(`/api/admin/members/${editing.value}`, payload)
@@ -190,6 +200,25 @@ function resolveApiUrl(path) {
               <input v-model="form.is_instructor" type="checkbox" />
               <span>{{ t('admin.is_instructor') }}</span>
             </label>
+
+            <label>
+              <span class="field-label">{{ t('admin.role_title') }}</span>
+              <input v-model="form.role_title" class="field-input" />
+            </label>
+            <label>
+              <span class="field-label">{{ t('admin.rank') }}</span>
+              <input v-model="form.rank" class="field-input" />
+            </label>
+
+            <div class="sm:col-span-2">
+              <h4 class="mb-2 uppercase text-xs tracking-widest text-ink-500 font-sans">{{ t('admin.bio') }}</h4>
+              <div class="grid sm:grid-cols-2 gap-2">
+                <label v-for="l in langs" :key="'mb-'+l" class="text-xs font-sans">
+                  <span class="text-ink-500">{{ l.toUpperCase() }}</span>
+                  <textarea v-model="form.bio[l]" rows="4" class="field-input !py-2 mt-1"></textarea>
+                </label>
+              </div>
+            </div>
           </div>
 
           <div class="mt-6 flex gap-2 justify-end">

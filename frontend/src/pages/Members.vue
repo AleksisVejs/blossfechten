@@ -4,9 +4,10 @@ import { useI18n } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
 import api from '@/lib/api'
 import StructuredData from '@/components/StructuredData.vue'
+import { loadCachedApi, saveCachedApi } from '@/lib/pageCache'
 
 const { t } = useI18n()
-const members = ref([])
+const members = ref(loadCachedApi('members') || [])
 
 // Only the names are verified (from the club's prior public site).
 const fallbackMembers = [
@@ -45,7 +46,8 @@ onMounted(async () => {
     const { data } = await api.get('/api/content/members')
     if (Array.isArray(data?.data) && data.data.length) {
       members.value = data.data
-    } else {
+      saveCachedApi('members', data.data)
+    } else if (!members.value.length) {
       members.value = fallbackMembers
       isFallback.value = true
     }

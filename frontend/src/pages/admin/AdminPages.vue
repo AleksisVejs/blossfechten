@@ -9,6 +9,20 @@ const toast = useToast()
 
 const pages = [
   { slug: 'about', label: () => t('admin.page_about') },
+  { slug: 'meyer', label: () => t('admin.page_meyer') },
+  { slug: 'curriculum-intro', label: () => 'Curriculum — intro' },
+  { slug: 'curriculum-i', label: () => 'Curriculum — I' },
+  { slug: 'curriculum-ii', label: () => 'Curriculum — II' },
+  { slug: 'curriculum-iii', label: () => 'Curriculum — III' },
+  { slug: 'curriculum-iv', label: () => 'Curriculum — IV' },
+  { slug: 'curriculum-v', label: () => 'Curriculum — V' },
+  { slug: 'home-hero', label: () => 'Home — hero' },
+  { slug: 'home-identity', label: () => 'Home — identity' },
+  { slug: 'home-pillar-tradition', label: () => 'Home — pillar: tradition' },
+  { slug: 'home-pillar-progression', label: () => 'Home — pillar: progression' },
+  { slug: 'home-pillar-community', label: () => 'Home — pillar: community' },
+  { slug: 'home-cta', label: () => 'Home — CTA' },
+  { slug: 'home-cta-note', label: () => 'Home — CTA note' },
 ]
 const langs = ['lv', 'en', 'ru', 'cs', 'de']
 

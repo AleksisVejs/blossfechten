@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import api from '@/lib/api'
+import { loadCachedApi, saveCachedApi } from '@/lib/pageCache'
 
 export const useTrainingsStore = defineStore('trainings', {
   state: () => ({
-    list: [],
-    mine: [],
+    list: loadCachedApi('trainings') || [],
+    mine: loadCachedApi('my-registrations') || [],
     loading: false,
   }),
   actions: {
@@ -13,11 +14,13 @@ export const useTrainingsStore = defineStore('trainings', {
       try {
         const { data } = await api.get('/api/trainings')
         this.list = data.data
+        saveCachedApi('trainings', data.data)
       } finally { this.loading = false }
     },
     async fetchMine() {
       const { data } = await api.get('/api/me/registrations')
       this.mine = data.data
+      saveCachedApi('my-registrations', data.data)
     },
     async register(id, note = null) {
       await api.post(`/api/trainings/${id}/register`, { note })

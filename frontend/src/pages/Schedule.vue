@@ -78,7 +78,7 @@ async function onUnregister(s) {
     <h2 class="mb-4">{{ t('schedule.upcoming') }}</h2>
     <p v-if="message" class="mb-4 text-oxblood-500 font-sans">{{ message }}</p>
 
-    <div v-if="store.loading">{{ t('common.loading') }}</div>
+    <div v-if="store.loading && !store.list.length">{{ t('common.loading') }}</div>
     <div v-else-if="!store.list.length" class="text-ink-500 italic">{{ t('schedule.no_upcoming') }}</div>
     <div v-else class="grid md:grid-cols-2 gap-4">
       <TrainingCard v-for="s in store.list" :key="s.id" :session="s"
