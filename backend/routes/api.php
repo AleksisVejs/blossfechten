@@ -1,0 +1,44 @@
+<?php
+
+use App\Http\Controllers\Api\Admin\TrainingAdminController;
+use App\Http\Controllers\Api\Admin\UserAdminController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ContentController;
+use App\Http\Controllers\Api\TrainingController;
+use App\Http\Controllers\Api\VideoController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/health', fn() => ['ok' => true]);
+
+// Auth
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/login', [AuthController::class, 'login']);
+
+// Public content
+Route::get('/content/pages/{slug}', [ContentController::class, 'page']);
+Route::get('/content/members', [ContentController::class, 'members']);
+Route::get('/content/videos', [VideoController::class, 'index']);
+Route::get('/trainings', [TrainingController::class, 'index']);
+Route::get('/trainings/{training}', [TrainingController::class, 'show']);
+
+// Authenticated
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+    Route::post('/trainings/{training}/register', [TrainingController::class, 'register']);
+    Route::delete('/trainings/{training}/register', [TrainingController::class, 'unregister']);
+    Route::get('/me/registrations', [TrainingController::class, 'myRegistrations']);
+});
+
+// Admin
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/trainings', [TrainingAdminController::class, 'index']);
+    Route::post('/trainings', [TrainingAdminController::class, 'store']);
+    Route::put('/trainings/{training}', [TrainingAdminController::class, 'update']);
+    Route::delete('/trainings/{training}', [TrainingAdminController::class, 'destroy']);
+    Route::get('/trainings/{training}/registrations', [TrainingAdminController::class, 'registrations']);
+
+    Route::get('/users', [UserAdminController::class, 'index']);
+    Route::put('/users/{user}', [UserAdminController::class, 'update']);
+});

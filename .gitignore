@@ -1,0 +1,40 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/*
+!.vscode/extensions.json
+.idea
+.nova
+.zed
+.cursor/
+
+# Frontend
+frontend/node_modules
+frontend/dist
+frontend/dist-ssr
+frontend/*.local
+frontend/logs
+*.log
+
+# Backend
+backend/vendor
+backend/node_modules
+backend/.env
+backend/.env.backup
+backend/.env.production
+backend/storage/*.key
+backend/storage/pail
+backend/public/build
+backend/public/hot
+backend/public/storage
+backend/.phpunit.result.cache
+backend/.phpunit.cache
+backend/auth.json
+backend/_ide_helper.php
+backend/Homestead.json
+backend/Homestead.yaml
+
+# Claude internals
+.claude/
