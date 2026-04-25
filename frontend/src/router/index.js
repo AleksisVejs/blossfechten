@@ -4,11 +4,10 @@ import { useAuthStore } from '@/stores/auth'
 const routes = [
   { path: '/', name: 'home', component: () => import('@/pages/Home.vue') },
   { path: '/about', name: 'about', component: () => import('@/pages/About.vue') },
-  { path: '/meyer', name: 'meyer', component: () => import('@/pages/Meyer.vue') },
+  { path: '/meyer', name: 'meyer', redirect: { name: 'about' } },
   { path: '/schedule', name: 'schedule', component: () => import('@/pages/Schedule.vue') },
   { path: '/members', name: 'members', component: () => import('@/pages/Members.vue') },
   { path: '/contact', name: 'contact', component: () => import('@/pages/Contact.vue') },
-  { path: '/gallery', name: 'gallery', component: () => import('@/pages/Gallery.vue') },
   { path: '/login', name: 'login', component: () => import('@/pages/Login.vue'), meta: { guest: true } },
   { path: '/register', name: 'register', component: () => import('@/pages/Register.vue'), meta: { guest: true } },
   { path: '/dashboard', name: 'dashboard', component: () => import('@/pages/Dashboard.vue'), meta: { auth: true } },

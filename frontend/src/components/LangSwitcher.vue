@@ -14,16 +14,22 @@ function pick(code) {
 
 <template>
   <div class="relative">
-    <button class="flex items-center gap-2 px-2 py-1 border border-parchment-300 rounded-sm text-sm hover:bg-parchment-100" @click="open = !open">
+    <button
+      class="inline-flex items-center gap-2 rounded-full px-3 py-2 text-[13px] uppercase tracking-wide text-ink-700 transition-colors duration-150 hover:bg-parchment-200 hover:text-oxblood-500"
+      @click="open = !open"
+      :aria-expanded="open"
+      aria-label="Switch language"
+    >
       <span>{{ SUPPORTED_LOCALES.find(l => l.code === locale)?.flag }}</span>
-      <span class="uppercase tracking-widest">{{ locale }}</span>
+      <span>{{ locale }}</span>
     </button>
-    <ul v-if="open" class="absolute right-0 mt-2 w-44 bg-parchment-50 border border-parchment-300 rounded-sm shadow-lg z-40">
+    <ul v-if="open" class="absolute right-0 z-40 mt-2 w-44 rounded-xl border border-parchment-300 bg-parchment-50 p-1 shadow-lg">
       <li v-for="l in SUPPORTED_LOCALES" :key="l.code">
         <button
           @click="pick(l.code)"
-          class="w-full flex items-center gap-2 px-3 py-2 hover:bg-parchment-100"
-          :class="{ 'bg-parchment-100': l.code === locale }">
+          class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors duration-150 hover:bg-parchment-100 hover:text-oxblood-500"
+          :class="{ 'bg-parchment-100 text-oxblood-500': l.code === locale }"
+        >
           <span>{{ l.flag }}</span>
           <span class="font-sans text-sm">{{ l.label }}</span>
         </button>

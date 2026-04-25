@@ -16,7 +16,7 @@ const fmt = computed(() => new Intl.DateTimeFormat(locale.value, {
 </script>
 
 <template>
-  <section class="max-w-3xl mx-auto px-4 py-16">
+  <section class="max-w-3xl mx-auto px-4 py-10 sm:py-16">
     <h1>{{ t('dashboard.title') }}</h1>
     <p class="text-ink-500 mt-1">{{ auth.user?.name }} — <span class="uppercase tracking-widest text-xs">{{ auth.user?.rank }}</span></p>
     <div class="divider-engraved my-6 w-1/3"></div>
@@ -28,7 +28,7 @@ const fmt = computed(() => new Intl.DateTimeFormat(locale.value, {
     <ul v-else class="space-y-3">
       <li v-for="r in store.mine" :key="r.id" class="card p-4 flex justify-between items-center flex-wrap gap-2">
         <div>
-          <div class="font-display text-xl">{{ r.training_session?.title?.[locale] || r.training_session?.focus }}</div>
+          <div class="font-serif text-xl">{{ r.training_session?.title?.[locale] || r.training_session?.focus }}</div>
           <div class="text-sm text-ink-500">{{ fmt.format(new Date(r.training_session.starts_at)) }}</div>
         </div>
         <span class="text-xs uppercase tracking-widest px-2 py-1 border"

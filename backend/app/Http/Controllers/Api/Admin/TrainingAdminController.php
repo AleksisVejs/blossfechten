@@ -12,7 +12,9 @@ class TrainingAdminController extends Controller
     {
         return response()->json([
             'data' => TrainingSession::orderByDesc('starts_at')
-                ->withCount('registrations')
+                ->withCount([
+                    'registrations' => fn($query) => $query->where('status', '!=', 'cancelled'),
+                ])
                 ->paginate(50),
         ]);
     }
@@ -39,7 +41,12 @@ class TrainingAdminController extends Controller
     public function registrations(TrainingSession $training)
     {
         return response()->json([
-            'data' => $training->registrations()->with('user:id,name,email,rank,phone')->get(),
+            'data' => $training->registrations()
+                ->where('status', '!=', 'cancelled')
+                ->with('user:id,name,email,rank,phone')
+                ->orderBy('status')
+                ->orderByDesc('created_at')
+                ->get(),
         ]);
     }
 

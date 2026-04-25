@@ -55,4 +55,5 @@ function formatDate(iso) {
       </div>
     </a>
   </div>
+  <p v-else class="text-center text-ink-500 italic py-8">{{ t('gallery.videos_unavailable') }}</p>
 </template>

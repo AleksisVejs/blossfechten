@@ -25,7 +25,7 @@ useHead({
 
 <template>
   <div>
-  <section class="max-w-5xl mx-auto px-4 py-16 grid lg:grid-cols-[1fr,300px] gap-10 items-start">
+  <section class="max-w-5xl mx-auto px-4 py-10 sm:py-16 grid lg:grid-cols-[1fr,300px] gap-8 lg:gap-10 items-start">
     <div>
       <h1>{{ t('meyer.title') }}</h1>
       <div class="divider-engraved my-6 w-1/3"></div>
@@ -52,11 +52,12 @@ useHead({
     </figure>
   </section>
 
-  <section class="max-w-5xl mx-auto px-4 pb-20">
-    <h2 class="text-center mb-8">{{ t('meyer.curriculum_title') }}</h2>
+  <section class="max-w-5xl mx-auto px-4 pb-12 sm:pb-20">
+    <h2 class="text-center mb-4">{{ t('meyer.curriculum_title') }}</h2>
+    <p class="text-center text-ink-500 italic max-w-2xl mx-auto mb-8">{{ t('meyer.curriculum_note') }}</p>
     <ol class="space-y-4">
       <li v-for="(lv, i) in levels" :key="lv" class="card p-5 flex gap-5">
-        <div class="font-display text-4xl text-gold-500 w-12 shrink-0">{{ ['I','II','III','IV','V'][i] }}</div>
+        <div class="font-serif text-4xl text-gold-500 w-12 shrink-0">{{ ['I','II','III','IV','V'][i] }}</div>
         <div>
           <h3>{{ t(`meyer.levels.${lv}.t`) }}</h3>
           <p class="text-ink-500 mt-1">{{ t(`meyer.levels.${lv}.d`) }}</p>

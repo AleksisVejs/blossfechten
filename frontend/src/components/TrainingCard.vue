@@ -30,7 +30,14 @@ const timeFmt = new Intl.DateTimeFormat(locale.value, { hour: '2-digit', minute:
       <span v-else class="text-xs text-ink-500 uppercase tracking-widest">{{ t('schedule.seats_left', { n: seatsLeft }) }}</span>
     </div>
     <p v-if="description" class="text-sm text-ink-500">{{ description }}</p>
-    <p class="text-xs uppercase tracking-widest text-ink-500">📍 {{ session.location }}</p>
+    <p class="text-xs uppercase tracking-widest text-ink-500 flex items-center gap-1.5">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 22s7-6.16 7-12a7 7 0 1 0-14 0c0 5.84 7 12 7 12z" />
+        <circle cx="12" cy="10" r="3" />
+      </svg>
+      <span>{{ session.location }}</span>
+    </p>
 
     <div class="pt-2 flex gap-2">
       <template v-if="auth.isAuthenticated">

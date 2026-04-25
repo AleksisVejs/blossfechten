@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 import NavBar from '@/components/NavBar.vue'
 import SiteFooter from '@/components/SiteFooter.vue'
+import Toast from '@/components/Toast.vue'
 import { SUPPORTED_LOCALES } from '@/i18n'
 
 const route = useRoute()
@@ -21,9 +22,9 @@ useHead({
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col">
+  <div class="min-h-screen flex flex-col overflow-x-hidden">
     <NavBar />
-    <main class="flex-1">
+    <main class="flex-1 min-w-0">
       <router-view v-slot="{ Component, route }">
         <transition name="fade" mode="out-in">
           <component :is="Component" :key="route.path" />
@@ -31,6 +32,7 @@ useHead({
       </router-view>
     </main>
     <SiteFooter />
+    <Toast />
   </div>
 </template>
 

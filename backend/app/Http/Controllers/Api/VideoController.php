@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Throwable;
 
 class VideoController extends Controller
 {
@@ -24,7 +25,19 @@ class VideoController extends Controller
     {
         $url = 'https://www.youtube.com/feeds/videos.xml?channel_id=' . self::CHANNEL_ID;
 
-        $response = Http::timeout(8)->get($url);
+        try {
+            $request = Http::timeout(8);
+
+            // Windows local environments can miss CA bundles; keep production verification intact.
+            if (app()->environment(['local', 'testing'])) {
+                $request = $request->withoutVerifying();
+            }
+
+            $response = $request->get($url);
+        } catch (Throwable) {
+            return [];
+        }
+
         if ($response->failed()) {
             return [];
         }

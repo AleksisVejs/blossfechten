@@ -52,9 +52,10 @@ async function onUnregister(s) {
 <template>
   <div>
   <StructuredData v-if="store.list.length" :schema="eventsSchema" />
-  <section class="max-w-5xl mx-auto px-4 py-16">
+  <section class="max-w-5xl mx-auto px-4 py-10 sm:py-16">
     <h1 class="text-center">{{ t('schedule.title') }}</h1>
     <div class="divider-engraved my-6 mx-auto w-1/3"></div>
+    <p class="text-center mb-8 font-sans text-oxblood-500">{{ t('schedule.first_training_free') }}</p>
 
     <div class="card p-6 mb-12">
       <h2 class="mb-4">{{ t('schedule.regular') }}</h2>

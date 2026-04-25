@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\MemberAdminController;
+use App\Http\Controllers\Api\Admin\PageAdminController;
 use App\Http\Controllers\Api\Admin\TrainingAdminController;
 use App\Http\Controllers\Api\Admin\UserAdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContentController;
+use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\TrainingController;
 use App\Http\Controllers\Api\VideoController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +21,7 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/content/pages/{slug}', [ContentController::class, 'page']);
 Route::get('/content/members', [ContentController::class, 'members']);
 Route::get('/content/videos', [VideoController::class, 'index']);
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:5,1');
 Route::get('/trainings', [TrainingController::class, 'index']);
 Route::get('/trainings/{training}', [TrainingController::class, 'show']);
 
@@ -41,4 +45,15 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
 
     Route::get('/users', [UserAdminController::class, 'index']);
     Route::put('/users/{user}', [UserAdminController::class, 'update']);
+
+    Route::get('/members', [MemberAdminController::class, 'index']);
+    Route::post('/members', [MemberAdminController::class, 'store']);
+    Route::put('/members/{member}', [MemberAdminController::class, 'update']);
+    Route::delete('/members/{member}', [MemberAdminController::class, 'destroy']);
+    Route::post('/members/reorder', [MemberAdminController::class, 'reorder']);
+    Route::post('/members/upload-photo', [MemberAdminController::class, 'uploadPhoto']);
+
+    Route::get('/pages', [PageAdminController::class, 'index']);
+    Route::get('/pages/{slug}', [PageAdminController::class, 'show']);
+    Route::put('/pages/{slug}', [PageAdminController::class, 'upsert']);
 });
