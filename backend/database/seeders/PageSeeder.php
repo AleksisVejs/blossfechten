@@ -264,7 +264,7 @@ class PageSeeder extends Seeder
         ];
 
         foreach ($pages as $p) {
-            Page::updateOrCreate(['slug' => $p['slug']], $p);
+            Page::firstOrCreate(['slug' => $p['slug']], $p);
         }
     }
 }
