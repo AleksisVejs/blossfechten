@@ -17,9 +17,41 @@ const api = axios.create({
 
 let csrfPromise = null
 
+function getCandidateCookieDomains(hostname) {
+  if (!hostname) return []
+
+  const domains = [hostname]
+  const parts = hostname.split('.')
+  if (parts.length >= 2) {
+    const parentDomain = parts.slice(-2).join('.')
+    if (!domains.includes(parentDomain)) domains.push(parentDomain)
+  }
+  return domains
+}
+
+function clearCookie(name) {
+  const expires = 'Thu, 01 Jan 1970 00:00:00 GMT'
+  document.cookie = `${name}=; expires=${expires}; path=/`
+
+  const hostname = window.location?.hostname
+  const domains = getCandidateCookieDomains(hostname)
+  domains.forEach((domain) => {
+    document.cookie = `${name}=; expires=${expires}; path=/; domain=${domain}`
+    document.cookie = `${name}=; expires=${expires}; path=/; domain=.${domain}`
+  })
+}
+
 function getXsrfToken() {
   const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/)
-  return match ? decodeURIComponent(match[1]) : null
+  if (!match) return null
+  try {
+    return decodeURIComponent(match[1])
+  } catch {
+    // Broken/partially-encoded cookie value can happen on shared hosting.
+    // Drop it so the next csrf-cookie request can mint a valid one.
+    clearCookie('XSRF-TOKEN')
+    return null
+  }
 }
 
 export async function ensureCsrf() {
@@ -49,6 +81,7 @@ api.interceptors.response.use(
   async error => {
     if (error.response?.status === 419 && !error.config._csrfRetried) {
       csrfPromise = null
+      clearCookie('XSRF-TOKEN')
       await ensureCsrf()
       error.config._csrfRetried = true
       const token = getXsrfToken()
