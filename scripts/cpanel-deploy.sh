@@ -6,13 +6,19 @@ BACKEND_DIR="$REPO_ROOT/backend"
 FRONTEND_DIR="$REPO_ROOT/frontend"
 
 # Update these if your cPanel paths differ.
-# Default to the Blossfechten addon-domain folder, NOT $HOME/public_html
-# (that is the primary domain's document root and would clobber another site).
-API_SYMLINK_PATH="${API_SYMLINK_PATH:-$HOME/blossfechten/api}"
-FRONTEND_PUBLIC_PATH="${FRONTEND_PUBLIC_PATH:-$HOME/blossfechten}"
+# The addon domain's document root is the build output itself
+# (frontend/dist), so we serve in place — no copy step.
+FRONTEND_PUBLIC_PATH="${FRONTEND_PUBLIC_PATH:-$FRONTEND_DIR/dist}"
+API_SYMLINK_PATH="${API_SYMLINK_PATH:-$FRONTEND_PUBLIC_PATH/api}"
 
-if [ "$(cd "$FRONTEND_PUBLIC_PATH" 2>/dev/null && pwd)" = "$(cd "$HOME/public_html" 2>/dev/null && pwd)" ]; then
-  echo "[deploy] ERROR: FRONTEND_PUBLIC_PATH resolves to \$HOME/public_html (the primary domain root). Refusing to deploy."
+# Safety: never let this script wipe the primary domain or the repo root.
+TARGET_RESOLVED="$(cd "$FRONTEND_PUBLIC_PATH" 2>/dev/null && pwd || echo "$FRONTEND_PUBLIC_PATH")"
+if [ "$TARGET_RESOLVED" = "$(cd "$HOME/public_html" 2>/dev/null && pwd)" ]; then
+  echo "[deploy] ERROR: FRONTEND_PUBLIC_PATH resolves to \$HOME/public_html (primary domain root). Refusing."
+  exit 1
+fi
+if [ "$TARGET_RESOLVED" = "$REPO_ROOT" ] || [ "$TARGET_RESOLVED" = "$FRONTEND_DIR" ]; then
+  echo "[deploy] ERROR: FRONTEND_PUBLIC_PATH ($TARGET_RESOLVED) overlaps the repo. Refusing — rsync --delete would erase the source."
   exit 1
 fi
 PHP_BIN="${PHP_BIN:-php}"
