@@ -6,8 +6,15 @@ BACKEND_DIR="$REPO_ROOT/backend"
 FRONTEND_DIR="$REPO_ROOT/frontend"
 
 # Update these if your cPanel paths differ.
-API_SYMLINK_PATH="${API_SYMLINK_PATH:-$HOME/api}"
-FRONTEND_PUBLIC_PATH="${FRONTEND_PUBLIC_PATH:-$HOME/public_html}"
+# Default to the Blossfechten addon-domain folder, NOT $HOME/public_html
+# (that is the primary domain's document root and would clobber another site).
+API_SYMLINK_PATH="${API_SYMLINK_PATH:-$HOME/blossfechten.lv/api}"
+FRONTEND_PUBLIC_PATH="${FRONTEND_PUBLIC_PATH:-$HOME/blossfechten.lv}"
+
+if [ "$(cd "$FRONTEND_PUBLIC_PATH" 2>/dev/null && pwd)" = "$(cd "$HOME/public_html" 2>/dev/null && pwd)" ]; then
+  echo "[deploy] ERROR: FRONTEND_PUBLIC_PATH resolves to \$HOME/public_html (the primary domain root). Refusing to deploy."
+  exit 1
+fi
 PHP_BIN="${PHP_BIN:-php}"
 COMPOSER_BIN="${COMPOSER_BIN:-composer}"
 
