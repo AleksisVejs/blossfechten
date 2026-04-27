@@ -23,6 +23,17 @@ const pages = [
   { slug: 'home-pillar-community', label: () => 'Home — pillar: community' },
   { slug: 'home-cta', label: () => 'Home — CTA' },
   { slug: 'home-cta-note', label: () => 'Home — CTA note' },
+  { slug: 'contact-header', label: () => 'Contact — header' },
+  { slug: 'contact-come', label: () => 'Contact — come block' },
+  { slug: 'contact-follow', label: () => 'Contact — follow heading' },
+  { slug: 'contact-form-intro', label: () => 'Contact — form intro' },
+  { slug: 'members-header', label: () => 'Members — header' },
+  { slug: 'members-fallback', label: () => 'Members — fallback note' },
+  { slug: 'members-instructors', label: () => 'Members — instructors heading' },
+  { slug: 'members-other', label: () => 'Members — other heading' },
+  { slug: 'schedule-header', label: () => 'Schedule — header' },
+  { slug: 'schedule-regular', label: () => 'Schedule — regular heading' },
+  { slug: 'schedule-upcoming', label: () => 'Schedule — upcoming' },
 ]
 const langs = ['lv', 'en', 'ru', 'cs', 'de']
 
