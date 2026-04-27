@@ -16,6 +16,18 @@ const seatsLeft = computed(() => Math.max(0, (props.session.capacity ?? 0) - (pr
 
 const dateFmt = new Intl.DateTimeFormat(locale.value, { weekday: 'long', day: '2-digit', month: 'long' })
 const timeFmt = new Intl.DateTimeFormat(locale.value, { hour: '2-digit', minute: '2-digit' })
+
+const sameDay = computed(() => {
+  const s = start.value, e = end.value
+  return s.getFullYear() === e.getFullYear()
+    && s.getMonth() === e.getMonth()
+    && s.getDate() === e.getDate()
+})
+
+const when = computed(() => sameDay.value
+  ? `${dateFmt.format(start.value)} · ${timeFmt.format(start.value)}–${timeFmt.format(end.value)}`
+  : `${dateFmt.format(start.value)} · ${timeFmt.format(start.value)} – ${dateFmt.format(end.value)} · ${timeFmt.format(end.value)}`
+)
 </script>
 
 <template>
@@ -23,7 +35,7 @@ const timeFmt = new Intl.DateTimeFormat(locale.value, { hour: '2-digit', minute:
     <div class="flex items-baseline justify-between flex-wrap gap-2">
       <div>
         <h3 class="text-xl">{{ title }}</h3>
-        <p class="text-sm text-ink-500">{{ dateFmt.format(start) }} · {{ timeFmt.format(start) }}–{{ timeFmt.format(end) }}</p>
+        <p class="text-sm text-ink-500">{{ when }}</p>
       </div>
       <span v-if="session.cancelled" class="text-oxblood-500 text-xs uppercase tracking-widest">{{ t('schedule.cancelled') }}</span>
       <span v-else-if="seatsLeft === 0" class="text-oxblood-500 text-xs uppercase tracking-widest">{{ t('schedule.full') }}</span>
