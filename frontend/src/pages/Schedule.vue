@@ -5,6 +5,8 @@ import { useHead } from '@unhead/vue'
 import { useTrainingsStore } from '@/stores/trainings'
 import TrainingCard from '@/components/TrainingCard.vue'
 import StructuredData from '@/components/StructuredData.vue'
+import EditableScheduleSlots from '@/components/EditableScheduleSlots.vue'
+import api from '@/lib/api'
 
 const { t, locale } = useI18n()
 const store = useTrainingsStore()
@@ -13,10 +15,30 @@ const message = ref('')
 useHead({
   title: () => `${t('schedule.title')} — Blossfechten Riga`,
   meta: [
-    { name: 'description', content: () => `${t('schedule.upcoming')} — Blossfechten Riga. ${t('schedule.regular')}: ${t('schedule.monday')}, ${t('schedule.wednesday')}, ${t('schedule.saturday')}.` },
+    { name: 'description', content: () => `${t('schedule.upcoming')} — Blossfechten Riga. ${t('schedule.regular')}: ${t('schedule.monday')}, ${t('schedule.wednesday')}, ${t('schedule.friday')}, ${t('schedule.saturday')}, ${t('schedule.sunday')}.` },
     { property: 'og:title', content: () => `${t('schedule.title')} — Blossfechten Riga` },
   ],
 })
+
+const DEFAULT_SLOTS = [
+  { day: 'monday',    start: '18:00', end: '20:00' },
+  { day: 'wednesday', start: '18:00', end: '20:00' },
+  { day: 'friday',    start: '18:00', end: '20:00' },
+  { day: 'saturday',  start: '11:00', end: '14:00' },
+  { day: 'sunday',    start: '11:00', end: '13:00' },
+]
+
+const slots = ref([...DEFAULT_SLOTS])
+
+async function fetchSlots() {
+  try {
+    const { data } = await api.get('/api/content/pages/regular-schedule')
+    const saved = data?.data?.body?.slots
+    if (Array.isArray(saved) && saved.length) slots.value = saved
+  } catch {
+    // page not yet saved — keep defaults
+  }
+}
 
 const eventsSchema = computed(() => ({
   '@context': 'https://schema.org',
@@ -35,7 +57,10 @@ const eventsSchema = computed(() => ({
   })),
 }))
 
-onMounted(() => store.fetch())
+onMounted(() => {
+  store.fetch()
+  fetchSlots()
+})
 
 async function onRegister(s) {
   try {
@@ -58,19 +83,14 @@ async function onUnregister(s) {
     <p class="text-center mb-8 font-sans text-oxblood-500">{{ t('schedule.first_training_free') }}</p>
 
     <div class="card p-6 mb-12">
-      <h2 class="mb-4">{{ t('schedule.regular') }}</h2>
+      <h2 class="mb-4 flex items-center gap-1">
+        {{ t('schedule.regular') }}
+        <EditableScheduleSlots :slots="slots" @updated="slots = $event" />
+      </h2>
       <ul class="grid sm:grid-cols-2 md:grid-cols-3 gap-4 font-sans">
-        <li class="border-l-2 border-gold-500 pl-3">
-          <div class="uppercase tracking-widest text-xs text-ink-500">{{ t('schedule.monday') }}</div>
-          <div class="text-xl">18:00 – 20:00</div>
-        </li>
-        <li class="border-l-2 border-gold-500 pl-3">
-          <div class="uppercase tracking-widest text-xs text-ink-500">{{ t('schedule.wednesday') }}</div>
-          <div class="text-xl">18:00 – 20:00</div>
-        </li>
-        <li class="border-l-2 border-gold-500 pl-3">
-          <div class="uppercase tracking-widest text-xs text-ink-500">{{ t('schedule.saturday') }}</div>
-          <div class="text-xl">11:00 – 14:00</div>
+        <li v-for="slot in slots" :key="slot.day + slot.start" class="border-l-2 border-gold-500 pl-3">
+          <div class="uppercase tracking-widest text-xs text-ink-500">{{ t(`schedule.${slot.day}`) }}</div>
+          <div class="text-xl">{{ slot.start }} – {{ slot.end }}</div>
         </li>
       </ul>
     </div>
