@@ -261,6 +261,101 @@ class PageSeeder extends Seeder
                     'lv' => '', 'en' => '', 'ru' => '', 'cs' => '', 'de' => '',
                 ],
             ],
+            [
+                'slug' => 'contact-header',
+                'title' => [
+                    'lv' => 'Kontakti', 'en' => 'Contact', 'ru' => 'Контакты', 'cs' => 'Kontakt', 'de' => 'Kontakt',
+                ],
+                'body' => [
+                    'lv' => 'Atnāciet uz treniņu un iepazīstiet klubu. Nāciet ērtā apģērbā un treniņa apavos — ekipējumu nodrošinām. Dalība ir pēc ielūguma pēc dažiem apmeklējumiem.',
+                    'en' => 'Visit a training to meet the club. Wear comfortable clothes and training shoes — we provide gear. Membership is by invitation after a few visits.',
+                    'ru' => 'Приходите на тренировку и познакомьтесь с клубом. Удобная одежда и спортивная обувь — снаряжение мы выдадим. Членство — по приглашению после нескольких посещений.',
+                    'cs' => 'Přijďte na trénink a poznejte klub. Pohodlné oblečení a sálovou obuv — vybavení zapůjčíme. Členství je na pozvání po několika návštěvách.',
+                    'de' => 'Kommen Sie zum Training und lernen Sie den Verein kennen. Bequeme Kleidung und Hallenschuhe — Ausrüstung stellen wir. Die Mitgliedschaft erfolgt nach einigen Besuchen auf Einladung.',
+                ],
+            ],
+            [
+                'slug' => 'contact-come',
+                'title' => [
+                    'lv' => 'Atnāc uz treniņu', 'en' => 'Come to a training', 'ru' => 'Приходите на тренировку', 'cs' => 'Přijďte na trénink', 'de' => 'Zum Training kommen',
+                ],
+                'body' => [
+                    'lv' => 'Pirmais treniņš ir bez maksas.', 'en' => 'Your first training is free.', 'ru' => 'Первая тренировка бесплатна.', 'cs' => 'První trénink je zdarma.', 'de' => 'Das erste Training ist kostenlos.',
+                ],
+            ],
+            [
+                'slug' => 'contact-follow',
+                'title' => [
+                    'lv' => 'Seko mums', 'en' => 'Follow us', 'ru' => 'Мы в соцсетях', 'cs' => 'Sledujte nás', 'de' => 'Folgen Sie uns',
+                ],
+                'body' => [ 'lv' => '', 'en' => '', 'ru' => '', 'cs' => '', 'de' => '' ],
+            ],
+            [
+                'slug' => 'contact-form-intro',
+                'title' => [
+                    'lv' => 'Sūti ziņu', 'en' => 'Send us a message', 'ru' => 'Написать нам', 'cs' => 'Pošlete nám zprávu', 'de' => 'Schreiben Sie uns',
+                ],
+                'body' => [
+                    'lv' => 'Ja jums ir jautājumi pirms apmeklējuma, rakstiet — mēs drīz atbildēsim.',
+                    'en' => 'If you have questions before visiting, write to us and we will reply soon.',
+                    'ru' => 'Если у вас есть вопросы перед посещением, напишите нам — скоро ответим.',
+                    'cs' => 'Pokud máte před návštěvou dotazy, napište nám — brzy odpovíme.',
+                    'de' => 'Wenn Sie Fragen vor dem Besuch haben, schreiben Sie uns — wir antworten bald.',
+                ],
+            ],
+            [
+                'slug' => 'members-header',
+                'title' => [
+                    'lv' => 'Galvenie biedri', 'en' => 'Core Members', 'ru' => 'Основные участники', 'cs' => 'Hlavní členové', 'de' => 'Kernmitglieder',
+                ],
+                'body' => [
+                    'lv' => 'Fehtētāji, kas tur namu.', 'en' => 'The fencers who hold up the house.', 'ru' => 'Фехтовальщики, на которых стоит клуб.', 'cs' => 'Šermíři, kteří drží dům.', 'de' => 'Die Fechter, die das Haus tragen.',
+                ],
+            ],
+            [
+                'slug' => 'members-fallback',
+                'title' => [ 'lv' => '', 'en' => '', 'ru' => '', 'cs' => '', 'de' => '' ],
+                'body' => [
+                    'lv' => 'Detalizēti apraksti drīzumā. Iepazīstiet klubu klātienē treniņā.',
+                    'en' => 'Detailed bios are coming soon. Meet the club in person at a training.',
+                    'ru' => 'Подробные биографии скоро появятся. Познакомьтесь с клубом лично на тренировке.',
+                    'cs' => 'Podrobné medailonky brzy. Klub poznáte osobně na tréninku.',
+                    'de' => 'Ausführliche Porträts folgen. Lernen Sie den Verein persönlich beim Training kennen.',
+                ],
+            ],
+            [
+                'slug' => 'members-instructors',
+                'title' => [ 'lv' => 'Instruktori', 'en' => 'Instructors', 'ru' => 'Инструкторы', 'cs' => 'Instruktoři', 'de' => 'Lehrer' ],
+                'body' => [ 'lv' => '', 'en' => '', 'ru' => '', 'cs' => '', 'de' => '' ],
+            ],
+            [
+                'slug' => 'members-other',
+                'title' => [ 'lv' => 'Biedri', 'en' => 'Members', 'ru' => 'Участники', 'cs' => 'Členové', 'de' => 'Mitglieder' ],
+                'body' => [ 'lv' => '', 'en' => '', 'ru' => '', 'cs' => '', 'de' => '' ],
+            ],
+            [
+                'slug' => 'schedule-header',
+                'title' => [ 'lv' => 'Treniņi', 'en' => 'Training', 'ru' => 'Тренировки', 'cs' => 'Tréninky', 'de' => 'Training' ],
+                'body' => [
+                    'lv' => 'Pirmais treniņš ir bez maksas.', 'en' => 'Your first training is free.', 'ru' => 'Первая тренировка бесплатна.', 'cs' => 'První trénink je zdarma.', 'de' => 'Das erste Training ist kostenlos.',
+                ],
+            ],
+            [
+                'slug' => 'schedule-regular',
+                'title' => [ 'lv' => 'Pastāvīgais grafiks', 'en' => 'Regular schedule', 'ru' => 'Постоянное расписание', 'cs' => 'Pravidelný rozvrh', 'de' => 'Regelmäßiger Plan' ],
+                'body' => [ 'lv' => '', 'en' => '', 'ru' => '', 'cs' => '', 'de' => '' ],
+            ],
+            [
+                'slug' => 'schedule-upcoming',
+                'title' => [ 'lv' => 'Tuvākās nodarbības', 'en' => 'Upcoming sessions', 'ru' => 'Ближайшие занятия', 'cs' => 'Nadcházející tréninky', 'de' => 'Kommende Einheiten' ],
+                'body' => [
+                    'lv' => 'Pagaidām nav ieplānotu nodarbību — lūdzu, atgriezieties drīz.',
+                    'en' => 'No sessions scheduled yet — please check back soon.',
+                    'ru' => 'Пока запланированных занятий нет — загляните позже.',
+                    'cs' => 'Zatím nejsou naplánovány žádné tréninky — vraťte se brzy.',
+                    'de' => 'Bisher sind keine Einheiten geplant — schauen Sie bald wieder vorbei.',
+                ],
+            ],
         ];
 
         foreach ($pages as $p) {

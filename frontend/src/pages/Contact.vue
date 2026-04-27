@@ -1,10 +1,44 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
 import api from '@/lib/api'
+import EditablePageText from '@/components/EditablePageText.vue'
+import { loadCachedPage, saveCachedPage } from '@/lib/pageCache'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+
+const slugs = ['contact-header', 'contact-come', 'contact-follow', 'contact-form-intro']
+const pages = reactive({})
+for (const slug of slugs) {
+  const cached = loadCachedPage(slug)
+  if (cached) pages[slug] = cached
+}
+const pagesLoaded = ref(slugs.every((s) => pages[s]))
+
+function pageTitle(slug, fallbackKey) {
+  const p = pages[slug]
+  return p?.title?.[locale.value] || p?.title?.en || (fallbackKey ? t(fallbackKey) : '')
+}
+function pageBody(slug, fallbackKey) {
+  const p = pages[slug]
+  return p?.body?.[locale.value] || p?.body?.en || (fallbackKey ? t(fallbackKey) : '')
+}
+function onPageUpdated(slug, data) {
+  pages[slug] = data
+  saveCachedPage(slug, data)
+}
+
+onMounted(async () => {
+  await Promise.all(slugs.map(async (slug) => {
+    try {
+      const { data } = await api.get(`/api/content/pages/${slug}`)
+      pages[slug] = data.data
+      saveCachedPage(slug, data.data)
+    } catch {}
+  }))
+  pagesLoaded.value = true
+})
 const phoneNumber = '+371 27442755'
 const emailAddress = 'viitinsh@gmail.com'
 const trainingAddress = 'Ādmiņu iela 4, Rīga, LV-1009'
@@ -58,16 +92,52 @@ useHead({
 
 <template>
   <section class="max-w-6xl mx-auto px-4 py-10 sm:py-16">
-    <h1 class="text-center">{{ t('contact.title') }}</h1>
+    <h1 class="text-center">
+      <span>{{ pageTitle('contact-header', 'contact.title') }}</span>
+      <EditablePageText
+        v-if="pagesLoaded"
+        slug="contact-header"
+        field="title"
+        :page="pages['contact-header']"
+        @updated="onPageUpdated('contact-header', $event)"
+      />
+    </h1>
     <div class="divider-engraved my-6 mx-auto w-1/3"></div>
-    <p class="text-center text-ink-500 max-w-2xl mx-auto mb-8 sm:mb-10">{{ t('contact.come_body') }}</p>
+    <p class="text-center text-ink-500 max-w-2xl mx-auto mb-8 sm:mb-10">
+      <span>{{ pageBody('contact-header', 'contact.come_body') }}</span>
+      <EditablePageText
+        v-if="pagesLoaded"
+        slug="contact-header"
+        field="body"
+        :page="pages['contact-header']"
+        @updated="onPageUpdated('contact-header', $event)"
+      />
+    </p>
 
     <div class="grid lg:grid-cols-2 gap-8 items-start">
       <div>
         <div class="card p-6 sm:p-8 mb-8 grid md:grid-cols-2 gap-8">
           <div class="space-y-4">
-            <h3 class="mb-3">{{ t('contact.come') }}</h3>
-            <p class="mt-3 font-sans text-oxblood-500">{{ t('contact.first_training_free') }}</p>
+            <h3 class="mb-3">
+              <span>{{ pageTitle('contact-come', 'contact.come') }}</span>
+              <EditablePageText
+                v-if="pagesLoaded"
+                slug="contact-come"
+                field="title"
+                :page="pages['contact-come']"
+                @updated="onPageUpdated('contact-come', $event)"
+              />
+            </h3>
+            <p class="mt-3 font-sans text-oxblood-500">
+              <span>{{ pageBody('contact-come', 'contact.first_training_free') }}</span>
+              <EditablePageText
+                v-if="pagesLoaded"
+                slug="contact-come"
+                field="body"
+                :page="pages['contact-come']"
+                @updated="onPageUpdated('contact-come', $event)"
+              />
+            </p>
             <div class="flex flex-wrap gap-3 pt-2">
               <a :href="`tel:${phoneNumber.replace(/\s+/g, '')}`" class="btn-primary">{{ t('contact.phone') }}</a>
               <a :href="`mailto:${emailAddress}`" class="btn-ghost">{{ t('contact.email') }}</a>
@@ -88,7 +158,16 @@ useHead({
               <a :href="mapsQuery" target="_blank" rel="noopener" class="text-lg hover:text-oxblood-500">{{ trainingAddress }}</a>
             </div>
             <div>
-              <div class="text-xs uppercase tracking-widest text-ink-500 mb-1">{{ t('contact.follow') }}</div>
+              <div class="text-xs uppercase tracking-widest text-ink-500 mb-1">
+                <span>{{ pageTitle('contact-follow', 'contact.follow') }}</span>
+                <EditablePageText
+                  v-if="pagesLoaded"
+                  slug="contact-follow"
+                  field="title"
+                  :page="pages['contact-follow']"
+                  @updated="onPageUpdated('contact-follow', $event)"
+                />
+              </div>
               <div class="flex flex-wrap gap-3">
                 <a
                   v-for="social in socialLinks"
@@ -119,8 +198,26 @@ useHead({
         </div>
       </div>
       <form class="card p-6 sm:p-8 space-y-4" @submit.prevent="submitContactForm">
-        <h3>{{ t('contact.form_title') }}</h3>
-        <p class="text-ink-500">{{ t('contact.form_intro') }}</p>
+        <h3>
+          <span>{{ pageTitle('contact-form-intro', 'contact.form_title') }}</span>
+          <EditablePageText
+            v-if="pagesLoaded"
+            slug="contact-form-intro"
+            field="title"
+            :page="pages['contact-form-intro']"
+            @updated="onPageUpdated('contact-form-intro', $event)"
+          />
+        </h3>
+        <p class="text-ink-500">
+          <span>{{ pageBody('contact-form-intro', 'contact.form_intro') }}</span>
+          <EditablePageText
+            v-if="pagesLoaded"
+            slug="contact-form-intro"
+            field="body"
+            :page="pages['contact-form-intro']"
+            @updated="onPageUpdated('contact-form-intro', $event)"
+          />
+        </p>
 
         <div>
           <label for="contact-name" class="block text-xs uppercase tracking-widest text-ink-500 mb-1">{{ t('auth.name') }}</label>
