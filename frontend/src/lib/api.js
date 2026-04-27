@@ -23,10 +23,18 @@ export async function ensureCsrf() {
   return csrfPromise
 }
 
+function getXsrfToken() {
+  const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/)
+  return match ? decodeURIComponent(match[1]) : null
+}
+
 api.interceptors.request.use(async (config) => {
   const method = (config.method || 'get').toLowerCase()
   if (['post', 'put', 'patch', 'delete'].includes(method)) {
     await ensureCsrf()
+    // Manually inject the token — withXSRFToken is unreliable cross-subdomain
+    const token = getXsrfToken()
+    if (token) config.headers['X-XSRF-TOKEN'] = token
   }
   const locale = localStorage.getItem('locale')
   if (locale) config.headers['X-Locale'] = locale
