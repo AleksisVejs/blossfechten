@@ -16,16 +16,18 @@ const api = axios.create({
 })
 
 let csrfPromise = null
-export async function ensureCsrf() {
-  if (!csrfPromise) {
-    csrfPromise = api.get('/sanctum/csrf-cookie')
-  }
-  return csrfPromise
-}
 
 function getXsrfToken() {
   const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/)
   return match ? decodeURIComponent(match[1]) : null
+}
+
+export async function ensureCsrf() {
+  // Re-fetch if no promise yet, or if the cookie has gone missing
+  if (!csrfPromise || !getXsrfToken()) {
+    csrfPromise = api.get('/sanctum/csrf-cookie')
+  }
+  return csrfPromise
 }
 
 api.interceptors.request.use(async (config) => {
@@ -40,5 +42,21 @@ api.interceptors.request.use(async (config) => {
   if (locale) config.headers['X-Locale'] = locale
   return config
 })
+
+// On 419 (stale/missing CSRF token), reset and retry the request once
+api.interceptors.response.use(
+  response => response,
+  async error => {
+    if (error.response?.status === 419 && !error.config._csrfRetried) {
+      csrfPromise = null
+      await ensureCsrf()
+      error.config._csrfRetried = true
+      const token = getXsrfToken()
+      if (token) error.config.headers['X-XSRF-TOKEN'] = token
+      return api.request(error.config)
+    }
+    return Promise.reject(error)
+  }
+)
 
 export default api
