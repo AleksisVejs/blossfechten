@@ -22,9 +22,14 @@ class ContactFormSubmitted extends Mailable
 
     public function envelope(): Envelope
     {
+        $fromAddress = (string) config('mail.from.address');
+        $fromName = (string) config('mail.from.name');
+
         return new Envelope(
-            subject: "Contact form — {$this->senderName}",
+            subject: "Contact form - {$this->senderName}",
+            from: new Address($fromAddress, $fromName),
             replyTo: [new Address($this->senderEmail, $this->senderName)],
+            returnPath: $fromAddress,
         );
     }
 
@@ -32,6 +37,7 @@ class ContactFormSubmitted extends Mailable
     {
         return new Content(
             view: 'emails.contact-form-submitted',
+            text: 'emails.contact-form-submitted-text',
             with: [
                 'senderName' => $this->senderName,
                 'senderEmail' => $this->senderEmail,
