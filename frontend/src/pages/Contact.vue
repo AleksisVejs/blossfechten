@@ -1,43 +1,19 @@
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
 import api from '@/lib/api'
 import EditablePageText from '@/components/EditablePageText.vue'
-import { loadCachedPage, saveCachedPage } from '@/lib/pageCache'
+import EditableTextPlaceholder from '@/components/EditableTextPlaceholder.vue'
+import { useEditablePages } from '@/composables/useEditablePages'
 
 const { t, locale } = useI18n()
 
 const slugs = ['contact-header', 'contact-come', 'contact-follow', 'contact-form-intro']
-const pages = reactive({})
-for (const slug of slugs) {
-  const cached = loadCachedPage(slug)
-  if (cached) pages[slug] = cached
-}
-const pagesLoaded = ref(slugs.every((s) => pages[s]))
-
-function pageTitle(slug, fallbackKey) {
-  const p = pages[slug]
-  return p?.title?.[locale.value] || p?.title?.en || (fallbackKey ? t(fallbackKey) : '')
-}
-function pageBody(slug, fallbackKey) {
-  const p = pages[slug]
-  return p?.body?.[locale.value] || p?.body?.en || (fallbackKey ? t(fallbackKey) : '')
-}
-function onPageUpdated(slug, data) {
-  pages[slug] = data
-  saveCachedPage(slug, data)
-}
+const { pages, pageLoaded, pagesLoaded, pageTitle, pageBody, fetchPages, onPageUpdated } = useEditablePages(slugs)
 
 onMounted(async () => {
-  await Promise.all(slugs.map(async (slug) => {
-    try {
-      const { data } = await api.get(`/api/content/pages/${slug}`)
-      pages[slug] = data.data
-      saveCachedPage(slug, data.data)
-    } catch {}
-  }))
-  pagesLoaded.value = true
+  await fetchPages()
 })
 const phoneNumber = '+371 27442755'
 const emailAddress = 'viitinsh@gmail.com'
@@ -94,6 +70,7 @@ useHead({
   <section class="max-w-6xl mx-auto px-4 py-10 sm:py-16">
     <h1 class="text-center">
       <span>{{ pageTitle('contact-header', 'contact.title') }}</span>
+      <EditableTextPlaceholder v-if="!pageLoaded['contact-header']" width-class="w-2/3" centered />
       <EditablePageText
         v-if="pagesLoaded"
         slug="contact-header"
@@ -105,6 +82,7 @@ useHead({
     <div class="divider-engraved my-6 mx-auto w-1/3"></div>
     <p class="text-center text-ink-500 max-w-2xl mx-auto mb-8 sm:mb-10">
       <span>{{ pageBody('contact-header', 'contact.come_body') }}</span>
+      <EditableTextPlaceholder v-if="!pageLoaded['contact-header']" :lines="2" width-class="w-5/6" centered />
       <EditablePageText
         v-if="pagesLoaded"
         slug="contact-header"
@@ -120,6 +98,7 @@ useHead({
           <div class="space-y-4">
             <h3 class="mb-3">
               <span>{{ pageTitle('contact-come', 'contact.come') }}</span>
+              <EditableTextPlaceholder v-if="!pageLoaded['contact-come']" width-class="w-2/3" />
               <EditablePageText
                 v-if="pagesLoaded"
                 slug="contact-come"
@@ -130,6 +109,7 @@ useHead({
             </h3>
             <p class="mt-3 font-sans text-oxblood-500">
               <span>{{ pageBody('contact-come', 'contact.first_training_free') }}</span>
+              <EditableTextPlaceholder v-if="!pageLoaded['contact-come']" width-class="w-1/2" />
               <EditablePageText
                 v-if="pagesLoaded"
                 slug="contact-come"
@@ -160,6 +140,7 @@ useHead({
             <div>
               <div class="text-xs uppercase tracking-widest text-ink-500 mb-1">
                 <span>{{ pageTitle('contact-follow', 'contact.follow') }}</span>
+                <EditableTextPlaceholder v-if="!pageLoaded['contact-follow']" width-class="w-24" />
                 <EditablePageText
                   v-if="pagesLoaded"
                   slug="contact-follow"
@@ -200,6 +181,7 @@ useHead({
       <form class="card p-6 sm:p-8 space-y-4" @submit.prevent="submitContactForm">
         <h3>
           <span>{{ pageTitle('contact-form-intro', 'contact.form_title') }}</span>
+          <EditableTextPlaceholder v-if="!pageLoaded['contact-form-intro']" width-class="w-2/3" />
           <EditablePageText
             v-if="pagesLoaded"
             slug="contact-form-intro"
@@ -210,6 +192,7 @@ useHead({
         </h3>
         <p class="text-ink-500">
           <span>{{ pageBody('contact-form-intro', 'contact.form_intro') }}</span>
+          <EditableTextPlaceholder v-if="!pageLoaded['contact-form-intro']" :lines="2" width-class="w-5/6" />
           <EditablePageText
             v-if="pagesLoaded"
             slug="contact-form-intro"

@@ -1,35 +1,19 @@
 <script setup>
-import { onMounted, ref, computed, reactive } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
 import api from '@/lib/api'
 import StructuredData from '@/components/StructuredData.vue'
 import EditablePageText from '@/components/EditablePageText.vue'
-import { loadCachedApi, saveCachedApi, loadCachedPage, saveCachedPage } from '@/lib/pageCache'
+import EditableTextPlaceholder from '@/components/EditableTextPlaceholder.vue'
+import { loadCachedApi, saveCachedApi } from '@/lib/pageCache'
+import { useEditablePages } from '@/composables/useEditablePages'
 
 const { t, locale } = useI18n()
 const members = ref(loadCachedApi('members') || [])
 
 const pageSlugs = ['members-header', 'members-fallback', 'members-instructors', 'members-other']
-const pages = reactive({})
-for (const slug of pageSlugs) {
-  const cached = loadCachedPage(slug)
-  if (cached) pages[slug] = cached
-}
-const pagesLoaded = ref(pageSlugs.every((s) => pages[s]))
-
-function pageTitle(slug, fallbackKey) {
-  const p = pages[slug]
-  return p?.title?.[locale.value] || p?.title?.en || (fallbackKey ? t(fallbackKey) : '')
-}
-function pageBody(slug, fallbackKey) {
-  const p = pages[slug]
-  return p?.body?.[locale.value] || p?.body?.en || (fallbackKey ? t(fallbackKey) : '')
-}
-function onPageUpdated(slug, data) {
-  pages[slug] = data
-  saveCachedPage(slug, data)
-}
+const { pages, pageLoaded, pagesLoaded, pageTitle, pageBody, fetchPages, onPageUpdated } = useEditablePages(pageSlugs)
 
 // Only the names are verified (from the club's prior public site).
 const fallbackMembers = [
@@ -64,13 +48,7 @@ const membersSchema = computed(() => ({
 }))
 
 onMounted(async () => {
-  Promise.all(pageSlugs.map(async (slug) => {
-    try {
-      const { data } = await api.get(`/api/content/pages/${slug}`)
-      pages[slug] = data.data
-      saveCachedPage(slug, data.data)
-    } catch {}
-  })).then(() => { pagesLoaded.value = true })
+  fetchPages()
 
   try {
     const { data } = await api.get('/api/content/members')
@@ -111,6 +89,7 @@ function memberPhoto(m) {
   <section class="max-w-5xl mx-auto px-4 py-10 sm:py-16">
     <h1 class="text-center">
       <span>{{ pageTitle('members-header', 'members.title') }}</span>
+      <EditableTextPlaceholder v-if="!pageLoaded['members-header']" width-class="w-2/3" centered />
       <EditablePageText
         v-if="pagesLoaded"
         slug="members-header"
@@ -121,6 +100,7 @@ function memberPhoto(m) {
     </h1>
     <p class="text-center text-ink-500 italic mt-2">
       <span>{{ pageBody('members-header', 'members.subtitle') }}</span>
+      <EditableTextPlaceholder v-if="!pageLoaded['members-header']" :lines="2" width-class="w-5/6" centered />
       <EditablePageText
         v-if="pagesLoaded"
         slug="members-header"
@@ -133,6 +113,7 @@ function memberPhoto(m) {
 
     <p v-if="isFallback" class="text-center text-ink-500 italic mb-8 text-sm">
       <span>{{ pageBody('members-fallback', 'members.fallback_note') }}</span>
+      <EditableTextPlaceholder v-if="!pageLoaded['members-fallback']" :lines="2" width-class="w-2/3" centered />
       <EditablePageText
         v-if="pagesLoaded"
         slug="members-fallback"
@@ -146,6 +127,7 @@ function memberPhoto(m) {
     <div v-if="members.some(m => m.is_instructor)" class="mb-10">
       <h2 class="text-center mb-6 text-lg uppercase tracking-widest text-gold-500 font-sans">
         <span>{{ pageTitle('members-instructors', 'members.instructors') }}</span>
+        <EditableTextPlaceholder v-if="!pageLoaded['members-instructors']" width-class="w-40" centered />
         <EditablePageText
           v-if="pagesLoaded"
           slug="members-instructors"
@@ -181,6 +163,7 @@ function memberPhoto(m) {
     <div v-if="members.some(m => !m.is_instructor)">
       <h2 class="text-center mb-6 text-lg uppercase tracking-widest text-ink-500 font-sans">
         <span>{{ pageTitle('members-other', 'members.other') }}</span>
+        <EditableTextPlaceholder v-if="!pageLoaded['members-other']" width-class="w-32" centered />
         <EditablePageText
           v-if="pagesLoaded"
           slug="members-other"

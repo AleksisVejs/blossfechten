@@ -1,17 +1,24 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import api from '@/lib/api'
+import { formatDateTimeLocal, parseLocalDateTime } from '@/lib/datetime'
 import { useToast } from '@/composables/useToast'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const toast = useToast()
 
 const trainings = ref([])
 const loading = ref(false)
 const editing = ref(null) // 'new' | id | null
 const form = ref(emptyForm())
+const formParts = reactive({
+  starts_at_date: '',
+  starts_at_time: '',
+  ends_at_date: '',
+  ends_at_time: '',
+})
 const filter = ref('upcoming') // upcoming | past | cancelled | all
 const search = ref('')
 const saving = ref(false)
@@ -22,15 +29,92 @@ const deletingNow = ref(false)
 const registrations = ref(null) // { training, items[] } | null
 const loadingRegs = ref(false)
 
-const fmt = computed(() => new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium', timeStyle: 'short' }))
+const fmt = computed(() => new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+}))
 const langs = ['lv', 'en', 'ru', 'cs', 'de']
+
+function getDatePart(value) {
+  return typeof value === 'string' && value.includes('T') ? value.split('T')[0] : ''
+}
+
+function getTimePart(value) {
+  if (typeof value !== 'string' || !value.includes('T')) return ''
+  return value.split('T')[1]?.slice(0, 5) || ''
+}
+
+function syncFormParts() {
+  formParts.starts_at_date = getDatePart(form.value.starts_at)
+  formParts.starts_at_time = getTimePart(form.value.starts_at)
+  formParts.ends_at_date = getDatePart(form.value.ends_at)
+  formParts.ends_at_time = getTimePart(form.value.ends_at)
+}
+
+function normalizeTimeInput(value) {
+  if (typeof value !== 'string') return ''
+
+  const cleaned = value.replace(/\D/g, '')
+  if (!cleaned) return ''
+
+  if (cleaned.length <= 2) return cleaned
+  if (cleaned.length <= 4) return `${cleaned.slice(0, 2)}:${cleaned.slice(2)}`
+
+  return null
+}
+
+function isValidTimeInput(value) {
+  if (!/^\d{2}:\d{2}$/.test(value)) return false
+  const [hours, minutes] = value.split(':').map(Number)
+  return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59
+}
+
+function updateDatePart(field, value) {
+  formParts[`${field}_date`] = value
+}
+
+function updateTimePart(field, value) {
+  const normalized = normalizeTimeInput(value)
+  if (normalized === null) return
+  formParts[`${field}_time`] = normalized
+}
+
+function buildDateTime(field) {
+  const datePart = formParts[`${field}_date`]
+  const timePart = formParts[`${field}_time`]
+
+  if (!datePart || !isValidTimeInput(timePart)) return ''
+
+  return `${datePart}T${timePart}`
+}
+
+function formatTrainingDateRange(session) {
+  const start = parseLocalDateTime(session.starts_at)
+  const end = parseLocalDateTime(session.ends_at)
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return ''
+
+  const isSameDay =
+    start.getFullYear() === end.getFullYear()
+    && start.getMonth() === end.getMonth()
+    && start.getDate() === end.getDate()
+
+  if (isSameDay) {
+    return fmt.value.format(start)
+  }
+
+  return `${fmt.value.format(start)} - ${fmt.value.format(end)}`
+}
 
 function emptyForm() {
   const d = new Date()
   return {
     id: null,
-    starts_at: d.toISOString().slice(0, 16),
-    ends_at: new Date(d.getTime() + 2 * 3600 * 1000).toISOString().slice(0, 16),
+    starts_at: formatDateTimeLocal(d),
+    ends_at: formatDateTimeLocal(new Date(d.getTime() + 2 * 3600 * 1000)),
     location: 'Ādmiņu iela 4, Rīga',
     focus: 'Longsword',
     title: { lv: '', en: '', ru: '', cs: '', de: '' },
@@ -39,6 +123,8 @@ function emptyForm() {
     cancelled: false,
   }
 }
+
+syncFormParts()
 
 async function load() {
   loading.value = true
@@ -57,8 +143,8 @@ const filtered = computed(() => {
   const now = new Date()
   const q = search.value.trim().toLowerCase()
   return trainings.value.filter(s => {
-    if (filter.value === 'upcoming' && (s.cancelled || new Date(s.ends_at) < now)) return false
-    if (filter.value === 'past' && new Date(s.ends_at) >= now) return false
+    if (filter.value === 'upcoming' && (s.cancelled || parseLocalDateTime(s.ends_at) < now)) return false
+    if (filter.value === 'past' && parseLocalDateTime(s.ends_at) >= now) return false
     if (filter.value === 'cancelled' && !s.cancelled) return false
     if (q) {
       const hay = [s.focus, s.location, ...Object.values(s.title || {}), ...Object.values(s.description || {})]
@@ -79,26 +165,43 @@ function edit(row) {
   editing.value = row.id
   form.value = {
     ...row,
-    starts_at: row.starts_at.slice(0, 16),
-    ends_at: row.ends_at.slice(0, 16),
+    starts_at: formatDateTimeLocal(row.starts_at),
+    ends_at: formatDateTimeLocal(row.ends_at),
     title: { lv: '', en: '', ru: '', cs: '', de: '', ...(row.title || {}) },
     description: { lv: '', en: '', ru: '', cs: '', de: '', ...(row.description || {}) },
   }
+  syncFormParts()
 }
-function newOne() { editing.value = 'new'; form.value = emptyForm() }
+function newOne() {
+  editing.value = 'new'
+  form.value = emptyForm()
+  syncFormParts()
+}
 function cancel() { editing.value = null }
 
 async function save() {
   saving.value = true
   try {
-    const payload = { ...form.value, members_only: false }
+    const payload = {
+      ...form.value,
+      starts_at: buildDateTime('starts_at'),
+      ends_at: buildDateTime('ends_at'),
+      members_only: false,
+    }
+
+    if (!payload.starts_at || !payload.ends_at) {
+      throw new Error('invalid-datetime')
+    }
+
     if (editing.value === 'new') await api.post('/api/admin/trainings', payload)
     else await api.put(`/api/admin/trainings/${editing.value}`, payload)
     editing.value = null
     toast.success(t('admin.saved'))
     await load()
   } catch (e) {
-    toast.error(e.response?.data?.message || t('admin.error_saving'))
+    toast.error(e.message === 'invalid-datetime'
+      ? 'Please enter a valid date and time in HH:mm format.'
+      : (e.response?.data?.message || t('admin.error_saving')))
   } finally {
     saving.value = false
   }
@@ -187,7 +290,7 @@ async function viewRegistrations(row) {
             ]"
           >
             <td class="p-3 whitespace-nowrap">
-              {{ fmt.format(new Date(s.starts_at)) }}
+              {{ formatTrainingDateRange(s) }}
               <span v-if="s.cancelled" class="ml-2 text-[10px] uppercase tracking-widest text-oxblood-500">{{ t('admin.cancelled') }}</span>
             </td>
             <td class="p-3">{{ s.focus }}</td>
@@ -218,12 +321,48 @@ async function viewRegistrations(row) {
 
           <div class="grid sm:grid-cols-2 gap-4 font-sans text-sm">
             <label>
-              <span class="field-label">{{ t('admin.date') }} / Start</span>
-              <input v-model="form.starts_at" type="datetime-local" class="field-input" />
+              <span class="field-label">Start date</span>
+              <input
+                :value="formParts.starts_at_date"
+                type="date"
+                class="field-input"
+                @input="updateDatePart('starts_at', $event.target.value)"
+              />
             </label>
             <label>
-              <span class="field-label">End</span>
-              <input v-model="form.ends_at" type="datetime-local" class="field-input" />
+              <span class="field-label">Start time</span>
+              <input
+                :value="formParts.starts_at_time"
+                type="text"
+                class="field-input"
+                inputmode="numeric"
+                placeholder="HH:mm"
+                maxlength="5"
+                pattern="[0-2][0-9]:[0-5][0-9]"
+                @input="updateTimePart('starts_at', $event.target.value)"
+              />
+            </label>
+            <label>
+              <span class="field-label">End date</span>
+              <input
+                :value="formParts.ends_at_date"
+                type="date"
+                class="field-input"
+                @input="updateDatePart('ends_at', $event.target.value)"
+              />
+            </label>
+            <label>
+              <span class="field-label">End time</span>
+              <input
+                :value="formParts.ends_at_time"
+                type="text"
+                class="field-input"
+                inputmode="numeric"
+                placeholder="HH:mm"
+                maxlength="5"
+                pattern="[0-2][0-9]:[0-5][0-9]"
+                @input="updateTimePart('ends_at', $event.target.value)"
+              />
             </label>
             <label>
               <span class="field-label">{{ t('admin.focus') }}</span>
@@ -282,7 +421,7 @@ async function viewRegistrations(row) {
             <div>
               <h3 class="mb-1">{{ t('admin.registrations') }}</h3>
               <p class="text-xs text-ink-500 font-sans">
-                {{ fmt.format(new Date(registrations.training.starts_at)) }} · {{ registrations.training.focus }}
+                {{ formatTrainingDateRange(registrations.training) }} · {{ registrations.training.focus }}
               </p>
             </div>
             <button class="text-2xl leading-none text-ink-500 hover:text-ink-900" @click="registrations = null">×</button>

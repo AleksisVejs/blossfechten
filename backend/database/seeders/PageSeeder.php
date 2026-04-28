@@ -346,6 +346,19 @@ class PageSeeder extends Seeder
                 'body' => [ 'lv' => '', 'en' => '', 'ru' => '', 'cs' => '', 'de' => '' ],
             ],
             [
+                'slug' => 'regular-schedule',
+                'title' => [ 'lv' => '', 'en' => '', 'ru' => '', 'cs' => '', 'de' => '' ],
+                'body' => [
+                    'slots' => [
+                        ['day' => 'monday', 'start' => '18:00', 'end' => '20:00'],
+                        ['day' => 'wednesday', 'start' => '18:00', 'end' => '20:00'],
+                        ['day' => 'friday', 'start' => '18:00', 'end' => '20:00'],
+                        ['day' => 'saturday', 'start' => '11:00', 'end' => '14:00'],
+                        ['day' => 'sunday', 'start' => '11:00', 'end' => '13:00'],
+                    ],
+                ],
+            ],
+            [
                 'slug' => 'schedule-upcoming',
                 'title' => [ 'lv' => 'Tuvākās nodarbības', 'en' => 'Upcoming sessions', 'ru' => 'Ближайшие занятия', 'cs' => 'Nadcházející tréninky', 'de' => 'Kommende Einheiten' ],
                 'body' => [
@@ -359,6 +372,7 @@ class PageSeeder extends Seeder
         ];
 
         foreach ($pages as $p) {
+            $p['published'] = true;
             Page::firstOrCreate(['slug' => $p['slug']], $p);
         }
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,8 +15,8 @@ class TrainingSession extends Model
     ];
 
     protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
+        'starts_at' => 'datetime:Y-m-d\TH:i:s',
+        'ends_at' => 'datetime:Y-m-d\TH:i:s',
         'title' => 'array',
         'description' => 'array',
         'members_only' => 'boolean',
@@ -42,5 +43,10 @@ class TrainingSession extends Model
     public function isFull(): bool
     {
         return $this->confirmedCount() >= $this->capacity;
+    }
+
+    protected function serializeDate(DateTimeInterface $date): string
+    {
+        return $date->format('Y-m-d\TH:i:s');
     }
 }

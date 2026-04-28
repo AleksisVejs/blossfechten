@@ -1,56 +1,19 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
-import api from '@/lib/api'
 import EditablePageText from '@/components/EditablePageText.vue'
-import { loadCachedPage, saveCachedPage } from '@/lib/pageCache'
+import EditableTextPlaceholder from '@/components/EditableTextPlaceholder.vue'
+import { useEditablePages } from '@/composables/useEditablePages'
 
 const { t, locale } = useI18n()
 const levels = ['novice', 'scholar', 'free_scholar', 'instructor', 'fechtmeister']
 const curriculumSlugs = ['curriculum-i', 'curriculum-ii', 'curriculum-iii', 'curriculum-iv', 'curriculum-v']
-const aboutPage = ref(loadCachedPage('about'))
-const aboutPageLoaded = ref(!!aboutPage.value)
-const meyerPage = ref(loadCachedPage('meyer'))
-const meyerPageLoaded = ref(!!meyerPage.value)
-const curriculumIntro = ref(loadCachedPage('curriculum-intro'))
-const curriculumIntroLoaded = ref(!!curriculumIntro.value)
-const curriculumLevels = ref(curriculumSlugs.map((s) => loadCachedPage(s)))
-const curriculumLevelsLoaded = ref(curriculumLevels.value.every(Boolean))
-
-async function loadPage(slug, target, loadedFlag) {
-  try {
-    const { data } = await api.get(`/api/content/pages/${slug}`)
-    target.value = data.data
-    saveCachedPage(slug, data.data)
-  } catch {} finally {
-    if (loadedFlag) loadedFlag.value = true
-  }
-}
-
-async function loadCurriculumLevels() {
-  await Promise.all(curriculumSlugs.map(async (slug, i) => {
-    try {
-      const { data } = await api.get(`/api/content/pages/${slug}`)
-      curriculumLevels.value[i] = data.data
-      saveCachedPage(slug, data.data)
-    } catch {}
-  }))
-  curriculumLevelsLoaded.value = true
-}
-
-function updateCurriculumLevel(i, page) {
-  const next = [...curriculumLevels.value]
-  next[i] = page
-  curriculumLevels.value = next
-  saveCachedPage(curriculumSlugs[i], page)
-}
+const slugs = ['about', 'meyer', 'curriculum-intro', ...curriculumSlugs]
+const { pages, pageLoaded, fetchPages, onPageUpdated } = useEditablePages(slugs)
 
 onMounted(() => {
-  loadPage('about', aboutPage, aboutPageLoaded)
-  loadPage('meyer', meyerPage, meyerPageLoaded)
-  loadPage('curriculum-intro', curriculumIntro, curriculumIntroLoaded)
-  loadCurriculumLevels()
+  fetchPages()
 })
 
 useHead({
@@ -67,24 +30,26 @@ useHead({
     <section class="max-w-3xl mx-auto px-4 py-10 sm:py-16">
       <p class="uppercase tracking-[0.3em] text-xs text-gold-500 text-center">{{ t('about.founded') }}</p>
       <h1 class="text-center mt-2">
-        <span>{{ aboutPage?.title?.[locale] || aboutPage?.title?.en || t('about.title') }}</span>
+        <span>{{ pages.about?.title?.[locale] || pages.about?.title?.en || (pageLoaded.about ? t('about.title') : '') }}</span>
+        <EditableTextPlaceholder v-if="!pageLoaded.about" width-class="w-2/3" centered />
         <EditablePageText
-          v-if="aboutPageLoaded"
+          v-if="pageLoaded.about"
           slug="about"
           field="title"
-          :page="aboutPage"
-          @updated="aboutPage = $event; saveCachedPage('about', $event)"
+          :page="pages.about"
+          @updated="onPageUpdated('about', $event)"
         />
       </h1>
       <div class="divider-engraved my-6 mx-auto w-1/3"></div>
       <div class="prose-parchment text-lg space-y-4 relative">
-        <p>{{ aboutPage?.body?.[locale] || aboutPage?.body?.en || t('about.body_single') }}</p>
+        <p>{{ pages.about?.body?.[locale] || pages.about?.body?.en || (pageLoaded.about ? t('about.body_single') : '') }}</p>
+        <EditableTextPlaceholder v-if="!pageLoaded.about" :lines="3" width-class="w-5/6" />
         <EditablePageText
-          v-if="aboutPageLoaded"
+          v-if="pageLoaded.about"
           slug="about"
           field="body"
-          :page="aboutPage"
-          @updated="aboutPage = $event; saveCachedPage('about', $event)"
+          :page="pages.about"
+          @updated="onPageUpdated('about', $event)"
         />
       </div>
       <figure class="mt-10 flex flex-col items-center">
@@ -97,25 +62,27 @@ useHead({
     <section class="max-w-5xl mx-auto px-4 pb-12 grid lg:grid-cols-[1fr,300px] gap-8 lg:gap-10 items-start">
       <div>
         <h2>
-          <span>{{ meyerPage?.title?.[locale] || meyerPage?.title?.en || t('meyer.title') }}</span>
+          <span>{{ pages.meyer?.title?.[locale] || pages.meyer?.title?.en || (pageLoaded.meyer ? t('meyer.title') : '') }}</span>
+          <EditableTextPlaceholder v-if="!pageLoaded.meyer" width-class="w-2/3" />
           <EditablePageText
-            v-if="meyerPageLoaded"
+            v-if="pageLoaded.meyer"
             slug="meyer"
             field="title"
-            :page="meyerPage"
-            @updated="meyerPage = $event; saveCachedPage('meyer', $event)"
+            :page="pages.meyer"
+            @updated="onPageUpdated('meyer', $event)"
           />
         </h2>
         <div class="divider-engraved my-6 w-1/3"></div>
         <div class="prose-parchment text-lg">
-          <p v-if="meyerPage">{{ meyerPage.body?.[locale] || meyerPage.body?.en }}</p>
-          <p v-else-if="meyerPageLoaded">{{ t('about.body_1') }}</p>
+          <p v-if="pages.meyer">{{ pages.meyer.body?.[locale] || pages.meyer.body?.en }}</p>
+          <p v-else-if="pageLoaded.meyer">{{ t('about.body_1') }}</p>
+          <EditableTextPlaceholder v-else :lines="3" width-class="w-5/6" />
           <EditablePageText
-            v-if="meyerPageLoaded"
+            v-if="pageLoaded.meyer"
             slug="meyer"
             field="body"
-            :page="meyerPage"
-            @updated="meyerPage = $event; saveCachedPage('meyer', $event)"
+            :page="pages.meyer"
+            @updated="onPageUpdated('meyer', $event)"
           />
         </div>
       </div>
@@ -140,23 +107,25 @@ useHead({
 
     <section class="max-w-5xl mx-auto px-4 pb-12 sm:pb-20">
       <h2 class="text-center mb-4">
-        <span>{{ curriculumIntro?.title?.[locale] || curriculumIntro?.title?.en || t('meyer.curriculum_title') }}</span>
+        <span>{{ pages['curriculum-intro']?.title?.[locale] || pages['curriculum-intro']?.title?.en || (pageLoaded['curriculum-intro'] ? t('meyer.curriculum_title') : '') }}</span>
+        <EditableTextPlaceholder v-if="!pageLoaded['curriculum-intro']" width-class="w-2/3" centered />
         <EditablePageText
-          v-if="curriculumIntroLoaded"
+          v-if="pageLoaded['curriculum-intro']"
           slug="curriculum-intro"
           field="title"
-          :page="curriculumIntro"
-          @updated="curriculumIntro = $event; saveCachedPage('curriculum-intro', $event)"
+          :page="pages['curriculum-intro']"
+          @updated="onPageUpdated('curriculum-intro', $event)"
         />
       </h2>
       <p class="text-center text-ink-500 italic max-w-2xl mx-auto mb-8">
-        <span>{{ curriculumIntro?.body?.[locale] || curriculumIntro?.body?.en || t('meyer.curriculum_note') }}</span>
+        <span>{{ pages['curriculum-intro']?.body?.[locale] || pages['curriculum-intro']?.body?.en || (pageLoaded['curriculum-intro'] ? t('meyer.curriculum_note') : '') }}</span>
+        <EditableTextPlaceholder v-if="!pageLoaded['curriculum-intro']" :lines="2" width-class="w-5/6" centered />
         <EditablePageText
-          v-if="curriculumIntroLoaded"
+          v-if="pageLoaded['curriculum-intro']"
           slug="curriculum-intro"
           field="body"
-          :page="curriculumIntro"
-          @updated="curriculumIntro = $event; saveCachedPage('curriculum-intro', $event)"
+          :page="pages['curriculum-intro']"
+          @updated="onPageUpdated('curriculum-intro', $event)"
         />
       </p>
       <ol class="space-y-4">
@@ -164,23 +133,25 @@ useHead({
           <div class="font-serif text-4xl text-gold-500 w-12 shrink-0">{{ ['I','II','III','IV','V'][i] }}</div>
           <div class="flex-1 min-w-0">
             <h3>
-              <span>{{ curriculumLevels[i]?.title?.[locale] || curriculumLevels[i]?.title?.en || t(`meyer.levels.${lv}.t`) }}</span>
+              <span>{{ pages[curriculumSlugs[i]]?.title?.[locale] || pages[curriculumSlugs[i]]?.title?.en || (pageLoaded[curriculumSlugs[i]] ? t(`meyer.levels.${lv}.t`) : '') }}</span>
+              <EditableTextPlaceholder v-if="!pageLoaded[curriculumSlugs[i]]" width-class="w-1/2" />
               <EditablePageText
-                v-if="curriculumLevelsLoaded"
+                v-if="pageLoaded[curriculumSlugs[i]]"
                 :slug="curriculumSlugs[i]"
                 field="title"
-                :page="curriculumLevels[i]"
-                @updated="updateCurriculumLevel(i, $event)"
+                :page="pages[curriculumSlugs[i]]"
+                @updated="onPageUpdated(curriculumSlugs[i], $event)"
               />
             </h3>
             <p class="text-ink-500 mt-1">
-              <span>{{ curriculumLevels[i]?.body?.[locale] || curriculumLevels[i]?.body?.en || t(`meyer.levels.${lv}.d`) }}</span>
+              <span>{{ pages[curriculumSlugs[i]]?.body?.[locale] || pages[curriculumSlugs[i]]?.body?.en || (pageLoaded[curriculumSlugs[i]] ? t(`meyer.levels.${lv}.d`) : '') }}</span>
+              <EditableTextPlaceholder v-if="!pageLoaded[curriculumSlugs[i]]" :lines="2" width-class="w-4/5" />
               <EditablePageText
-                v-if="curriculumLevelsLoaded"
+                v-if="pageLoaded[curriculumSlugs[i]]"
                 :slug="curriculumSlugs[i]"
                 field="body"
-                :page="curriculumLevels[i]"
-                @updated="updateCurriculumLevel(i, $event)"
+                :page="pages[curriculumSlugs[i]]"
+                @updated="onPageUpdated(curriculumSlugs[i], $event)"
               />
             </p>
           </div>

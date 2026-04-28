@@ -24,10 +24,15 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const auth = useAuthStore()
-  if (auth.user === null && !auth._tried) {
-    auth._tried = true
-    await auth.fetchMe()
+
+  const needsSession = !!(to.meta.auth || to.meta.admin || to.meta.guest)
+
+  if (needsSession) {
+    await auth.initSession()
+  } else if (!auth.initialized && !auth.initPromise) {
+    auth.initSession()
   }
+
   if (to.meta.auth && !auth.isAuthenticated) return { name: 'login', query: { next: to.fullPath } }
   if (to.meta.admin && !auth.isAdmin) return { name: 'home' }
   if (to.meta.guest && auth.isAuthenticated) return { name: 'dashboard' }

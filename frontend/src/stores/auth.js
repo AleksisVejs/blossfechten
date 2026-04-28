@@ -6,6 +6,8 @@ export const useAuthStore = defineStore('auth', {
     user: null,
     loading: false,
     error: null,
+    initialized: false,
+    initPromise: null,
   }),
   getters: {
     isAuthenticated: (s) => !!s.user,
@@ -18,13 +20,26 @@ export const useAuthStore = defineStore('auth', {
         this.user = data.user
       } catch {
         this.user = null
+      } finally {
+        this.initialized = true
       }
+    },
+    async initSession() {
+      if (this.initialized) return this.user
+      if (!this.initPromise) {
+        this.initPromise = this.fetchMe().finally(() => {
+          this.initPromise = null
+        })
+      }
+      await this.initPromise
+      return this.user
     },
     async login(payload) {
       this.loading = true; this.error = null
       try {
         const { data } = await api.post('/api/auth/login', payload)
         this.user = data.user
+        this.initialized = true
       } catch (e) {
         this.error = e.response?.data?.message || 'Login failed'
         throw e
@@ -35,19 +50,24 @@ export const useAuthStore = defineStore('auth', {
       try {
         const { data } = await api.post('/api/auth/register', payload)
         this.user = data.user
+        this.initialized = true
       } catch (e) {
         this.error = e.response?.data?.message || 'Registration failed'
         throw e
       } finally { this.loading = false }
     },
     async logout() {
-      try { await api.post('/api/auth/logout') } finally { this.user = null }
+      try { await api.post('/api/auth/logout') } finally {
+        this.user = null
+        this.initialized = true
+      }
     },
     async updateProfile(payload) {
       this.loading = true; this.error = null
       try {
         const { data } = await api.put('/api/auth/profile', payload)
         this.user = data.user
+        this.initialized = true
         return data.user
       } catch (e) {
         this.error = e.response?.data?.message || 'Profile update failed'

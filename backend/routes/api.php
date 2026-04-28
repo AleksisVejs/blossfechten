@@ -13,11 +13,20 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn() => ['ok' => true]);
 
-// Auth
-Route::post('/auth/register', [AuthController::class, 'register']);
-Route::post('/auth/login', [AuthController::class, 'login']);
+// Auth (session-based SPA auth needs web middleware)
+Route::middleware('web')->group(function () {
+    Route::post('/auth/register', [AuthController::class, 'register']);
+    Route::post('/auth/login', [AuthController::class, 'login']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/auth/me', [AuthController::class, 'me']);
+        Route::put('/auth/profile', [AuthController::class, 'updateProfile']);
+        Route::post('/auth/logout', [AuthController::class, 'logout']);
+    });
+});
 
 // Public content
+Route::get('/content/pages', [ContentController::class, 'pages']);
 Route::get('/content/pages/{slug}', [ContentController::class, 'page']);
 Route::get('/content/members', [ContentController::class, 'members']);
 Route::get('/content/videos', [VideoController::class, 'index']);
@@ -27,10 +36,6 @@ Route::get('/trainings/{training}', [TrainingController::class, 'show']);
 
 // Authenticated
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/auth/me', [AuthController::class, 'me']);
-    Route::put('/auth/profile', [AuthController::class, 'updateProfile']);
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
-
     Route::post('/trainings/{training}/register', [TrainingController::class, 'register']);
     Route::delete('/trainings/{training}/register', [TrainingController::class, 'unregister']);
     Route::get('/me/registrations', [TrainingController::class, 'myRegistrations']);

@@ -2,15 +2,18 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import api from '@/lib/api'
+import { loadCachedApi, saveCachedApi } from '@/lib/pageCache'
 
 const { t } = useI18n()
-const videos = ref([])
-const loading = ref(true)
+const cachedVideos = loadCachedApi('youtube-videos')
+const videos = ref(Array.isArray(cachedVideos) ? cachedVideos : [])
+const loading = ref(!videos.value.length)
 
 onMounted(async () => {
   try {
     const { data } = await api.get('/api/content/videos')
-    videos.value = data.data
+    videos.value = Array.isArray(data?.data) ? data.data : []
+    saveCachedApi('youtube-videos', videos.value)
   } catch {
     // silently skip if backend unavailable
   } finally {

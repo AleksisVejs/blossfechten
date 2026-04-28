@@ -33,6 +33,7 @@ const pages = [
   { slug: 'members-other', label: () => 'Members — other heading' },
   { slug: 'schedule-header', label: () => 'Schedule — header' },
   { slug: 'schedule-regular', label: () => 'Schedule — regular heading' },
+  { slug: 'regular-schedule', label: () => 'Schedule — regular slots' },
   { slug: 'schedule-upcoming', label: () => 'Schedule — upcoming' },
 ]
 const langs = ['lv', 'en', 'ru', 'cs', 'de']

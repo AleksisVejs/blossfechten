@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
+import { parseLocalDateTime } from '@/lib/datetime'
 
 const props = defineProps({ session: { type: Object, required: true } })
 const emit = defineEmits(['register', 'unregister'])
@@ -10,12 +11,24 @@ const auth = useAuthStore()
 
 const title = computed(() => props.session.title?.[locale.value] || props.session.title?.en || props.session.focus)
 const description = computed(() => props.session.description?.[locale.value] || props.session.description?.en || '')
-const start = computed(() => new Date(props.session.starts_at))
-const end = computed(() => new Date(props.session.ends_at))
+const start = computed(() => parseLocalDateTime(props.session.starts_at))
+const end = computed(() => parseLocalDateTime(props.session.ends_at))
 const seatsLeft = computed(() => Math.max(0, (props.session.capacity ?? 0) - (props.session.confirmed_count ?? 0)))
 
-const dateFmt = new Intl.DateTimeFormat(locale.value, { weekday: 'long', day: '2-digit', month: 'long' })
-const timeFmt = new Intl.DateTimeFormat(locale.value, { hour: '2-digit', minute: '2-digit' })
+const dateTimeFmt = new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+})
+
+const timeFmt = new Intl.DateTimeFormat('en-GB', {
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+})
 
 const sameDay = computed(() => {
   const s = start.value, e = end.value
@@ -25,8 +38,8 @@ const sameDay = computed(() => {
 })
 
 const when = computed(() => sameDay.value
-  ? `${dateFmt.format(start.value)} · ${timeFmt.format(start.value)}–${timeFmt.format(end.value)}`
-  : `${dateFmt.format(start.value)} · ${timeFmt.format(start.value)} – ${dateFmt.format(end.value)} · ${timeFmt.format(end.value)}`
+  ? `${dateTimeFmt.format(start.value)}-${timeFmt.format(end.value)}`
+  : `${dateTimeFmt.format(start.value)} - ${dateTimeFmt.format(end.value)}`
 )
 </script>
 

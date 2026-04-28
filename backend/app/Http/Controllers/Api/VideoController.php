@@ -26,7 +26,7 @@ class VideoController extends Controller
         $url = 'https://www.youtube.com/feeds/videos.xml?channel_id=' . self::CHANNEL_ID;
 
         try {
-            $request = Http::timeout(8);
+            $request = Http::timeout(3);
 
             // Windows local environments can miss CA bundles; keep production verification intact.
             if (app()->environment(['local', 'testing'])) {

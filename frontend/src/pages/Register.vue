@@ -54,7 +54,7 @@ async function submit() {
   <section class="max-w-md mx-auto px-4 py-10 sm:py-16">
     <div class="text-center mb-8">
       <img src="/img/logo.png" alt="Blossfechten Riga" class="w-14 h-14 mx-auto object-contain opacity-90" />
-      <p class="uppercase tracking-[0.3em] text-[11px] text-gold-500 mt-4">Schola Meyeri</p>
+      <p class="uppercase tracking-[0.3em] text-[11px] text-gold-500 mt-4">Fencer's Guild Latvia</p>
       <h1 class="mt-2">{{ t('auth.register_title') }}</h1>
       <div class="divider-engraved my-5 mx-auto w-1/3"></div>
       <p class="text-ink-500 italic text-sm">{{ t('auth.register_subtitle') }}</p>

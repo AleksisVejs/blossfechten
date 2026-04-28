@@ -121,7 +121,7 @@ const accountButtonClass =
         <div class="font-display text-base leading-none text-ink-900 sm:hidden">Blossfechten Riga</div>
         <div class="hidden sm:block">
           <div class="font-display leading-none text-xl text-ink-900">{{ $t('brand') }}</div>
-          <div class="hidden text-xs uppercase tracking-[0.2em] text-ink-500 lg:block">Schola Meyeri</div>
+          <div class="hidden text-xs uppercase tracking-[0.2em] text-ink-500 lg:block">Fencer's Guild Latvia</div>
         </div>
       </router-link>
 

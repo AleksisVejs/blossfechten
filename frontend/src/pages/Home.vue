@@ -1,12 +1,13 @@
 <script setup>
-import { ref, onMounted, reactive } from 'vue'
+import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
 import api from '@/lib/api'
 import StructuredData from '@/components/StructuredData.vue'
 import YouTubeGrid from '@/components/YouTubeGrid.vue'
 import EditablePageText from '@/components/EditablePageText.vue'
-import { loadCachedPage, saveCachedPage } from '@/lib/pageCache'
+import EditableTextPlaceholder from '@/components/EditableTextPlaceholder.vue'
+import { useEditablePages } from '@/composables/useEditablePages'
 
 const { t, locale } = useI18n()
 const pillars = ['tradition', 'progression', 'community']
@@ -21,37 +22,12 @@ const slugs = [
   'home-cta',
   'home-cta-note',
 ]
-const pages = reactive({})
-for (const slug of slugs) {
-  const cached = loadCachedPage(slug)
-  if (cached) pages[slug] = cached
-}
-const pagesLoaded = ref(slugs.every((s) => pages[s]))
+const { pages, pageLoaded, pagesLoaded, pageTitle, pageBody, fetchPages, onPageUpdated } = useEditablePages(slugs)
 
 function pillarSlug(p) { return `home-pillar-${p}` }
 
-function pageTitle(slug, fallbackKey) {
-  const p = pages[slug]
-  return p?.title?.[locale.value] || p?.title?.en || (fallbackKey ? t(fallbackKey) : '')
-}
-function pageBody(slug, fallbackKey) {
-  const p = pages[slug]
-  return p?.body?.[locale.value] || p?.body?.en || (fallbackKey ? t(fallbackKey) : '')
-}
-function onPageUpdated(slug, data) {
-  pages[slug] = data
-  saveCachedPage(slug, data)
-}
-
 onMounted(async () => {
-  await Promise.all(slugs.map(async (slug) => {
-    try {
-      const { data } = await api.get(`/api/content/pages/${slug}`)
-      pages[slug] = data.data
-      saveCachedPage(slug, data.data)
-    } catch {}
-  }))
-  pagesLoaded.value = true
+  await fetchPages()
 })
 
 useHead({
@@ -96,6 +72,7 @@ const clubSchema = {
       <p class="uppercase tracking-[0.3em] text-xs text-gold-500 mb-4">Anno Domini MMXXII</p>
       <h1 class="text-4xl sm:text-5xl md:text-7xl text-ink-900">
         <span>{{ pageTitle('home-hero', 'home.hero_title') }}</span>
+        <EditableTextPlaceholder v-if="!pageLoaded['home-hero']" width-class="w-3/4" centered />
         <EditablePageText
           v-if="pagesLoaded"
           slug="home-hero"
@@ -107,6 +84,7 @@ const clubSchema = {
       <div class="divider-engraved my-6 mx-auto w-1/2"></div>
       <p class="max-w-2xl mx-auto text-lg text-ink-500 italic">
         <span>{{ pageBody('home-hero', 'home.hero_sub') }}</span>
+        <EditableTextPlaceholder v-if="!pageLoaded['home-hero']" :lines="2" width-class="w-5/6" centered />
         <EditablePageText
           v-if="pagesLoaded"
           slug="home-hero"
@@ -136,6 +114,7 @@ const clubSchema = {
     <div class="text-center max-w-3xl mx-auto mb-8">
       <h2 class="mb-3">
         <span>{{ pageTitle('home-identity', 'tagline') }}</span>
+        <EditableTextPlaceholder v-if="!pageLoaded['home-identity']" width-class="w-2/3" centered />
         <EditablePageText
           v-if="pagesLoaded"
           slug="home-identity"
@@ -146,6 +125,7 @@ const clubSchema = {
       </h2>
       <p class="text-ink-500">
         <span>{{ pageBody('home-identity', 'home.identity') }}</span>
+        <EditableTextPlaceholder v-if="!pageLoaded['home-identity']" :lines="2" width-class="w-5/6" centered />
         <EditablePageText
           v-if="pagesLoaded"
           slug="home-identity"
@@ -159,6 +139,7 @@ const clubSchema = {
       <div v-for="p in pillars" :key="p" class="card p-6 h-full">
         <h3 class="mb-2">
           <span>{{ pageTitle(pillarSlug(p), `home.pillars.${p}.t`) }}</span>
+          <EditableTextPlaceholder v-if="!pageLoaded[pillarSlug(p)]" width-class="w-2/3" />
           <EditablePageText
             v-if="pagesLoaded"
             :slug="pillarSlug(p)"
@@ -169,6 +150,7 @@ const clubSchema = {
         </h3>
         <p class="text-ink-500">
           <span>{{ pageBody(pillarSlug(p), `home.pillars.${p}.d`) }}</span>
+          <EditableTextPlaceholder v-if="!pageLoaded[pillarSlug(p)]" :lines="2" width-class="w-4/5" />
           <EditablePageText
             v-if="pagesLoaded"
             :slug="pillarSlug(p)"
@@ -198,6 +180,7 @@ const clubSchema = {
     <div class="divider-engraved mx-auto w-1/3 mb-6"></div>
     <h2 class="mb-3">
       <span>{{ pageTitle('home-cta', 'contact.come') }}</span>
+      <EditableTextPlaceholder v-if="!pageLoaded['home-cta']" width-class="w-2/3" centered />
       <EditablePageText
         v-if="pagesLoaded"
         slug="home-cta"
@@ -208,6 +191,7 @@ const clubSchema = {
     </h2>
     <p class="text-ink-500 text-base">
       <span>{{ pageBody('home-cta', 'contact.come_body') }}</span>
+      <EditableTextPlaceholder v-if="!pageLoaded['home-cta']" :lines="2" width-class="w-5/6" centered />
       <EditablePageText
         v-if="pagesLoaded"
         slug="home-cta"
@@ -218,6 +202,7 @@ const clubSchema = {
     </p>
     <p class="mt-3 font-sans text-oxblood-500">
       <span>{{ pageTitle('home-cta-note', 'contact.first_training_free') }}</span>
+      <EditableTextPlaceholder v-if="!pageLoaded['home-cta-note']" width-class="w-1/2" centered />
       <EditablePageText
         v-if="pagesLoaded"
         slug="home-cta-note"

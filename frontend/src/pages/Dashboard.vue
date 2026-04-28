@@ -3,6 +3,7 @@ import { onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useTrainingsStore } from '@/stores/trainings'
 import { useAuthStore } from '@/stores/auth'
+import { parseLocalDateTime } from '@/lib/datetime'
 
 const { t, locale } = useI18n()
 const store = useTrainingsStore()
@@ -10,8 +11,13 @@ const auth = useAuthStore()
 
 onMounted(() => store.fetchMine())
 
-const fmt = computed(() => new Intl.DateTimeFormat(locale.value, {
-  weekday: 'long', day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit',
+const fmt = computed(() => new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
 }))
 </script>
 
@@ -29,7 +35,7 @@ const fmt = computed(() => new Intl.DateTimeFormat(locale.value, {
       <li v-for="r in store.mine" :key="r.id" class="card p-4 flex justify-between items-center flex-wrap gap-2">
         <div>
           <div class="font-serif text-xl">{{ r.training_session?.title?.[locale] || r.training_session?.focus }}</div>
-          <div class="text-sm text-ink-500">{{ fmt.format(new Date(r.training_session.starts_at)) }}</div>
+          <div class="text-sm text-ink-500">{{ fmt.format(parseLocalDateTime(r.training_session.starts_at)) }}</div>
         </div>
         <span class="text-xs uppercase tracking-widest px-2 py-1 border"
           :class="r.status === 'confirmed' ? 'border-gold-500 text-gold-500' : 'border-oxblood-500 text-oxblood-500'">
