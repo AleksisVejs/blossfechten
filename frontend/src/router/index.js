@@ -7,6 +7,8 @@ const routes = [
   { path: '/meyer', name: 'meyer', redirect: { name: 'about' } },
   { path: '/schedule', name: 'schedule', component: () => import('@/pages/Schedule.vue') },
   { path: '/members', name: 'members', component: () => import('@/pages/Members.vue') },
+  { path: '/forum', name: 'forum', component: () => import('@/pages/Forum.vue') },
+  { path: '/forum/:slug', name: 'forum-post', component: () => import('@/pages/ForumPost.vue') },
   { path: '/contact', name: 'contact', component: () => import('@/pages/Contact.vue') },
   { path: '/login', name: 'login', component: () => import('@/pages/Login.vue'), meta: { guest: true } },
   { path: '/register', name: 'register', component: () => import('@/pages/Register.vue'), meta: { guest: true } },

@@ -341,6 +341,17 @@ class PageSeeder extends Seeder
                 ],
             ],
             [
+                'slug' => 'forum-header',
+                'title' => [ 'lv' => 'Forums', 'en' => 'Forum', 'ru' => 'Форум', 'cs' => 'Fórum', 'de' => 'Forum' ],
+                'body' => [
+                    'lv' => 'Ziņas, paziņojumi un noderīgi kluba ieraksti.',
+                    'en' => 'News, announcements, and useful posts from the club.',
+                    'ru' => 'Новости, объявления и полезные публикации клуба.',
+                    'cs' => 'Novinky, oznámení a užitečné příspěvky klubu.',
+                    'de' => 'Neuigkeiten, Ankündigungen und nützliche Beiträge des Vereins.',
+                ],
+            ],
+            [
                 'slug' => 'schedule-regular',
                 'title' => [ 'lv' => 'Pastāvīgais grafiks', 'en' => 'Regular schedule', 'ru' => 'Постоянное расписание', 'cs' => 'Pravidelný rozvrh', 'de' => 'Regelmäßiger Plan' ],
                 'body' => [ 'lv' => '', 'en' => '', 'ru' => '', 'cs' => '', 'de' => '' ],

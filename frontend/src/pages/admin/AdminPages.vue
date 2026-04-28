@@ -32,6 +32,7 @@ const pages = [
   { slug: 'members-instructors', label: () => 'Members — instructors heading' },
   { slug: 'members-other', label: () => 'Members — other heading' },
   { slug: 'schedule-header', label: () => 'Schedule — header' },
+  { slug: 'forum-header', label: () => 'Forum — header' },
   { slug: 'schedule-regular', label: () => 'Schedule — regular heading' },
   { slug: 'regular-schedule', label: () => 'Schedule — regular slots' },
   { slug: 'schedule-upcoming', label: () => 'Schedule — upcoming' },

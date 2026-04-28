@@ -11,11 +11,13 @@ const router = useRouter()
 const AdminTrainings = defineAsyncComponent(() => import('./admin/AdminTrainings.vue'))
 const AdminUsers = defineAsyncComponent(() => import('./admin/AdminUsers.vue'))
 const AdminMembers = defineAsyncComponent(() => import('./admin/AdminMembers.vue'))
+const AdminForumPosts = defineAsyncComponent(() => import('./admin/AdminForumPosts.vue'))
 
 const tab = ref('trainings')
 
 const tabs = computed(() => [
   { key: 'trainings', label: t('admin.trainings'), comp: AdminTrainings },
+  { key: 'forum', label: t('admin.forum_posts'), comp: AdminForumPosts },
   { key: 'members', label: t('admin.members_content'), comp: AdminMembers },
   { key: 'users', label: t('admin.users'), comp: AdminUsers },
 ])

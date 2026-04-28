@@ -15,7 +15,7 @@ class ContactController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
-            'email' => ['required', 'email:rfc,dns', 'max:190'],
+            'email' => ['required', 'email:rfc', 'max:190'],
             'message' => ['required', 'string', 'min:10', 'max:3000'],
         ]);
 
@@ -31,18 +31,25 @@ class ContactController extends Controller
             ?: env('CONTACT_RECIPIENT', 'viitinsh@gmail.com');
 
         try {
-            Mail::to($recipient)->send(new ContactFormSubmitted(
+            $sentMessage = Mail::to($recipient)->send(new ContactFormSubmitted(
                 senderName: $data['name'],
                 senderEmail: $data['email'],
                 messageBody: $data['message'],
                 ip: $request->ip(),
             ));
+
+            Log::info('Contact form email handed off to SMTP', [
+                'recipient' => $recipient,
+                'from' => config('mail.from.address'),
+                'message_id' => $sentMessage?->getMessageId(),
+            ]);
         } catch (Throwable $e) {
             // Don't fail the user-facing request if SMTP is down — message
             // is already in the log and can be replayed manually.
             Log::error('Contact form email send failed', [
                 'recipient' => $recipient,
                 'error' => $e->getMessage(),
+                'exception' => $e::class,
             ]);
         }
 
