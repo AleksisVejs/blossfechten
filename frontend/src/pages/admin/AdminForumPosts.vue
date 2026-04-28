@@ -95,6 +95,18 @@ watch(
   { immediate: true },
 )
 
+watch(
+  () => [route.query.edit, posts.value.length],
+  ([editValue]) => {
+    if (typeof editValue !== 'string' || !editValue.trim()) return
+    const match = posts.value.find((item) => String(item.id) === editValue || item.slug === editValue)
+    if (!match) return
+    edit(match)
+    router.replace({ query: { ...route.query, edit: undefined } })
+  },
+  { immediate: true },
+)
+
 function edit(row) {
   editing.value = row.id
   pendingUploads.value = new Set()
@@ -197,9 +209,9 @@ async function onCoverFileChange(event) {
 }
 
 function insertAtCursor(textareaEl, valueToInsert, fallbackLang) {
-  const start = textareaEl?.selectionStart ?? form.value.body[fallbackLang].length
-  const end = textareaEl?.selectionEnd ?? form.value.body[fallbackLang].length
-  const current = form.value.body[fallbackLang] || ''
+  const current = (form.value.body?.[fallbackLang] || '').toString()
+  const start = textareaEl?.selectionStart ?? current.length
+  const end = textareaEl?.selectionEnd ?? current.length
   const next = `${current.slice(0, start)}${valueToInsert}${current.slice(end)}`
   form.value.body[fallbackLang] = next
 

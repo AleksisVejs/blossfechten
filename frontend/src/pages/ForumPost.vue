@@ -2,15 +2,23 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useHead } from '@unhead/vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import api from '@/lib/api'
 import { resolveMediaUrl } from '@/lib/mediaUrl'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
+import { useAuthStore } from '@/stores/auth'
+import { useToast } from '@/composables/useToast'
 
 const { t, locale } = useI18n()
 const route = useRoute()
+const router = useRouter()
+const auth = useAuthStore()
+const toast = useToast()
 
 const loading = ref(false)
 const post = ref(null)
+const confirmingDelete = ref(false)
+const deletingNow = ref(false)
 
 function localText(value, fallback = '') {
   if (!value || typeof value !== 'object') return fallback
@@ -55,6 +63,32 @@ async function load() {
 watch(() => route.params.slug, load)
 onMounted(load)
 
+function editCurrentPost() {
+  if (!post.value?.id && !post.value?.slug) return
+  router.push({
+    name: 'admin',
+    query: {
+      tab: 'forum',
+      edit: String(post.value.id || post.value.slug),
+    },
+  })
+}
+
+async function deleteCurrentPost() {
+  if (!post.value?.id) return
+  deletingNow.value = true
+  try {
+    await api.delete(`/api/admin/forum-posts/${post.value.id}`)
+    toast.success(t('admin.deleted'))
+    confirmingDelete.value = false
+    router.push({ name: 'forum' })
+  } catch {
+    toast.error(t('admin.error_deleting'))
+  } finally {
+    deletingNow.value = false
+  }
+}
+
 useHead({
   title: () => `${localText(post.value?.title, t('forum.title'))} — Blossfechten Riga`,
   meta: [
@@ -86,6 +120,14 @@ useHead({
         </span>
       </div>
       <h1 class="!text-4xl sm:!text-5xl">{{ localText(post.title, '') }}</h1>
+      <div v-if="auth.isAdmin" class="mt-4 flex flex-wrap gap-2">
+        <button class="btn-ghost !py-2 !px-3" @click="editCurrentPost">
+          {{ t('admin.edit') }}
+        </button>
+        <button class="btn-ghost !py-2 !px-3 text-oxblood-500" @click="confirmingDelete = true">
+          {{ t('admin.delete') }}
+        </button>
+      </div>
       <p class="text-lg text-ink-500 mt-4">{{ localText(post.excerpt, '') }}</p>
       <div class="divider-engraved my-6"></div>
       <div class="prose-parchment text-ink-900 leading-relaxed">
@@ -106,5 +148,16 @@ useHead({
         </span>
       </div>
     </article>
+
+    <ConfirmDialog
+      :open="confirmingDelete"
+      destructive
+      :title="t('admin.delete')"
+      :message="t('admin.confirm_delete_forum_post')"
+      :confirm-label="t('admin.delete')"
+      :loading="deletingNow"
+      @confirm="deleteCurrentPost"
+      @cancel="confirmingDelete = false"
+    />
   </section>
 </template>
