@@ -29,7 +29,6 @@ class ContactFormSubmitted extends Mailable
             subject: "Contact form - {$this->senderName}",
             from: new Address($fromAddress, $fromName),
             replyTo: [new Address($this->senderEmail, $this->senderName)],
-            returnPath: $fromAddress,
         );
     }
 
