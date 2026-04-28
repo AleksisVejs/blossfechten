@@ -35,7 +35,6 @@ class ContactController extends Controller
                 senderName: $data['name'],
                 senderEmail: $data['email'],
                 messageBody: $data['message'],
-                ip: $request->ip(),
             ));
 
             Log::info('Contact form email handed off to SMTP', [

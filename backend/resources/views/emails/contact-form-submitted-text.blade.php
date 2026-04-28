@@ -1,12 +1,9 @@
-New contact form submission
+Jauns kontaktformas pieteikums
 
-Name: {{ $senderName }}
-Email: {{ $senderEmail }}
-@if ($ip)
-IP: {{ $ip }}
-@endif
+Vārds: {{ $senderName }}
+E-pasts: {{ $senderEmail }}
 
-Message:
+Ziņa:
 {{ $messageBody }}
 
-Reply directly to this email to respond to {{ $senderName }}.
+Atbildiet tieši uz šo e-pastu, lai atbildētu {{ $senderName }}.

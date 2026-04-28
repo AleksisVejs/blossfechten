@@ -17,7 +17,6 @@ class ContactFormSubmitted extends Mailable
         public string $senderName,
         public string $senderEmail,
         public string $messageBody,
-        public ?string $ip = null,
     ) {}
 
     public function envelope(): Envelope
@@ -26,7 +25,7 @@ class ContactFormSubmitted extends Mailable
         $fromName = (string) config('mail.from.name');
 
         return new Envelope(
-            subject: "Contact form - {$this->senderName}",
+            subject: "Kontaktformas pieteikums - {$this->senderName}",
             from: new Address($fromAddress, $fromName),
             replyTo: [new Address($this->senderEmail, $this->senderName)],
         );
@@ -41,7 +40,6 @@ class ContactFormSubmitted extends Mailable
                 'senderName' => $this->senderName,
                 'senderEmail' => $this->senderEmail,
                 'messageBody' => $this->messageBody,
-                'ip' => $this->ip,
             ],
         );
     }
