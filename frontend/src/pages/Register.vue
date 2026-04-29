@@ -30,19 +30,22 @@ useHead({
 onMounted(() => nameField.value?.focus())
 
 const passwordsMatch = computed(() =>
-  form.value.password.length > 0 &&
+  form.value.password.length >= 8 &&
   form.value.password_confirmation.length > 0 &&
   form.value.password === form.value.password_confirmation
 )
 const passwordsMismatch = computed(() =>
-  form.value.password_confirmation.length > 0 && !passwordsMatch.value
+  // Only show "mismatch" after user has entered a confirmation and the password meets min length.
+  form.value.password_confirmation.length > 0 &&
+  form.value.password.length >= 8 &&
+  !passwordsMatch.value
 )
 
 async function submit() {
   err.value = ''
   try {
     await auth.register(form.value)
-    router.push({ name: 'dashboard' })
+    router.push({ name: 'verify-email' })
   } catch (e) {
     const errors = e.response?.data?.errors
     err.value = errors ? Object.values(errors).flat().join(' ') : (e.response?.data?.message || t('common.error'))
@@ -172,7 +175,7 @@ async function submit() {
       <button
         type="submit"
         class="btn-primary w-full"
-        :disabled="auth.loading || passwordsMismatch"
+        :disabled="auth.loading || !passwordsMatch"
       >
         <svg v-if="auth.loading" class="w-4 h-4 mr-2 animate-spin" viewBox="0 0 24 24" fill="none">
           <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-opacity="0.25" />

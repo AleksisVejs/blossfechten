@@ -9,6 +9,9 @@ const { t } = useI18n()
 const auth = useAuthStore()
 const toast = useToast()
 const err = ref('')
+const pwErr = ref('')
+const pwSubmitting = ref(false)
+const pwForm = ref({ current_password: '', password: '', password_confirmation: '' })
 const form = ref({
   name: auth.user?.name || '',
   phone: auth.user?.phone || '',
@@ -31,6 +34,25 @@ watch(
   },
   { immediate: true },
 )
+
+async function changePassword() {
+  pwErr.value = ''
+  if (pwForm.value.password !== pwForm.value.password_confirmation) {
+    pwErr.value = t('auth.password_mismatch')
+    return
+  }
+  pwSubmitting.value = true
+  try {
+    await auth.changePassword(pwForm.value)
+    pwForm.value = { current_password: '', password: '', password_confirmation: '' }
+    toast.success(t('profile.password_changed'))
+  } catch (e) {
+    const errors = e.response?.data?.errors
+    pwErr.value = errors ? Object.values(errors).flat().join(' ') : (e.response?.data?.message || t('common.error'))
+  } finally {
+    pwSubmitting.value = false
+  }
+}
 
 async function saveProfile() {
   err.value = ''
@@ -101,6 +123,42 @@ async function saveProfile() {
       <div class="mt-5 flex justify-end">
         <button type="submit" class="btn-primary" :disabled="auth.loading">
           {{ auth.loading ? t('auth.submitting') : t('profile.save') }}
+        </button>
+      </div>
+    </form>
+
+    <form class="card p-6 sm:p-8 mt-8" @submit.prevent="changePassword">
+      <h2 class="text-xl !m-0">{{ t('profile.change_password') }}</h2>
+      <p class="text-sm text-ink-500 mt-1">{{ t('profile.change_password_subtitle') }}</p>
+      <div class="divider-engraved my-4 w-1/4"></div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="sm:col-span-2">
+          <label for="pw-current" class="field-label">{{ t('profile.current_password') }}</label>
+          <input id="pw-current" v-model="pwForm.current_password" type="password" required autocomplete="current-password" class="field-input" />
+        </div>
+        <div>
+          <label for="pw-new" class="field-label">{{ t('profile.new_password') }}</label>
+          <input id="pw-new" v-model="pwForm.password" type="password" required minlength="8" autocomplete="new-password" class="field-input" />
+          <p class="text-xs text-ink-500/80 mt-1.5 font-sans">{{ t('auth.password_hint') }}</p>
+        </div>
+        <div>
+          <label for="pw-confirm" class="field-label">{{ t('auth.password_confirmation') }}</label>
+          <input id="pw-confirm" v-model="pwForm.password_confirmation" type="password" required autocomplete="new-password" class="field-input" />
+        </div>
+      </div>
+
+      <div
+        v-if="pwErr"
+        role="alert"
+        class="mt-4 px-3 py-2 border border-oxblood-500/40 bg-oxblood-500/5 rounded-sm text-sm text-oxblood-500 font-sans"
+      >
+        {{ pwErr }}
+      </div>
+
+      <div class="mt-5 flex justify-end">
+        <button type="submit" class="btn-primary" :disabled="pwSubmitting">
+          {{ pwSubmitting ? t('auth.submitting') : t('profile.change_password_submit') }}
         </button>
       </div>
     </form>

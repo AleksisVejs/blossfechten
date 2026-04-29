@@ -110,5 +110,8 @@ async function submit() {
       {{ t('auth.no_account') }}
       <router-link :to="{ name: 'register' }" class="ml-1 text-oxblood-500 hover:text-oxblood-700 underline-offset-2 hover:underline">{{ t('nav.register') }}</router-link>
     </p>
+    <p class="text-sm text-ink-500 text-center mt-2 font-sans">
+      <router-link :to="{ name: 'forgot-password' }" class="text-oxblood-500 hover:text-oxblood-700 underline-offset-2 hover:underline">{{ t('auth.forgot_link') }}</router-link>
+    </p>
   </section>
 </template>

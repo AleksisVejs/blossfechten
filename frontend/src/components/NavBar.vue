@@ -33,8 +33,11 @@ const utilityLinks = computed(() => {
 })
 
 async function doLogout() {
-  await auth.logout()
-  router.push({ name: 'home' })
+  try {
+    await auth.logout()
+  } finally {
+    router.push({ name: 'login' })
+  }
 }
 
 function closeMenu() {
