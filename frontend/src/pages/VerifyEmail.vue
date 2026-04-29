@@ -13,7 +13,7 @@ const sending = ref(false)
 const sent = ref(false)
 const errorMsg = ref('')
 
-const status = computed(() => route.query.status || '')
+const status = ref(typeof route.query.status === 'string' ? route.query.status : '')
 const verifyUrl = computed(() => {
   const value = route.query.verify_url
   return typeof value === 'string' ? value : ''
@@ -24,13 +24,21 @@ useHead({
   meta: [{ name: 'robots', content: 'noindex' }],
 })
 
-onMounted(() => {
+onMounted(async () => {
   if (!auth.initialized) auth.initSession()
 
-  // Email links now land on the frontend first so the visible link looks safe.
-  // Then we forward the browser to the signed API verification URL.
-  if (verifyUrl.value) {
-    window.location.replace(verifyUrl.value)
+  if (verifyUrl.value && !status.value) {
+    try {
+      const res = await fetch(verifyUrl.value, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { Accept: 'application/json' },
+      })
+      const data = await res.json().catch(() => ({}))
+      status.value = data?.status || (res.ok ? 'success' : 'invalid')
+    } catch {
+      status.value = 'invalid'
+    }
   }
 })
 
@@ -68,8 +76,11 @@ async function resend() {
       <div v-else-if="status === 'invalid'" class="px-3 py-2 border border-oxblood-500/40 bg-oxblood-500/5 rounded-sm text-sm text-oxblood-500 font-sans">
         {{ t('auth.verify_invalid') }}
       </div>
+      <p v-else-if="verifyUrl" class="text-ink-500 text-sm font-sans">
+        {{ t('auth.submitting') }}
+      </p>
       <p v-else class="text-ink-500 text-sm font-sans">
-        {{ verifyUrl ? t('auth.submitting') : t('auth.verify_pending') }}
+        {{ t('auth.verify_pending') }}
       </p>
 
       <div v-if="auth.isAuthenticated && !auth.user?.email_verified_at" class="pt-3 border-t border-parchment-700/30">

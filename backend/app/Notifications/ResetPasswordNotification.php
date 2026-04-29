@@ -10,7 +10,6 @@ class ResetPasswordNotification extends ResetPassword
     public function toMail($notifiable)
     {
         $frontend = rtrim((string) config('app.frontend_url', ''), '/');
-        // Fallback: avoid empty/relative redirects if FRONTEND_URL isn't configured.
         if ($frontend === '') {
             $frontend = rtrim((string) config('app.url', ''), '/');
         }
@@ -21,10 +20,13 @@ class ResetPasswordNotification extends ResetPassword
 
         return (new MailMessage)
             ->subject('Paroles atjaunošana — Blossfechten Riga')
-            ->greeting('Sveiki, ' . ($notifiable->name ?? '') . '!')
-            ->line('Saņemts pieprasījums atjaunot paroli jūsu kontam.')
-            ->action('Atjaunot paroli', $url)
-            ->line('Šī saite ir derīga ' . $minutes . ' minūtes.')
-            ->line('Ja jūs nepieprasījāt paroles atjaunošanu, varat ignorēt šo e-pastu.');
+            ->view(
+                ['emails.reset-password', 'emails.reset-password-text'],
+                [
+                    'recipientName' => $notifiable->name ?? '',
+                    'resetUrl' => $url,
+                    'minutes' => $minutes,
+                ]
+            );
     }
 }
