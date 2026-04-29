@@ -125,20 +125,24 @@ class AuthController extends Controller
     {
         $user = $request->user();
         $userId = $user->id;
+        $registrationsDeleted = 0;
+        $tokensDeleted = 0;
+        $usersDeletedRows = 0;
 
-        DB::transaction(function () use ($user): void {
+        DB::transaction(function () use ($user, &$registrationsDeleted, &$tokensDeleted, &$usersDeletedRows): void {
             // Delete pivot/pivot-like rows.
-            $user->registrations()->delete();
+            $registrationsDeleted = (int) $user->registrations()->delete();
 
             // Delete Sanctum tokens.
-            $user->tokens()->delete();
+            $tokensDeleted = (int) $user->tokens()->delete();
 
             // Finally delete the user itself.
-            $user->delete();
+            // Use a query builder delete to get a concrete "affected rows" count.
+            $usersDeletedRows = User::query()->whereKey($user->id)->delete();
         });
 
         $stillExists = User::query()->where('id', $userId)->exists();
-        $deleted = ! $stillExists;
+        $deleted = ! $stillExists && $usersDeletedRows > 0;
 
         Auth::guard('web')->logout();
         $request->session()->invalidate();
@@ -148,6 +152,9 @@ class AuthController extends Controller
             'deleted' => $deleted,
             'user_id' => $userId,
             'still_exists' => $stillExists,
+            'registrations_deleted' => $registrationsDeleted,
+            'tokens_deleted' => $tokensDeleted,
+            'users_deleted_rows' => $usersDeletedRows,
         ]);
     }
 
