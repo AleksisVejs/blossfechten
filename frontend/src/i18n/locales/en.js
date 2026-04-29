@@ -184,6 +184,12 @@ export default {
     current_password: 'Current password',
     new_password: 'New password',
     password_changed: 'Password updated.',
+    delete_account: 'Delete account',
+    delete_account_title: 'Delete account?',
+    delete_account_subtitle: 'Permanently remove your account and all associated data.',
+    delete_account_confirm: 'Delete my account',
+    deleted: 'Account deleted.',
+    delete_account_failed: 'Could not delete your account.',
   },
   admin: {
     title: 'Administration',

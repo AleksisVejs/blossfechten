@@ -90,5 +90,17 @@ export const useAuthStore = defineStore('auth', {
         throw e
       } finally { this.loading = false }
     },
+    async deleteProfile() {
+      this.loading = true; this.error = null
+      try {
+        await api.delete('/api/auth/profile')
+        this.user = null
+        this.initialized = true
+        return true
+      } catch (e) {
+        this.error = e.response?.data?.message || 'Profile deletion failed'
+        throw e
+      } finally { this.loading = false }
+    },
   },
 })

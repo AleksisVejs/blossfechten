@@ -184,6 +184,12 @@ export default {
     current_password: 'Současné heslo',
     new_password: 'Nové heslo',
     password_changed: 'Heslo aktualizováno.',
+    delete_account: 'Smazat účet',
+    delete_account_title: 'Smazat účet?',
+    delete_account_subtitle: 'Trvale odeberte svůj účet a související data.',
+    delete_account_confirm: 'Smazat můj účet',
+    deleted: 'Účet smazán.',
+    delete_account_failed: 'Nepodařilo se smazat účet.',
   },
   admin: {
     title: 'Administrace',

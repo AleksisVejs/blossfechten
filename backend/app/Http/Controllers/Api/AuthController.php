@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -118,6 +119,28 @@ class AuthController extends Controller
         $user->update($data);
 
         return response()->json(['user' => $user->fresh()]);
+    }
+
+    public function deleteProfile(Request $request)
+    {
+        $user = $request->user();
+
+        DB::transaction(function () use ($user): void {
+            // Delete pivot/pivot-like rows.
+            $user->registrations()->delete();
+
+            // Delete Sanctum tokens.
+            $user->tokens()->delete();
+
+            // Finally delete the user itself.
+            $user->delete();
+        });
+
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->noContent();
     }
 
     public function changePassword(Request $request)

@@ -184,6 +184,12 @@ export default {
     current_password: 'Aktuelles Passwort',
     new_password: 'Neues Passwort',
     password_changed: 'Passwort aktualisiert.',
+    delete_account: 'Konto löschen',
+    delete_account_title: 'Konto löschen?',
+    delete_account_subtitle: 'Entferne dauerhaft dein Konto und alle zugehörigen Daten.',
+    delete_account_confirm: 'Mein Konto löschen',
+    deleted: 'Konto gelöscht.',
+    delete_account_failed: 'Konnte Konto nicht löschen.',
   },
   admin: {
     title: 'Verwaltung',

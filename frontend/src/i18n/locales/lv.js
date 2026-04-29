@@ -184,6 +184,12 @@ export default {
     current_password: 'Pašreizējā parole',
     new_password: 'Jaunā parole',
     password_changed: 'Parole atjaunota.',
+    delete_account: 'Dzēst kontu',
+    delete_account_title: 'Dzēst kontu?',
+    delete_account_subtitle: 'Neatgriezeniski noņemt jūsu kontu un ar to saistītos datus.',
+    delete_account_confirm: 'Dzēst manu kontu',
+    deleted: 'Konts dzēsts.',
+    delete_account_failed: 'Neizdevās dzēst kontu.',
   },
   admin: {
     title: 'Administrācija',

@@ -32,6 +32,7 @@ Route::middleware('web')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::put('/auth/profile', [AuthController::class, 'updateProfile']);
+        Route::delete('/auth/profile', [AuthController::class, 'deleteProfile']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);
         Route::post('/auth/email/resend', [AuthController::class, 'resendVerification'])->middleware('throttle:6,1');
         Route::post('/auth/password/change', [AuthController::class, 'changePassword'])->middleware('throttle:10,1');

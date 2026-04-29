@@ -184,6 +184,12 @@ export default {
     current_password: 'Текущий пароль',
     new_password: 'Новый пароль',
     password_changed: 'Пароль обновлён.',
+    delete_account: 'Удалить аккаунт',
+    delete_account_title: 'Удалить аккаунт?',
+    delete_account_subtitle: 'Навсегда удалить ваш аккаунт и связанные данные.',
+    delete_account_confirm: 'Удалить мой аккаунт',
+    deleted: 'Аккаунт удалён.',
+    delete_account_failed: 'Не удалось удалить аккаунт.',
   },
   admin: {
     title: 'Администрирование',

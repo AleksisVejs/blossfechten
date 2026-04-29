@@ -1,12 +1,15 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { SUPPORTED_LOCALES, setLocale } from '@/i18n'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
 import { useToast } from '@/composables/useToast'
 
 const { t } = useI18n()
 const auth = useAuthStore()
+const router = useRouter()
 const toast = useToast()
 const err = ref('')
 const pwErr = ref('')
@@ -17,6 +20,8 @@ const form = ref({
   phone: auth.user?.phone || '',
   locale: auth.user?.locale || 'en',
 })
+const deleteDialogOpen = ref(false)
+const deleteErr = ref('')
 
 const userInitial = computed(() => {
   const name = auth.user?.name || ''
@@ -65,10 +70,36 @@ async function saveProfile() {
     err.value = errors ? Object.values(errors).flat().join(' ') : (e.response?.data?.message || t('common.error'))
   }
 }
+
+async function confirmDeleteProfile() {
+  deleteErr.value = ''
+  try {
+    await auth.deleteProfile()
+    toast.success(t('profile.deleted'))
+    deleteDialogOpen.value = false
+    router.push({ name: 'login' })
+  } catch (e) {
+    const errors = e.response?.data?.errors
+    deleteErr.value = errors
+      ? Object.values(errors).flat().join(' ')
+      : (e.response?.data?.message || t('profile.delete_account_failed'))
+    return
+  }
+}
 </script>
 
 <template>
   <section class="max-w-3xl mx-auto px-4 py-10 sm:py-16">
+    <ConfirmDialog
+      :open="deleteDialogOpen"
+      :title="t('profile.delete_account_title')"
+      :message="t('profile.delete_account_subtitle')"
+      :confirm-label="t('profile.delete_account_confirm')"
+      destructive
+      :loading="auth.loading"
+      @confirm="confirmDeleteProfile"
+      @cancel="deleteDialogOpen = false"
+    />
     <h1>{{ t('profile.title') }}</h1>
     <p class="text-ink-500 mt-1">{{ t('profile.subtitle') }}</p>
     <div class="divider-engraved my-6 w-1/3"></div>
@@ -126,6 +157,26 @@ async function saveProfile() {
         </button>
       </div>
     </form>
+
+    <div class="card p-6 sm:p-8 mt-8">
+      <h2 class="text-xl !m-0">{{ t('profile.delete_account') }}</h2>
+      <p class="text-sm text-ink-500 mt-1">{{ t('profile.delete_account_subtitle') }}</p>
+
+      <div v-if="deleteErr" role="alert" class="mt-4 px-3 py-2 border border-oxblood-500/40 bg-oxblood-500/5 rounded-sm text-sm text-oxblood-500 font-sans">
+        <span>{{ deleteErr }}</span>
+      </div>
+
+      <div class="mt-5 flex justify-end">
+        <button
+          type="button"
+          class="btn-ghost text-oxblood-500"
+          :disabled="auth.loading"
+          @click="deleteDialogOpen = true"
+        >
+          {{ t('profile.delete_account_confirm') }}
+        </button>
+      </div>
+    </div>
 
     <form class="card p-6 sm:p-8 mt-8" @submit.prevent="changePassword">
       <h2 class="text-xl !m-0">{{ t('profile.change_password') }}</h2>
