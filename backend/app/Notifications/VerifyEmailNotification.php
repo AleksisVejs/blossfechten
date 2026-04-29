@@ -29,14 +29,17 @@ class VerifyEmailNotification extends VerifyEmail
             $frontend = rtrim((string) config('app.url', ''), '/');
         }
         $url = $frontend . '/verify-email?verify_url=' . urlencode($apiUrl);
+        $minutes = (int) config('auth.verification.expire', 60);
 
         return (new MailMessage)
             ->subject('Apstipriniet savu e-pasta adresi — Blossfechten Riga')
-            ->greeting('Sveiki, ' . ($notifiable->name ?? '') . '!')
-            ->line('Paldies, ka pievienojāties Blossfechten Riga skolai. Lūdzu, apstipriniet savu e-pasta adresi, noklikšķinot uz pogas zemāk.')
-            ->action('Apstiprināt e-pastu', $url)
-            ->line('Šī saite ir derīga ' . (int) config('auth.verification.expire', 60) . ' minūtes.')
-            ->line('Ja poga neatveras, ielīmējiet šo saiti pārlūkā: ' . $url)
-            ->line('Ja jūs neveidojāt kontu, varat ignorēt šo e-pastu.');
+            ->view(
+                ['emails.verify-email', 'emails.verify-email-text'],
+                [
+                    'recipientName' => $notifiable->name ?? '',
+                    'verifyUrl' => $url,
+                    'minutes' => $minutes,
+                ]
+            );
     }
 }

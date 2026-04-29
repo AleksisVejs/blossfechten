@@ -186,28 +186,34 @@ class AuthController extends Controller
     public function verifyEmail(Request $request, int $id, string $hash)
     {
         $frontend = rtrim((string) config('app.frontend_url', ''), '/');
-        // Fallback: avoid empty/relative redirects if FRONTEND_URL isn't configured.
         if ($frontend === '') {
             $frontend = rtrim((string) config('app.url', ''), '/');
         }
 
+        $respond = function (string $status) use ($request, $frontend) {
+            if ($request->wantsJson()) {
+                return response()->json(['status' => $status]);
+            }
+            return redirect($frontend . '/verify-email?status=' . $status);
+        };
+
         if (!$request->hasValidSignature()) {
-            return redirect($frontend . '/verify-email?status=invalid');
+            return $respond('invalid');
         }
 
         $user = User::find($id);
         if (!$user || !hash_equals($hash, sha1($user->getEmailForVerification()))) {
-            return redirect($frontend . '/verify-email?status=invalid');
+            return $respond('invalid');
         }
 
         if ($user->hasVerifiedEmail()) {
-            return redirect($frontend . '/verify-email?status=already');
+            return $respond('already');
         }
 
         $user->markEmailAsVerified();
         event(new Verified($user));
 
-        return redirect($frontend . '/verify-email?status=success');
+        return $respond('success');
     }
 
     public function resendVerification(Request $request)
