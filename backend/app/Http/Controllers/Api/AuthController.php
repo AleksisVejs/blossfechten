@@ -124,6 +124,8 @@ class AuthController extends Controller
     public function deleteProfile(Request $request)
     {
         $user = $request->user();
+        $userId = $user->id;
+        $deleted = false;
 
         DB::transaction(function () use ($user): void {
             // Delete pivot/pivot-like rows.
@@ -133,14 +135,18 @@ class AuthController extends Controller
             $user->tokens()->delete();
 
             // Finally delete the user itself.
-            $user->delete();
+            $deleted = (bool) $user->delete();
         });
 
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return response()->noContent();
+        return response()->json([
+            'deleted' => $deleted,
+            'user_id' => $userId,
+            'still_exists' => $deleted ? User::query()->where('id', $userId)->exists() : true,
+        ]);
     }
 
     public function changePassword(Request $request)
