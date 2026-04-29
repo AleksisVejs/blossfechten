@@ -23,7 +23,9 @@ Route::middleware('web')->group(function () {
     Route::post('/auth/password/forgot', [AuthController::class, 'forgotPassword'])->middleware('throttle:6,1');
     Route::post('/auth/password/reset', [AuthController::class, 'resetPassword'])->middleware('throttle:6,1');
 
-    Route::get('/auth/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+    // Some browsers / security intermediaries may re-fetch signed verification URLs
+    // using a different HTTP method. Accept POST in addition to GET to avoid 405.
+    Route::match(['get', 'post'], '/auth/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
         ->middleware('signed')
         ->name('verification.verify');
 
