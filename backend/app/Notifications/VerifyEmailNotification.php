@@ -24,7 +24,7 @@ class VerifyEmailNotification extends VerifyEmail
     public function toMail($notifiable): MailMessage
     {
         $apiUrl = $this->verificationUrl($notifiable);
-        $frontend = rtrim((string) env('FRONTEND_URL', ''), '/');
+        $frontend = rtrim((string) config('app.frontend_url', ''), '/');
         if ($frontend === '') {
             $frontend = rtrim((string) config('app.url', ''), '/');
         }

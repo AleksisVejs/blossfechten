@@ -185,7 +185,7 @@ class AuthController extends Controller
 
     public function verifyEmail(Request $request, int $id, string $hash)
     {
-        $frontend = rtrim((string) env('FRONTEND_URL', ''), '/');
+        $frontend = rtrim((string) config('app.frontend_url', ''), '/');
         // Fallback: avoid empty/relative redirects if FRONTEND_URL isn't configured.
         if ($frontend === '') {
             $frontend = rtrim((string) config('app.url', ''), '/');
