@@ -93,8 +93,11 @@ export const useAuthStore = defineStore('auth', {
     async deleteProfile() {
       this.loading = true; this.error = null
       try {
-        const { data } = await api.delete('/api/auth/profile')
-        if (!data?.deleted) {
+        const res = await api.delete('/api/auth/profile')
+        // Some deployments may still return 204 (no JSON). In that case the request
+        // succeeded and we treat it as success, since the backend logs out the session.
+        const data = res?.data
+        if (data && typeof data === 'object' && Object.prototype.hasOwnProperty.call(data, 'deleted') && data.deleted !== true) {
           throw new Error(data?.still_exists ? 'Account still exists.' : 'Account deletion failed.')
         }
         this.user = null
