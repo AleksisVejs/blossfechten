@@ -4,6 +4,7 @@ import { useHead } from '@unhead/vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/lib/api'
+import { parseLocalDateTime } from '@/lib/datetime'
 import { resolveMediaUrl } from '@/lib/mediaUrl'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -63,6 +64,12 @@ async function load() {
 watch(() => route.params.slug, load)
 onMounted(load)
 
+function goBack() {
+  // Prefer browser history; fall back to the forum list if the user landed here directly.
+  if (typeof window !== 'undefined' && window.history.length > 1) router.go(-1)
+  else router.push({ name: 'forum' })
+}
+
 function editCurrentPost() {
   if (!post.value?.id && !post.value?.slug) return
   router.push({
@@ -102,6 +109,12 @@ useHead({
     <div v-if="loading" class="card p-8 text-center italic text-ink-500 font-sans">{{ t('common.loading') }}</div>
     <div v-else-if="!post" class="card p-8 text-center italic text-ink-500 font-sans">{{ t('common.error') }}</div>
     <article v-else class="card p-6 sm:p-8">
+      <div class="flex items-center gap-3 mb-5">
+        <button class="btn-ghost !py-2 !px-3 flex items-center gap-2" @click="goBack">
+          <span aria-hidden="true">&larr;</span>
+          {{ t('common.back') }}
+        </button>
+      </div>
       <img
         v-if="post.cover_image_url"
         :src="resolveMediaUrl(post.cover_image_url)"
@@ -113,7 +126,7 @@ useHead({
           {{ t('forum.pinned') }}
         </span>
         <span class="text-xs text-ink-500 font-sans">
-          {{ new Date(post.published_at || post.created_at).toLocaleDateString() }}
+          {{ parseLocalDateTime(post.published_at || post.created_at).toLocaleDateString() }}
         </span>
         <span class="text-xs text-ink-500 font-sans">
           · {{ post.author?.name || 'Blossfechten Riga' }}

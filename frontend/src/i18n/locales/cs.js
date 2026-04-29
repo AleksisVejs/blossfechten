@@ -62,6 +62,7 @@ export default {
     title: 'Tréninky',
     first_training_free: 'První trénink je zdarma.',
     regular: 'Pravidelný rozvrh',
+    official_online_training: 'Oficiální online trénink na Fencer’s Guild →',
     monday: 'Pondělí',
     tuesday: 'Úterý',
     wednesday: 'Středa',
@@ -220,7 +221,7 @@ export default {
     slot_start: 'Od',
     slot_end: 'Do',
   },
-  common: { loading: 'Načítání…', error: 'Něco se pokazilo.', close: 'Zavřít' },
+  common: { loading: 'Načítání…', error: 'Něco se pokazilo.', close: 'Zavřít', back: 'Zpět' },
   gallery: {
     videos: 'Videa',
     all_videos: 'Všechna videa na YouTube',

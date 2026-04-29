@@ -2,6 +2,19 @@
 
 use Laravel\Sanctum\Sanctum;
 
+// Ensure local SPA dev ports that might be used for Vite are treated as stateful as well.
+// This avoids "missing cookie/session" issues when running the frontend on a non-default port.
+$stateful = explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
+    '%s%s',
+    'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
+    Sanctum::currentApplicationUrlWithPort(),
+    // Sanctum::currentRequestHost(),
+)));
+$stateful = array_values(array_unique(array_filter(array_map('trim', array_merge(
+    $stateful,
+    ['localhost:5176', '127.0.0.1:5176'],
+)))));
+
 return [
 
     /*
@@ -15,12 +28,7 @@ return [
     |
     */
 
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
-        'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
-        Sanctum::currentApplicationUrlWithPort(),
-        // Sanctum::currentRequestHost(),
-    ))),
+    'stateful' => $stateful,
 
     /*
     |--------------------------------------------------------------------------

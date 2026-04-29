@@ -1,8 +1,9 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/lib/api'
+import { formatDateTimeLocal, parseLocalDateTime } from '@/lib/datetime'
 import { resolveMediaUrl } from '@/lib/mediaUrl'
 import { useToast } from '@/composables/useToast'
 import ConfirmDialog from '@/components/ConfirmDialog.vue'
@@ -29,6 +30,61 @@ const confirmingDelete = ref(null)
 const deletingNow = ref(false)
 
 const form = ref(emptyForm())
+const formParts = reactive({
+  published_at_date: '',
+  published_at_time: '',
+})
+
+function getDatePart(value) {
+  return typeof value === 'string' && value.includes('T') ? value.split('T')[0] : ''
+}
+
+function getTimePart(value) {
+  if (typeof value !== 'string' || !value.includes('T')) return ''
+  return value.split('T')[1]?.slice(0, 5) || ''
+}
+
+function syncFormParts() {
+  formParts.published_at_date = getDatePart(form.value.published_at)
+  formParts.published_at_time = getTimePart(form.value.published_at)
+}
+
+function normalizeTimeInput(value) {
+  if (typeof value !== 'string') return ''
+
+  const cleaned = value.replace(/\D/g, '')
+  if (!cleaned) return ''
+
+  if (cleaned.length <= 2) return cleaned
+  if (cleaned.length <= 4) return `${cleaned.slice(0, 2)}:${cleaned.slice(2)}`
+
+  return null
+}
+
+function isValidTimeInput(value) {
+  if (!/^\d{2}:\d{2}$/.test(value)) return false
+  const [hours, minutes] = value.split(':').map(Number)
+  return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59
+}
+
+function updateDatePart(field, value) {
+  formParts[`${field}_date`] = value
+}
+
+function updateTimePart(field, value) {
+  const normalized = normalizeTimeInput(value)
+  if (normalized === null) return
+  formParts[`${field}_time`] = normalized
+}
+
+function buildDateTime(field) {
+  const datePart = formParts[`${field}_date`]
+  const timePart = formParts[`${field}_time`]
+
+  if (!datePart || !isValidTimeInput(timePart)) return ''
+
+  return `${datePart}T${timePart}`
+}
 
 function emptyForm() {
   return {
@@ -42,7 +98,9 @@ function emptyForm() {
     tags: '',
     is_pinned: false,
     published: true,
-    published_at: '',
+    // Default to "publish now" in the user's local time.
+    // This avoids falling back to backend `now()` (UTC), which causes offsets.
+    published_at: formatDateTimeLocal(new Date()),
   }
 }
 
@@ -75,8 +133,8 @@ async function load() {
   try {
     const { data } = await api.get('/api/admin/forum-posts')
     posts.value = data.data.data || []
-  } catch {
-    toast.error(t('admin.error_loading'))
+  } catch (e) {
+    toast.error(e?.response?.data?.message || t('admin.error_loading'))
   } finally {
     loading.value = false
   }
@@ -118,14 +176,17 @@ function edit(row) {
     body: { ...emptyForm().body, ...(row.body || {}) },
     tags: (row.tags || []).join(', '),
     slug_locked: true,
-    published_at: toDateTimeLocal(row.published_at),
+    published_at: row.published_at ? formatDateTimeLocal(row.published_at) : '',
   }
+
+  syncFormParts()
 }
 
 function newOne() {
   editing.value = 'new'
   form.value = emptyForm()
   pendingUploads.value = new Set()
+  syncFormParts()
 }
 
 async function cancel() {
@@ -154,7 +215,9 @@ async function save(andCopyUrl = false) {
         .split(',')
         .map((part) => part.trim().toLowerCase())
         .filter(Boolean),
-      published_at: form.value.published ? (form.value.published_at || null) : null,
+      published_at: form.value.published
+        ? (buildDateTime('published_at') || formatDateTimeLocal(new Date()) || null)
+        : null,
     }
 
     const response = editing.value === 'new'
@@ -172,8 +235,11 @@ async function save(andCopyUrl = false) {
     pendingUploads.value = new Set()
     editing.value = null
     await load()
-  } catch {
-    toast.error(t('admin.error_saving'))
+  } catch (e) {
+    const validationErrors = e?.response?.data?.errors
+    const firstError = validationErrors ? validationErrors[Object.keys(validationErrors)[0]]?.[0] : null
+
+    toast.error(firstError || e?.response?.data?.message || t('admin.error_saving'))
   } finally {
     saving.value = false
   }
@@ -352,18 +418,6 @@ async function cleanupPendingUploads() {
   toDelete.forEach((url) => pendingUploads.value.delete(url))
 }
 
-function toDateTimeLocal(value) {
-  if (!value) return ''
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return ''
-  const yyyy = date.getFullYear()
-  const mm = String(date.getMonth() + 1).padStart(2, '0')
-  const dd = String(date.getDate()).padStart(2, '0')
-  const hh = String(date.getHours()).padStart(2, '0')
-  const mi = String(date.getMinutes()).padStart(2, '0')
-  return `${yyyy}-${mm}-${dd}T${hh}:${mi}`
-}
-
 function slugify(value) {
   return (value || '')
     .toString()
@@ -465,7 +519,7 @@ async function confirmDelete() {
                 {{ t('forum.pinned') }}
               </span>
             </td>
-            <td class="p-3 text-ink-500">{{ new Date(item.published_at || item.updated_at).toLocaleDateString() }}</td>
+            <td class="p-3 text-ink-500">{{ parseLocalDateTime(item.published_at || item.updated_at).toLocaleDateString() }}</td>
             <td class="p-3">{{ (item.tags || []).join(', ') || '—' }}</td>
             <td class="p-3 text-right space-x-1 whitespace-nowrap">
               <button class="btn-ghost !px-2 !py-1 !text-[11px]" @click="edit(item)">{{ t('admin.edit') }}</button>
@@ -520,9 +574,30 @@ async function confirmDelete() {
               <label class="flex items-center gap-2 font-sans text-sm">
                 <input v-model="form.is_pinned" type="checkbox" /> {{ t('forum.pinned') }}
               </label>
-              <label class="font-sans text-sm">
-                <span class="field-label !mb-1">{{ t('admin.publish_at') }}</span>
-                <input v-model="form.published_at" type="datetime-local" class="field-input !py-2" />
+              <label class="font-sans text-sm flex items-start gap-3">
+                <div class="flex flex-col">
+                  <span class="field-label !mb-1">{{ t('admin.publish_at') }}</span>
+                  <div class="flex items-center gap-2">
+                    <input
+                      :value="formParts.published_at_date"
+                      type="date"
+                      class="field-input !py-2"
+                      :disabled="!form.published"
+                      @input="updateDatePart('published_at', $event.target.value)"
+                    />
+                    <input
+                      :value="formParts.published_at_time"
+                      type="text"
+                      class="field-input !py-2"
+                      :disabled="!form.published"
+                      inputmode="numeric"
+                      placeholder="HH:mm"
+                      maxlength="5"
+                      pattern="[0-2][0-9]:[0-5][0-9]"
+                      @input="updateTimePart('published_at', $event.target.value)"
+                    />
+                  </div>
+                </div>
               </label>
             </div>
           </div>

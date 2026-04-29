@@ -62,6 +62,7 @@ export default {
     title: 'Тренировки',
     first_training_free: 'Первая тренировка бесплатна.',
     regular: 'Регулярное расписание',
+    official_online_training: 'Официальные онлайн-тренировки Fencer’s Guild →',
     monday: 'Понедельник',
     tuesday: 'Вторник',
     wednesday: 'Среда',
@@ -220,7 +221,7 @@ export default {
     slot_start: 'Начало',
     slot_end: 'Конец',
   },
-  common: { loading: 'Загрузка…', error: 'Что-то пошло не так.', close: 'Закрыть' },
+  common: { loading: 'Загрузка…', error: 'Что-то пошло не так.', close: 'Закрыть', back: 'Назад' },
   gallery: {
     videos: 'Видео',
     all_videos: 'Все видео на YouTube',

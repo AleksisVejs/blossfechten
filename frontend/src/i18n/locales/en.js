@@ -62,6 +62,7 @@ export default {
     title: 'Training',
     first_training_free: 'Your first training is free.',
     regular: 'Regular schedule',
+    official_online_training: 'Official online training on Fencer’s Guild →',
     monday: 'Monday',
     tuesday: 'Tuesday',
     wednesday: 'Wednesday',
@@ -257,6 +258,7 @@ export default {
     loading: 'Loading…',
     error: 'Something went wrong.',
     close: 'Close',
+    back: 'Back',
   },
   gallery: {
     videos: 'Videos',

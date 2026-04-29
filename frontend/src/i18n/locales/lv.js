@@ -62,6 +62,7 @@ export default {
     title: 'Treniņi',
     first_training_free: 'Pirmais treniņš ir bez maksas.',
     regular: 'Regulārais grafiks',
+    official_online_training: 'Oficiālais tiešsaistes treniņš Fencer’s Guild →',
     monday: 'Pirmdiena',
     tuesday: 'Otrdiena',
     wednesday: 'Trešdiena',
@@ -257,6 +258,7 @@ export default {
     loading: 'Ielādē…',
     error: 'Radās kļūda.',
     close: 'Aizvērt',
+    back: 'Atpakaļ',
   },
   gallery: {
     videos: 'Video',

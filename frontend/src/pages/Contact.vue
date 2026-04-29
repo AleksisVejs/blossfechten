@@ -43,15 +43,18 @@ async function submitContactForm() {
   state.fieldErrors = {}
 
   try {
-    const { data } = await api.post('/api/contact', form)
-    state.success = data.message || t('contact.form_success')
+    await api.post('/api/contact', form)
+    state.success = t('contact.form_success')
+    state.error = ''
     form.name = ''
     form.email = ''
     form.message = ''
   } catch (error) {
     const response = error?.response
-    state.error = response?.data?.message || t('contact.form_error')
-    state.fieldErrors = response?.data?.errors || {}
+    const errors = response?.data?.errors || {}
+    state.fieldErrors = errors
+    state.success = ''
+    state.error = Object.keys(errors).length ? '' : t('contact.form_error')
   } finally {
     state.sending = false
   }

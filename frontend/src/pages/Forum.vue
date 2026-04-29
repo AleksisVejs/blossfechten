@@ -4,6 +4,7 @@ import { useHead } from '@unhead/vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/lib/api'
+import { parseLocalDateTime } from '@/lib/datetime'
 import { resolveMediaUrl } from '@/lib/mediaUrl'
 import EditablePageText from '@/components/EditablePageText.vue'
 import { useEditablePages } from '@/composables/useEditablePages'
@@ -176,7 +177,7 @@ useHead({
             {{ t('forum.pinned') }}
           </span>
           <span class="text-xs text-ink-500 font-sans">
-            {{ new Date(post.published_at || post.created_at).toLocaleDateString() }}
+            {{ parseLocalDateTime(post.published_at || post.created_at).toLocaleDateString() }}
           </span>
         </div>
         <h3 class="!text-2xl">{{ localText(post.title, 'Forum post') }}</h3>

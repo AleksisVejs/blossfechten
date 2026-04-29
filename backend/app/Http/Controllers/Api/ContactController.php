@@ -50,10 +50,25 @@ class ContactController extends Controller
                 'error' => $e->getMessage(),
                 'exception' => $e::class,
             ]);
+
+            return response()->json([
+                'message' => 'contact_form_send_failed',
+            ], 500);
+        }
+
+        if (!$sentMessage) {
+            // Be defensive: treat a non-exceptional "no sent message" as failure.
+            Log::error('Contact form email send returned an empty result', [
+                'recipient' => $recipient,
+            ]);
+
+            return response()->json([
+                'message' => 'contact_form_send_failed',
+            ], 500);
         }
 
         return response()->json([
-            'message' => 'Your message has been sent.',
+            'message' => 'contact_form_send_success',
         ], 201);
     }
 }

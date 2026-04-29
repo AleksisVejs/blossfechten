@@ -126,7 +126,7 @@ async function onUnregister(s) {
       />
     </p>
 
-    <div class="card p-6 mb-12">
+    <div class="card p-6 mb-6">
       <h2 class="mb-4 flex items-center gap-1">
         <span>{{ pageTitle('schedule-regular', 'schedule.regular') }}</span>
         <EditableTextPlaceholder v-if="!pageLoaded['schedule-regular']" width-class="w-32" />
@@ -146,6 +146,24 @@ async function onUnregister(s) {
           <div class="text-xl">{{ slot.start }} – {{ slot.end }}</div>
         </li>
       </ul>
+    </div>
+
+    <div class="card p-6 mb-12">
+      <a
+        href="https://fencersguild.com/"
+        target="_blank"
+        rel="noopener"
+        class="flex items-center gap-4 w-full hover:opacity-90 transition-opacity"
+      >
+        <img
+          src="/img/gryf.png"
+          alt="Fencers Guild"
+          class="h-14 w-14 rounded-md bg-parchment-100/70 object-contain p-2"
+        />
+        <div class="font-serif text-lg text-oxblood-500">
+          {{ t('schedule.official_online_training') }}
+        </div>
+      </a>
     </div>
 
     <div class="mb-4 flex flex-wrap items-center justify-between gap-3">

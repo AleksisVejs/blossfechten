@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,7 +29,7 @@ class ForumPost extends Model
         'tags' => 'array',
         'is_pinned' => 'boolean',
         'published' => 'boolean',
-        'published_at' => 'datetime',
+        'published_at' => 'datetime:Y-m-d\TH:i:s',
     ];
 
     public function author(): BelongsTo
@@ -43,5 +44,12 @@ class ForumPost extends Model
             ->where(function (Builder $inner) {
                 $inner->whereNull('published_at')->orWhere('published_at', '<=', now());
             });
+    }
+
+    protected function serializeDate(DateTimeInterface $date): string
+    {
+        // Keep API responses consistent with `TrainingSession` (no timezone suffix),
+        // so the frontend can interpret values as local time reliably.
+        return $date->format('Y-m-d\TH:i:s');
     }
 }

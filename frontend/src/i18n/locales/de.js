@@ -62,6 +62,7 @@ export default {
     title: 'Training',
     first_training_free: 'Das erste Training ist kostenlos.',
     regular: 'Regulärer Plan',
+    official_online_training: 'Offizielles Online-Training bei der Fencer’s Guild →',
     monday: 'Montag',
     tuesday: 'Dienstag',
     wednesday: 'Mittwoch',
@@ -220,7 +221,7 @@ export default {
     slot_start: 'Von',
     slot_end: 'Bis',
   },
-  common: { loading: 'Lädt…', error: 'Etwas ist schiefgelaufen.', close: 'Schließen' },
+  common: { loading: 'Lädt…', error: 'Etwas ist schiefgelaufen.', close: 'Schließen', back: 'Zurück' },
   gallery: {
     videos: 'Videos',
     all_videos: 'Alle Videos auf YouTube',
