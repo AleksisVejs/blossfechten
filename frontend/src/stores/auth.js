@@ -93,7 +93,10 @@ export const useAuthStore = defineStore('auth', {
     async deleteProfile() {
       this.loading = true; this.error = null
       try {
-        await api.delete('/api/auth/profile')
+        const { data } = await api.delete('/api/auth/profile')
+        if (!data?.deleted) {
+          throw new Error(data?.still_exists ? 'Account still exists.' : 'Account deletion failed.')
+        }
         this.user = null
         this.initialized = true
         return true
