@@ -9,11 +9,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class AuthController extends Controller
 {
@@ -225,7 +227,18 @@ class AuthController extends Controller
     {
         $request->validate(['email' => ['required', 'email']]);
 
-        $status = Password::sendResetLink($request->only('email'));
+        try {
+            $status = Password::sendResetLink($request->only('email'));
+        } catch (Throwable $e) {
+            Log::error('Password reset link send failed', [
+                'email' => $request->input('email'),
+                'error' => $e->getMessage(),
+                'exception' => $e::class,
+            ]);
+
+            // Avoid breaking the UI; don't reveal details to the user.
+            $status = 'passwords.sent';
+        }
 
         // Always respond with the same message to avoid email enumeration.
         return response()->json([

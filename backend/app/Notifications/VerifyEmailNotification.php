@@ -23,7 +23,12 @@ class VerifyEmailNotification extends VerifyEmail
 
     public function toMail($notifiable): MailMessage
     {
-        $url = $this->verificationUrl($notifiable);
+        $apiUrl = $this->verificationUrl($notifiable);
+        $frontend = rtrim((string) env('FRONTEND_URL', ''), '/');
+        if ($frontend === '') {
+            $frontend = rtrim((string) config('app.url', ''), '/');
+        }
+        $url = $frontend . '/verify-email?verify_url=' . urlencode($apiUrl);
 
         return (new MailMessage)
             ->subject('Apstipriniet savu e-pasta adresi — Blossfechten Riga')
@@ -31,6 +36,7 @@ class VerifyEmailNotification extends VerifyEmail
             ->line('Paldies, ka pievienojāties Blossfechten Riga skolai. Lūdzu, apstipriniet savu e-pasta adresi, noklikšķinot uz pogas zemāk.')
             ->action('Apstiprināt e-pastu', $url)
             ->line('Šī saite ir derīga ' . (int) config('auth.verification.expire', 60) . ' minūtes.')
+            ->line('Ja poga neatveras, ielīmējiet šo saiti pārlūkā: ' . $url)
             ->line('Ja jūs neveidojāt kontu, varat ignorēt šo e-pastu.');
     }
 }
