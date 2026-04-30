@@ -81,6 +81,16 @@ function memberPhoto(m) {
   if (m.photo_url) return resolveApiUrl(m.photo_url)
   return localPhotoByName[m.full_name] || ''
 }
+
+function memberBio(m) {
+  if (!m?.bio || typeof m.bio !== 'object') return ''
+
+  const currentLocale = locale.value
+  if (m.bio[currentLocale]) return m.bio[currentLocale]
+
+  const fallbackLocale = ['en', 'lv', 'ru', 'cs', 'de'].find(l => m.bio[l])
+  return fallbackLocale ? m.bio[fallbackLocale] : ''
+}
 </script>
 
 <template>
@@ -154,6 +164,12 @@ function memberPhoto(m) {
           </div>
           <div class="flex-1 min-w-0">
             <h3>{{ m.full_name }}</h3>
+            <p v-if="m.role_title || m.rank" class="font-sans text-xs uppercase tracking-widest text-gold-500 mt-1">
+              {{ [m.role_title, m.rank].filter(Boolean).join(' • ') }}
+            </p>
+            <p v-if="memberBio(m)" class="font-sans text-sm text-ink-500 mt-2">
+              {{ memberBio(m) }}
+            </p>
           </div>
         </article>
       </div>
@@ -186,6 +202,12 @@ function memberPhoto(m) {
           </div>
           <div>
             <h3>{{ m.full_name }}</h3>
+            <p v-if="m.role_title || m.rank" class="font-sans text-xs uppercase tracking-widest text-gold-500 mt-1">
+              {{ [m.role_title, m.rank].filter(Boolean).join(' • ') }}
+            </p>
+            <p v-if="memberBio(m)" class="font-sans text-sm text-ink-500 mt-2">
+              {{ memberBio(m) }}
+            </p>
           </div>
         </article>
       </div>
