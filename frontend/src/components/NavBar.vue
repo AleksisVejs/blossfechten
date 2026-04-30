@@ -122,9 +122,9 @@ const accountButtonClass =
           alt="Blossfechten Riga"
           :class="['w-10 object-contain transition-all duration-200', isScrolled ? 'h-8' : 'h-10']"
         />
-        <div class="font-display text-base leading-none text-ink-900 sm:hidden">Blossfechten Riga</div>
+        <div class="brand-medieval text-base leading-none text-ink-900 sm:hidden">Blossfechten Riga</div>
         <div class="hidden sm:block">
-          <div class="font-display leading-none text-xl text-ink-900">{{ $t('brand') }}</div>
+          <div class="brand-medieval leading-none text-xl text-ink-900">{{ $t('brand') }}</div>
           <div class="hidden text-xs uppercase tracking-[0.2em] text-ink-500 lg:block">Fencer's Guild Latvia</div>
         </div>
       </router-link>

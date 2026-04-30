@@ -1,45 +1,30 @@
 <script setup>
-import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import api from '@/lib/api'
-import { loadCachedApi, saveCachedApi } from '@/lib/pageCache'
 
 const { t } = useI18n()
-const cachedVideos = loadCachedApi('youtube-videos')
-const videos = ref(Array.isArray(cachedVideos) ? cachedVideos : [])
-const loading = ref(!videos.value.length)
-
-onMounted(async () => {
-  try {
-    const { data } = await api.get('/api/content/videos')
-    videos.value = Array.isArray(data?.data) ? data.data : []
-    saveCachedApi('youtube-videos', videos.value)
-  } catch {
-    // silently skip if backend unavailable
-  } finally {
-    loading.value = false
-  }
-})
-
-function formatDate(iso) {
-  return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-}
+const videos = [
+  { id: 'ZqmlUYZ5hZs', title: 'Kas mēs esam un ko mēs daram' },
+  { id: 'zviaYIlH95A', title: 'First Baltic longsword seminar 2023' },
+  { id: 'fBDb0Ffrm-U', title: 'Bauskas viduslaiku svetki. Medieval festival in Bauska - non-choreographed fight demonstration.' },
+  { id: 'W_fKkqvNrcQ', title: "Fencer's guild summercamp 2023" },
+  { id: 'eb3cX8VE6ao', title: "Fencer's guild annual Autumn school" },
+  { id: 'e5mekCOBG4I', title: 'Blossfechten Riga 2024 summer camp' },
+]
 </script>
 
 <template>
-  <div v-if="loading" class="text-center text-ink-500 italic py-8">{{ t('common.loading') }}</div>
-  <div v-else-if="videos.length" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+  <div v-if="videos.length" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
     <a
       v-for="v in videos"
       :key="v.id"
-      :href="v.url"
+      :href="`https://www.youtube.com/watch?v=${v.id}`"
       target="_blank"
       rel="noopener"
       class="card group overflow-hidden flex flex-col"
     >
       <div class="relative overflow-hidden aspect-video bg-parchment-200">
         <img
-          :src="v.thumbnail"
+          :src="`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`"
           :alt="v.title"
           class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
@@ -54,7 +39,6 @@ function formatDate(iso) {
       </div>
       <div class="p-4 flex flex-col gap-1 flex-1">
         <p class="font-sans text-sm text-ink-900 line-clamp-2 leading-snug">{{ v.title }}</p>
-        <p class="text-xs text-ink-500 mt-auto font-sans">{{ formatDate(v.published) }}</p>
       </div>
     </a>
   </div>

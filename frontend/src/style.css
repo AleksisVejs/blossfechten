@@ -44,3 +44,9 @@ h3 { @apply text-xl md:text-2xl; }
   @apply border-oxblood-500 focus:border-oxblood-500 focus:ring-oxblood-500/20;
 }
 .prose-parchment p { @apply leading-relaxed text-ink-500 mb-4; }
+
+.brand-medieval {
+  font-family: "UnifrakturMaguntia", "Cormorant Garamond", serif;
+  font-weight: 400;
+  font-style: normal;
+}

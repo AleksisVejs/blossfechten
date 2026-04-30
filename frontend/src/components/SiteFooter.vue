@@ -6,7 +6,7 @@ const year = new Date().getFullYear()
   <footer class="mt-16 border-t border-parchment-300/60 bg-parchment-100/50">
     <div class="max-w-6xl mx-auto px-4 py-8 sm:py-10 grid sm:grid-cols-2 md:grid-cols-3 gap-6 text-sm break-words">
       <div>
-        <div class="font-display text-2xl">{{ $t('brand') }}</div>
+        <div class="brand-medieval text-2xl">{{ $t('brand') }}</div>
         <p class="text-ink-500 mt-2 italic">{{ $t('tagline') }}</p>
         <p class="text-ink-500 mt-2">{{ $t('footer.guild') }}</p>
       </div>

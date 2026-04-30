@@ -10,7 +10,6 @@ use App\Http\Controllers\Api\ContentController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\ForumController;
 use App\Http\Controllers\Api\TrainingController;
-use App\Http\Controllers\Api\VideoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn() => ['ok' => true]);
@@ -43,7 +42,6 @@ Route::middleware('web')->group(function () {
 Route::get('/content/pages', [ContentController::class, 'pages']);
 Route::get('/content/pages/{slug}', [ContentController::class, 'page']);
 Route::get('/content/members', [ContentController::class, 'members']);
-Route::get('/content/videos', [VideoController::class, 'index']);
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:5,1');
 Route::get('/trainings', [TrainingController::class, 'index']);
 Route::get('/trainings/{training}', [TrainingController::class, 'show']);
