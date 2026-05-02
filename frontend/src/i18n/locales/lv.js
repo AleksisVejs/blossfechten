@@ -254,6 +254,8 @@ export default {
     cover_image_url: 'Vāka attēla URL',
     upload_cover: 'Augšupielādēt vāka attēlu',
     upload_inline_image: 'Pievienot attēlu',
+    upload_inline_pdf: 'Pievienot PDF',
+    inline_pdf_invalid_type: 'Lūdzu, augšupielādējiet PDF failu.',
     uploading: 'Augšupielādē…',
     drop_image_hint: 'Raksti tekstu šeit. Ievelc attēlu, lai to augšupielādētu un ievietotu.',
     inline_image_invalid_type: 'Lūdzu augšupielādē attēla failu (jpg, png, webp, gif...).',

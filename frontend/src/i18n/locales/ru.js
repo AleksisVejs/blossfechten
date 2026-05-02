@@ -231,6 +231,8 @@ export default {
     cover_image_url: 'URL обложки',
     upload_cover: 'Загрузить обложку',
     upload_inline_image: 'Добавить изображение',
+    upload_inline_pdf: 'Добавить PDF',
+    inline_pdf_invalid_type: 'Пожалуйста, загрузите PDF файл.',
     uploading: 'Загрузка…',
     drop_image_hint: 'Пишите текст здесь. Перетащите изображение, чтобы загрузить и вставить его.',
     inline_image_invalid_type: 'Загрузите файл изображения (jpg, png, webp, gif...).',

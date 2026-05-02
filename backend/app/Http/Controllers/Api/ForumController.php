@@ -16,12 +16,7 @@ class ForumController extends Controller
         ]);
 
         $query = ForumPost::query()
-            ->where('published', true)
-            ->where(function ($inner) {
-                $inner->where('is_pinned', true)
-                    ->orWhereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
-            })
+            ->published()
             ->orderByDesc('is_pinned')
             ->orderByDesc('published_at')
             ->orderByDesc('created_at');
@@ -50,12 +45,7 @@ class ForumController extends Controller
     public function show(string $slug)
     {
         $post = ForumPost::query()
-            ->where('published', true)
-            ->where(function ($inner) {
-                $inner->where('is_pinned', true)
-                    ->orWhereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
-            })
+            ->published()
             ->where('slug', $slug)
             ->with('author:id,name')
             ->firstOrFail();

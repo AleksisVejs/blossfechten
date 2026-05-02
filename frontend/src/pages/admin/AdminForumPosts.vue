@@ -362,6 +362,45 @@ async function onBodyFilePick(event, lang) {
   event.target.value = ''
 }
 
+const uploadingPdfByLang = ref({})
+
+async function uploadInlinePdf(file, lang, textareaEl) {
+  if (!file) return
+  if (file.type !== 'application/pdf') {
+    toast.error(t('admin.inline_pdf_invalid_type'))
+    return
+  }
+
+  uploadingPdfByLang.value = { ...uploadingPdfByLang.value, [lang]: true }
+  try {
+    const payload = new FormData()
+    payload.append('pdf', file)
+    const { data } = await api.post('/api/admin/forum-posts/upload-inline-pdf', payload, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+
+    const fileUrl = data?.data?.file_url
+    if (!fileUrl) throw new Error('missing-file-url')
+
+    pendingUploads.value.add(fileUrl)
+    const label = file.name.replace(/\.pdf$/i, '')
+    const markdownLine = `\n![${label}](${fileUrl})\n`
+    insertAtCursor(textareaEl, markdownLine, lang)
+    toast.success(t('admin.saved'))
+  } catch (e) {
+    toast.error(e.response?.data?.message || t('admin.error_saving'))
+  } finally {
+    uploadingPdfByLang.value = { ...uploadingPdfByLang.value, [lang]: false }
+  }
+}
+
+async function onBodyPdfPick(event, lang) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  await uploadInlinePdf(file, lang, null)
+  event.target.value = ''
+}
+
 async function removeCoverImage() {
   const current = form.value.cover_image_url
   form.value.cover_image_url = ''
@@ -447,6 +486,7 @@ const renderedPreview = computed(() => {
     .replace(/^### (.*)$/gm, '<h3>$1</h3>')
     .replace(/^## (.*)$/gm, '<h2>$1</h2>')
     .replace(/^# (.*)$/gm, '<h1>$1</h1>')
+    .replace(/!\[(.*?)\]\((https?:\/\/[^\s)]+\.pdf|\/[^\s)]+\.pdf)\)/gi, '<a href="$2" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;border:1px solid #d4c9a8;border-radius:2px;">📄 $1</a>')
     .replace(/!\[(.*?)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)/g, '<img src="$2" alt="$1" />')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
@@ -644,6 +684,11 @@ async function confirmDelete() {
                   <input type="file" accept="image/*" class="hidden" @change="onBodyFilePick($event, l)" />
                 </label>
                 <span v-if="uploadingInlineByLang[l]" class="text-[11px] text-ink-500">{{ t('admin.uploading') }}</span>
+                <label class="btn-ghost !py-1 !px-2 !text-[11px] cursor-pointer">
+                  {{ t('admin.upload_inline_pdf') }}
+                  <input type="file" accept="application/pdf" class="hidden" @change="onBodyPdfPick($event, l)" />
+                </label>
+                <span v-if="uploadingPdfByLang[l]" class="text-[11px] text-ink-500">{{ t('admin.uploading') }}</span>
               </div>
             </label>
           </div>

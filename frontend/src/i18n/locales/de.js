@@ -231,6 +231,8 @@ export default {
     cover_image_url: 'URL des Titelbilds',
     upload_cover: 'Titelbild hochladen',
     upload_inline_image: 'Bild hinzufügen',
+    upload_inline_pdf: 'PDF hinzufügen',
+    inline_pdf_invalid_type: 'Bitte laden Sie eine PDF-Datei hoch.',
     uploading: 'Lädt hoch…',
     drop_image_hint: 'Text hier schreiben. Bild hierher ziehen, um es hochzuladen und einzufügen.',
     inline_image_invalid_type: 'Bitte eine Bilddatei hochladen (jpg, png, webp, gif...).',
