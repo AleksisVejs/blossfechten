@@ -33,19 +33,21 @@ const contentBlocks = computed(() => {
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line) => {
-      const imageMatch = line.match(/^!\[(.*?)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)$/i)
+      const imageMatch = line.match(/^!\[(.*?)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)\s*(.*)$/i)
       if (imageMatch) {
         const src = resolveMediaUrl(imageMatch[2])
+        const caption = imageMatch[3]?.trim() || ''
         if (/\.pdf$/i.test(imageMatch[2])) {
           return {
             type: 'pdf',
-            label: imageMatch[1] || 'PDF',
+            label: caption || imageMatch[1] || 'PDF',
             src,
           }
         }
         return {
           type: 'image',
           alt: imageMatch[1] || 'Forum image',
+          caption,
           src,
         }
       }
@@ -166,13 +168,15 @@ useHead({
             </svg>
             <span>{{ block.label }}</span>
           </a>
-          <img
-            v-else
-            :src="block.src"
-            :alt="block.alt"
-            class="w-full max-h-[30rem] object-contain rounded-sm border border-parchment-300/70 my-4"
-            loading="lazy"
-          />
+          <figure v-else class="my-4">
+            <img
+              :src="block.src"
+              :alt="block.alt"
+              class="w-full max-h-[30rem] object-contain rounded-sm border border-parchment-300/70"
+              loading="lazy"
+            />
+            <figcaption v-if="block.caption" class="text-center text-sm text-ink-500 font-sans mt-2">{{ block.caption }}</figcaption>
+          </figure>
         </template>
       </div>
       <div v-if="post.tags?.length" class="flex flex-wrap gap-1.5 mt-6">
