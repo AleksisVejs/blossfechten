@@ -140,6 +140,45 @@ class ForumPostAdminController extends Controller
         ]);
     }
 
+    public function uploadInlinePdf(Request $request)
+    {
+        $file = $request->file('pdf');
+
+        if (! $file) {
+            return response()->json([
+                'message' => 'No PDF file was uploaded.',
+            ], 422);
+        }
+
+        $validator = validator(
+            ['pdf' => $file],
+            ['pdf' => ['file', 'mimes:pdf', 'max:20480']],
+            ['pdf.max' => 'PDF is too large. Maximum allowed size is 20MB.']
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()->first('pdf'),
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $targetDir = public_path('img/forum/files');
+
+        if (! File::exists($targetDir)) {
+            File::makeDirectory($targetDir, 0755, true);
+        }
+
+        $filename = Str::uuid()->toString() . '.pdf';
+        $file->move($targetDir, $filename);
+
+        return response()->json([
+            'data' => [
+                'file_url' => url('img/forum/files/' . $filename),
+            ],
+        ]);
+    }
+
     public function deleteUploadedImage(Request $request)
     {
         $data = $request->validate([
@@ -257,7 +296,7 @@ class ForumPostAdminController extends Controller
             return false;
         }
 
-        return preg_match('#^/img/forum(?:/inline)?/[A-Za-z0-9._-]+$#', $normalizedPath) === 1;
+        return preg_match('#^/img/forum(?:/inline|/files)?/[A-Za-z0-9._-]+$#', $normalizedPath) === 1;
     }
 
     private function deleteForumImageByUrl(string $url): void

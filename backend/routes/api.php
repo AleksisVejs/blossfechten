@@ -60,6 +60,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/forum-posts', [ForumPostAdminController::class, 'index']);
     Route::post('/forum-posts/upload-cover', [ForumPostAdminController::class, 'uploadCover']);
     Route::post('/forum-posts/upload-inline-image', [ForumPostAdminController::class, 'uploadInlineImage']);
+    Route::post('/forum-posts/upload-inline-pdf', [ForumPostAdminController::class, 'uploadInlinePdf']);
     Route::delete('/forum-posts/uploaded-image', [ForumPostAdminController::class, 'deleteUploadedImage']);
     Route::post('/forum-posts', [ForumPostAdminController::class, 'store']);
     Route::put('/forum-posts/{forumPost}', [ForumPostAdminController::class, 'update']);

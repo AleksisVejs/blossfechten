@@ -231,6 +231,8 @@ export default {
     cover_image_url: 'URL titulního obrázku',
     upload_cover: 'Nahrát titulní obrázek',
     upload_inline_image: 'Přidat obrázek',
+    upload_inline_pdf: 'Přidat PDF',
+    inline_pdf_invalid_type: 'Nahrajte prosím soubor PDF.',
     uploading: 'Nahrávání…',
     drop_image_hint: 'Pište text sem. Přetáhněte obrázek pro nahrání a vložení.',
     inline_image_invalid_type: 'Nahrajte soubor obrázku (jpg, png, webp, gif...).',

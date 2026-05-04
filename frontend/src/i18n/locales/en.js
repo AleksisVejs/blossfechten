@@ -254,6 +254,8 @@ export default {
     cover_image_url: 'Cover image URL',
     upload_cover: 'Upload cover image',
     upload_inline_image: 'Add image',
+    upload_inline_pdf: 'Add PDF',
+    inline_pdf_invalid_type: 'Please upload a PDF file.',
     uploading: 'Uploading…',
     drop_image_hint: 'Write text here. Drop an image to upload and insert it.',
     inline_image_invalid_type: 'Please upload an image file (jpg, png, webp, gif...).',

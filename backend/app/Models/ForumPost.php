@@ -39,11 +39,7 @@ class ForumPost extends Model
 
     public function scopePublished(Builder $query): Builder
     {
-        return $query
-            ->where('published', true)
-            ->where(function (Builder $inner) {
-                $inner->whereNull('published_at')->orWhere('published_at', '<=', now());
-            });
+        return $query->where('published', true);
     }
 
     protected function serializeDate(DateTimeInterface $date): string

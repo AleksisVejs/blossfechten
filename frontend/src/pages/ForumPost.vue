@@ -33,12 +33,22 @@ const contentBlocks = computed(() => {
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line) => {
-      const imageMatch = line.match(/^!\[(.*?)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)$/i)
+      const imageMatch = line.match(/^!\[(.*?)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)\s*(.*)$/i)
       if (imageMatch) {
+        const src = resolveMediaUrl(imageMatch[2])
+        const caption = imageMatch[3]?.trim() || ''
+        if (/\.pdf$/i.test(imageMatch[2])) {
+          return {
+            type: 'pdf',
+            label: caption || imageMatch[1] || 'PDF',
+            src,
+          }
+        }
         return {
           type: 'image',
           alt: imageMatch[1] || 'Forum image',
-          src: resolveMediaUrl(imageMatch[2]),
+          caption,
+          src,
         }
       }
 
@@ -119,7 +129,7 @@ useHead({
         v-if="post.cover_image_url"
         :src="resolveMediaUrl(post.cover_image_url)"
         :alt="localText(post.title, 'Forum post cover')"
-        class="w-full h-64 sm:h-80 object-cover rounded-sm border border-parchment-300/70 mb-5"
+        class="w-full rounded-sm border border-parchment-300/70 mb-5"
       />
       <div class="flex flex-wrap items-center gap-2 mb-3">
         <span v-if="post.is_pinned" class="text-[10px] uppercase tracking-widest text-gold-500 border border-gold-500/50 px-2 py-1 rounded-sm">
@@ -146,13 +156,27 @@ useHead({
       <div class="prose-parchment text-ink-900 leading-relaxed">
         <template v-for="(block, idx) in contentBlocks" :key="idx">
           <p v-if="block.type === 'text'">{{ block.text }}</p>
-          <img
-            v-else
-            :src="block.src"
-            :alt="block.alt"
-            class="w-full max-h-[30rem] object-contain rounded-sm border border-parchment-300/70 my-4"
-            loading="lazy"
-          />
+          <a
+            v-else-if="block.type === 'pdf'"
+            :href="block.src"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 px-4 py-3 my-4 rounded-sm border border-parchment-300/70 bg-parchment-100 hover:bg-parchment-200 transition-colors font-sans text-sm text-ink-700"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 shrink-0 text-oxblood-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+            </svg>
+            <span>{{ block.label }}</span>
+          </a>
+          <figure v-else class="my-4">
+            <img
+              :src="block.src"
+              :alt="block.alt"
+              class="w-full max-h-[30rem] object-contain rounded-sm border border-parchment-300/70"
+              loading="lazy"
+            />
+            <figcaption v-if="block.caption" class="text-center text-sm text-ink-500 font-sans mt-2">{{ block.caption }}</figcaption>
+          </figure>
         </template>
       </div>
       <div v-if="post.tags?.length" class="flex flex-wrap gap-1.5 mt-6">
