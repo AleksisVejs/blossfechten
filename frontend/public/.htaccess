@@ -3,6 +3,10 @@
   RewriteBase /
   Options -MultiViews
 
+  # Canonical host: redirect www to non-www.
+  RewriteCond %{HTTP_HOST} ^www\.blossfechtenriga\.com$ [NC]
+  RewriteRule ^ https://blossfechtenriga.com%{REQUEST_URI} [L,R=301]
+
   # Force HTTPS.
   RewriteCond %{HTTPS} !=on
   RewriteCond %{HTTP:X-Forwarded-Proto} !=https
