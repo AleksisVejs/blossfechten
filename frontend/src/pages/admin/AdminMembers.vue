@@ -89,6 +89,7 @@ async function onPhotoFileChange(event) {
     payload.append('photo', file)
     const { data } = await api.post('/api/admin/members/upload-photo', payload, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120_000,
     })
     form.value.photo_url = data?.data?.photo_url || form.value.photo_url
     toast.success(t('admin.saved'))

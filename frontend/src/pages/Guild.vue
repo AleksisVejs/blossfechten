@@ -93,23 +93,22 @@ useHead({
 
     <!-- ② History & background -->
     <section class="border-t border-parchment-300/60 bg-parchment-100/40">
-      <div class="max-w-3xl mx-auto px-4 py-12">
-        <div class="prose-parchment text-lg space-y-4 relative">
-          <p>{{ pages['guild-intro']?.body?.[locale] || pages['guild-intro']?.body?.en || (pageLoaded['guild-intro'] ? t('guild.intro') : '') }}</p>
-          <EditableTextPlaceholder v-if="!pageLoaded['guild-intro']" :lines="3" width-class="w-5/6" />
+      <div class="max-w-3xl mx-auto px-4 pt-8 pb-6">
+        <EditableTextPlaceholder v-if="!pageLoaded['guild-intro']" :lines="3" width-class="w-5/6" />
+        <p v-else class="prose-parchment text-lg">
+          {{ pages['guild-intro']?.body?.[locale] || pages['guild-intro']?.body?.en || t('guild.intro') }}
           <EditablePageText
-            v-if="pageLoaded['guild-intro']"
             slug="guild-intro"
             field="body"
             :page="pages['guild-intro']"
             @updated="onPageUpdated('guild-intro', $event)"
           />
-        </div>
+        </p>
       </div>
     </section>
 
     <!-- ③ Philosophy & ④ Code side by side on large screens -->
-    <section class="max-w-5xl mx-auto px-4 py-14 sm:py-20 grid md:grid-cols-2 gap-10 md:gap-16">
+    <section class="max-w-5xl mx-auto px-4 py-10 sm:py-14 grid md:grid-cols-2 gap-8 md:gap-16">
 
       <div>
         <h2 class="mb-4">
@@ -124,17 +123,16 @@ useHead({
           />
         </h2>
         <div class="divider-engraved mb-6 w-1/3"></div>
-        <div class="prose-parchment text-base space-y-3 relative">
-          <p>{{ pages['guild-philosophy']?.body?.[locale] || pages['guild-philosophy']?.body?.en || (pageLoaded['guild-philosophy'] ? t('guild.philosophy_body') : '') }}</p>
-          <EditableTextPlaceholder v-if="!pageLoaded['guild-philosophy']" :lines="4" width-class="w-5/6" />
+        <EditableTextPlaceholder v-if="!pageLoaded['guild-philosophy']" :lines="4" width-class="w-5/6" />
+        <p v-else class="prose-parchment text-base">
+          {{ pages['guild-philosophy']?.body?.[locale] || pages['guild-philosophy']?.body?.en || t('guild.philosophy_body') }}
           <EditablePageText
-            v-if="pageLoaded['guild-philosophy']"
             slug="guild-philosophy"
             field="body"
             :page="pages['guild-philosophy']"
             @updated="onPageUpdated('guild-philosophy', $event)"
           />
-        </div>
+        </p>
       </div>
 
       <div>
@@ -151,17 +149,16 @@ useHead({
         </h2>
         <div class="divider-engraved mb-6 w-1/3"></div>
         <p class="italic text-gold-600 text-lg font-serif mb-4">{{ t('guild.virtues') }}</p>
-        <div class="prose-parchment text-base space-y-3 relative">
-          <p>{{ pages['guild-code']?.body?.[locale] || pages['guild-code']?.body?.en || (pageLoaded['guild-code'] ? t('guild.code_body') : '') }}</p>
-          <EditableTextPlaceholder v-if="!pageLoaded['guild-code']" :lines="3" width-class="w-5/6" />
+        <EditableTextPlaceholder v-if="!pageLoaded['guild-code']" :lines="3" width-class="w-5/6" />
+        <p v-else class="prose-parchment text-base">
+          {{ pages['guild-code']?.body?.[locale] || pages['guild-code']?.body?.en || t('guild.code_body') }}
           <EditablePageText
-            v-if="pageLoaded['guild-code']"
             slug="guild-code"
             field="body"
             :page="pages['guild-code']"
             @updated="onPageUpdated('guild-code', $event)"
           />
-        </div>
+        </p>
       </div>
 
     </section>

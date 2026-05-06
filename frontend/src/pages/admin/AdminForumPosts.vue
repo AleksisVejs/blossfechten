@@ -255,6 +255,7 @@ async function onCoverFileChange(event) {
     payload.append('cover', file)
     const { data } = await api.post('/api/admin/forum-posts/upload-cover', payload, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120_000,
     })
     const previous = form.value.cover_image_url
     form.value.cover_image_url = data?.data?.cover_image_url || form.value.cover_image_url
@@ -326,6 +327,7 @@ async function uploadInlineImage(file, lang, textareaEl) {
     payload.append('file', file)
     const { data } = await api.post('/api/admin/forum-posts/upload-inline-image', payload, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120_000,
     })
 
     const imageUrl = data?.data?.image_url
@@ -377,6 +379,7 @@ async function uploadInlinePdf(file, lang, textareaEl) {
     payload.append('pdf', file)
     const { data } = await api.post('/api/admin/forum-posts/upload-inline-pdf', payload, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120_000,
     })
 
     const fileUrl = data?.data?.file_url
