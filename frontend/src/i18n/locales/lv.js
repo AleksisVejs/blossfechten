@@ -304,7 +304,7 @@ export default {
   },
   guild: {
     title: 'Paukotāju ģilde',
-    established: 'Sv. Mihaēla paukošanās ģilde — dib. 2010',
+    established: 'Sv. Mihaela paukošanas ģilde — anno 2010',
     meta_description: 'Paukotāju ģilde (Guildam Gladiatorum) — starptautisks tīkls, kas veltīts vēsturisko Eiropas cīņas mākslu izpētei un mācīšanai no 14.–17. gadsimta avotiem.',
     intro: 'Paukotāju ģilde (Guildam Gladiatorum) tika dibināta 2010. gadā kā Sv. Mihaēla paukošanās ģilde, veltīta cīņas mākslu izpētei un praktizēšanai, balstoties uz oriģinālajiem rakstītajiem avotiem no 14. līdz 17. gadsimtam. Ģilde darbojas kā starptautisks tīkls ar skolām Vācijā, Čehijā, Latvijā un Brazīlijā. Simtiem studentu no Eiropas un Āzijas valstīm ir piedalījušies.',
     philosophy_title: 'Filozofija un treniņi',

@@ -266,7 +266,7 @@ export default {
   },
   guild: {
     title: 'Šermířská gilda',
-    established: 'Gilda Sv. Michaela — zal. 2010',
+    established: 'Gilda Sv. Michaela — anno 2010',
     meta_description: 'Šermířská gilda (Guildam Gladiatorum) — mezinárodní síť věnovaná výzkumu a výuce historických evropských bojových umění ze zdrojů 14.–17. století.',
     intro: 'Šermířská gilda (Guildam Gladiatorum) byla založena v roce 2010 jako Gilda Sv. Michaela, věnovaná výzkumu a praxi bojových umění na základě původních písemných pramenů 14. až 17. století. Gilda funguje jako mezinárodní síť se školami v Německu, České republice, Lotyšsku a Brazílii. Zúčastnily se jí stovky studentů z evropských a asijských zemí.',
     philosophy_title: 'Filozofie a trénink',

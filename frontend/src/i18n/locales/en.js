@@ -304,7 +304,7 @@ export default {
   },
   guild: {
     title: "The Fencer's Guild",
-    established: "St. Michael's Fencing Guild — est. 2010",
+    established: "St. Michael's Fencing Guild — anno 2010",
     meta_description: "The Fencer's Guild (Guildam Gladiatorum) — an international network dedicated to researching and teaching historical European martial arts from 14th–17th century sources.",
     intro: "The Fencer's Guild (Guildam Gladiatorum) was established in 2010 as St. Michael's Fencing Guild, dedicated to researching and practicing martial arts based on original written sources of the 14th to 17th centuries. The guild operates as an international network with schools across Germany, Czech Republic, Latvia, and Brazil. Hundreds of students from European and Asian countries have participated.",
     philosophy_title: 'Philosophy & Training',

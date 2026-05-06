@@ -43,16 +43,6 @@ useHead({
       </a>
 
       <div class="space-y-1.5 relative">
-        <p class="uppercase tracking-[0.3em] text-xs text-ink-400">
-          {{ pages['guild-membership']?.title?.[locale] || pages['guild-membership']?.title?.en || (pageLoaded['guild-membership'] ? t('guild.member_of') : '') }}
-          <EditablePageText
-            v-if="pageLoaded['guild-membership']"
-            slug="guild-membership"
-            field="title"
-            :page="pages['guild-membership']"
-            @updated="onPageUpdated('guild-membership', $event)"
-          />
-        </p>
         <h1 class="font-serif text-4xl sm:text-5xl text-ink-900">
           {{ pages['guild-intro']?.title?.[locale] || pages['guild-intro']?.title?.en || t('guild.title') }}
           <EditablePageText

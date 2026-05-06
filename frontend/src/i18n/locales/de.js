@@ -266,7 +266,7 @@ export default {
   },
   guild: {
     title: 'Die Fechtergilde',
-    established: 'St. Michaels Fechtergilde — gegr. 2010',
+    established: 'St. Michaels Fechtergilde — anno 2010',
     meta_description: 'Die Fechtergilde (Guildam Gladiatorum) — ein internationales Netzwerk zur Erforschung und Lehre historischer europäischer Kampfkünste aus Quellen des 14.–17. Jahrhunderts.',
     intro: 'Die Fechtergilde (Guildam Gladiatorum) wurde 2010 als St. Michaels Fechtergilde gegründet, gewidmet der Erforschung und Ausübung von Kampfkünsten auf Grundlage originaler schriftlicher Quellen des 14. bis 17. Jahrhunderts. Die Gilde arbeitet als internationales Netzwerk mit Schulen in Deutschland, Tschechien, Lettland und Brasilien. Hunderte Schüler aus europäischen und asiatischen Ländern haben teilgenommen.',
     philosophy_title: 'Philosophie & Training',
