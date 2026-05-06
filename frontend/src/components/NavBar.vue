@@ -14,6 +14,7 @@ const accountMenuOpen = ref(false)
 
 const mainLinks = [
   { name: 'about', label: 'nav.about' },
+  { name: 'guild', label: 'nav.guild' },
   { name: 'schedule', label: 'nav.schedule' },
   { name: 'forum', label: 'nav.forum' },
   { name: 'members', label: 'nav.members' },

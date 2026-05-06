@@ -370,6 +370,74 @@ class PageSeeder extends Seeder
                 ],
             ],
             [
+                'slug' => 'guild-membership',
+                'title' => [
+                    'lv' => 'Blossfechten Riga ir šīs organizācijas biedrs:',
+                    'en' => 'Blossfechten Riga is a member of the',
+                    'ru' => 'Blossfechten Riga является членом',
+                    'cs' => 'Blossfechten Riga je členem',
+                    'de' => 'Blossfechten Riga ist Mitglied der',
+                ],
+                'body' => [
+                    'lv' => 'Mēs trenējamies zem Paukotāju ģildes karoga — starptautiska skolu tīkla, kas veltīts vēsturisko Eiropas cīņas mākslu godīgai izpētei. Mūsu programma, standarti un pārbaudījumi seko Ģildes tradīcijai.',
+                    'en' => "We train under the banner of the Fencer's Guild — an international network of schools committed to the honest study of historical European martial arts. Our curriculum, standards, and examinations follow the Guild tradition.",
+                    'ru' => 'Мы тренируемся под знаменем Гильдии фехтовальщиков — международной сети школ, посвящённых честному изучению исторических европейских боевых искусств. Наша программа, стандарты и экзамены следуют традиции Гильдии.',
+                    'cs' => 'Trénujeme pod hlavičkou Šermířské gildy — mezinárodní sítě škol oddaných poctivému studiu historických evropských bojových umění. Náš program, standardy a zkoušky se řídí tradicí Gildy.',
+                    'de' => 'Wir trainieren unter dem Banner der Fechtergilde — einem internationalen Netzwerk von Schulen, die dem ehrlichen Studium historischer europäischer Kampfkünste gewidmet sind. Unser Lehrplan, unsere Standards und Prüfungen folgen der Tradition der Gilde.',
+                ],
+            ],
+            [
+                'slug' => 'guild-intro',
+                'title' => [
+                    'lv' => 'Paukotāju ģilde',
+                    'en' => "The Fencer's Guild",
+                    'ru' => 'Гильдия фехтовальщиков',
+                    'cs' => 'Šermířská gilda',
+                    'de' => 'Die Fechtergilde',
+                ],
+                'body' => [
+                    'lv' => "Paukotāju ģilde (Guildam Gladiatorum) tika dibināta 2010. gadā kā Sv. Mihaēla paukošanās ģilde, veltīta cīņas mākslu izpētei un praktizēšanai, balstoties uz oriģinālajiem rakstītajiem avotiem no 14. līdz 17. gadsimtam. Ģilde darbojas kā starptautisks tīkls ar skolām Vācijā, Čehijā, Latvijā un Brazīlijā. Simtiem studentu no Eiropas un Āzijas valstīm ir piedalījušies.",
+                    'en' => "The Fencer's Guild (Guildam Gladiatorum) was established in 2010 as St. Michael's Fencing Guild, dedicated to researching and practicing martial arts based on original written sources of the 14th to 17th centuries. The guild operates as an international network with schools across Germany, Czech Republic, Latvia, and Brazil. Hundreds of students from European and Asian countries have participated.",
+                    'ru' => 'Гильдия фехтовальщиков (Guildam Gladiatorum) была основана в 2010 году как Гильдия Св. Михаила, посвящённая изучению и практике боевых искусств на основе оригинальных письменных источников XIV–XVII веков. Гильдия действует как международная сеть со школами в Германии, Чехии, Латвии и Бразилии. В ней приняли участие сотни учеников из европейских и азиатских стран.',
+                    'cs' => 'Šermířská gilda (Guildam Gladiatorum) byla založena v roce 2010 jako Gilda Sv. Michaela, věnovaná výzkumu a praxi bojových umění na základě původních písemných pramenů 14. až 17. století. Gilda funguje jako mezinárodní síť se školami v Německu, České republice, Lotyšsku a Brazílii. Zúčastnily se jí stovky studentů z evropských a asijských zemí.',
+                    'de' => 'Die Fechtergilde (Guildam Gladiatorum) wurde 2010 als St. Michaels Fechtergilde gegründet, gewidmet der Erforschung und Ausübung von Kampfkünsten auf Grundlage originaler schriftlicher Quellen des 14. bis 17. Jahrhunderts. Die Gilde arbeitet als internationales Netzwerk mit Schulen in Deutschland, Tschechien, Lettland und Brasilien. Hunderte Schüler aus europäischen und asiatischen Ländern haben teilgenommen.',
+                ],
+            ],
+            [
+                'slug' => 'guild-philosophy',
+                'title' => [
+                    'lv' => 'Filozofija un treniņi',
+                    'en' => 'Philosophy & Training',
+                    'ru' => 'Философия и тренировки',
+                    'cs' => 'Filozofie a trénink',
+                    'de' => 'Philosophie & Training',
+                ],
+                'body' => [
+                    'lv' => 'Ģilde uzsver drošu, kontrolētu paukošanos bez aizsargekipējuma. Praktizētāji sit droši un kontrolēti, izvairoties no bīstamiem dūrieniem sejā. Visiem jāsaglabā cieņa un draudzība, kas ir bruņniecības un mākslas kronis. Cīņa turpinās, līdz viens dalībnieks padodas, un intensitāte tiek pielāgota savstarpējam komfortam.',
+                    'en' => 'The guild emphasizes safe, controlled fencing without protective equipment. Practitioners strike in a safe and controlled manner while avoiding dangerous thrusts to the face. All must maintain consideration and friendship, which is the crown of chivalry and art. Combat continues until one participant surrenders, with intensity adjusted to mutual comfort levels.',
+                    'ru' => 'Гильдия делает упор на безопасное, контролируемое фехтование без защитного снаряжения. Практикующие наносят удары безопасно и контролируемо, избегая опасных уколов в лицо. Все должны соблюдать уважение и дружбу, которые являются венцом рыцарства и искусства. Бой продолжается до сдачи одного из участников, а интенсивность регулируется по взаимному согласию.',
+                    'cs' => 'Gilda klade důraz na bezpečný, kontrolovaný šerm bez ochranného vybavení. Praktikanti vedou údery bezpečně a kontrolovaně, vyhýbají se nebezpečným bodům do obličeje. Všichni musí zachovávat ohleduplnost a přátelství, které jsou korunou rytířství a umění. Boj pokračuje, dokud se jeden z účastníků nevzdá, přičemž intenzita je přizpůsobena vzájemnému komfortu.',
+                    'de' => 'Die Gilde betont sicheres, kontrolliertes Fechten ohne Schutzausrüstung. Praktizierende führen Hiebe sicher und kontrolliert aus und vermeiden gefährliche Stöße ins Gesicht. Alle müssen Rücksicht und Freundschaft wahren, die Krone der Ritterlichkeit und Kunst. Der Kampf geht weiter, bis ein Teilnehmer aufgibt, wobei die Intensität dem gegenseitigen Komfort angepasst wird.',
+                ],
+            ],
+            [
+                'slug' => 'guild-code',
+                'title' => [
+                    'lv' => 'Uzvedības kodekss',
+                    'en' => 'Code of Conduct',
+                    'ru' => 'Кодекс поведения',
+                    'cs' => 'Kodex chování',
+                    'de' => 'Verhaltenskodex',
+                ],
+                'body' => [
+                    'lv' => 'Biedriem jāiemieso bruņnieciskās vērtības un jāuztur ģildes gods. Dalībai nepieciešams nokārtot ģildes pārbaudījumu un dot zvērestu uz zobena. Pārkāpumi, ieskaitot negodīgumu, zādzību un vielu ļaunprātīgu lietošanu, noved pie dalības izbeigšanas.',
+                    'en' => 'Members must embody chivalric virtues and uphold the honour of the guild. Membership requires passing a guild test and taking the sword oath. Violations including dishonesty, theft, and substance abuse result in membership termination.',
+                    'ru' => 'Члены гильдии должны воплощать рыцарские добродетели и поддерживать честь гильдии. Для вступления необходимо пройти гильдейское испытание и принести клятву на мече. Нарушения, включая нечестность, кражу и злоупотребление веществами, ведут к исключению.',
+                    'cs' => 'Členové musí ztělesňovat rytířské ctnosti a hájit čest gildy. Členství vyžaduje složení gildovní zkoušky a přísahu na meč. Porušení včetně nečestnosti, krádeže a zneužívání návykových látek vede k ukončení členství.',
+                    'de' => 'Mitglieder müssen ritterliche Tugenden verkörpern und die Ehre der Gilde wahren. Die Mitgliedschaft erfordert das Bestehen einer Gildenprüfung und den Schwerteid. Verstöße einschließlich Unehrlichkeit, Diebstahl und Substanzmissbrauch führen zur Beendigung der Mitgliedschaft.',
+                ],
+            ],
+            [
                 'slug' => 'schedule-upcoming',
                 'title' => [ 'lv' => 'Tuvākās nodarbības', 'en' => 'Upcoming sessions', 'ru' => 'Ближайшие занятия', 'cs' => 'Nadcházející tréninky', 'de' => 'Kommende Einheiten' ],
                 'body' => [
