@@ -45,34 +45,26 @@ export function useEditablePages(slugs) {
   }
 
   async function fetchPages() {
-    const missingSlugs = slugs.filter((slug) => !pageLoaded[slug])
-
-    if (!missingSlugs.length) {
-      return
-    }
-
-    if (missingSlugs.length === 1) {
-      await fetchPage(missingSlugs[0])
+    // Always refresh from the API so edits on one device appear on others.
+    // localStorage cache is only used for instant paint while the request runs.
+    if (slugs.length === 1) {
+      await fetchPage(slugs[0])
       return
     }
 
     try {
       const { data } = await api.get('/api/content/pages', {
-        params: { slugs: missingSlugs },
+        params: { slugs },
       })
       const fetchedPages = data?.data || {}
 
-      missingSlugs.forEach((slug) => {
+      slugs.forEach((slug) => {
         applyPage(slug, fetchedPages[slug] || null)
+        pageLoaded[slug] = true
       })
     } catch {
-      await Promise.all(missingSlugs.map((slug) => fetchPage(slug)))
-      return
+      await Promise.all(slugs.map((slug) => fetchPage(slug)))
     }
-
-    missingSlugs.forEach((slug) => {
-      pageLoaded[slug] = true
-    })
   }
 
   function onPageUpdated(slug, data) {
