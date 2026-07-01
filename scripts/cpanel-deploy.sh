@@ -26,6 +26,13 @@ COMPOSER_BIN="${COMPOSER_BIN:-composer}"
 
 echo "[deploy] Starting deployment from $REPO_ROOT"
 
+echo "[deploy] Pulling latest code"
+cd "$REPO_ROOT"
+if ! git pull --ff-only; then
+  echo "[deploy] ERROR: git pull failed (local changes or diverged history). Resolve manually, then re-run."
+  exit 1
+fi
+
 if ! command -v "$PHP_BIN" >/dev/null 2>&1; then
   echo "[deploy] ERROR: PHP binary '$PHP_BIN' not found"
   exit 1
