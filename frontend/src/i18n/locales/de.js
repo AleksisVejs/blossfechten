@@ -30,7 +30,7 @@ export default {
       progression: { t: "Strukturierter Weg", d: "Vier Stufen vom Schüler zum Fechtmeister. Langfristiges Studium, kein Fitnesskurs." },
       community: { t: "Offene Zunft", d: "Mitglieder der Fencer’s Guild. Anfänger und erfahrene Fechter sind willkommen." },
     },
-    identity: "Wir sind ein spezialisierter HEMA-Verein, der sich ausschließlich dem Langschwert-Traktat von Joachim Meyer (1570) widmet — eine Quelle, gründlich und ehrlich studiert, kein allgemeines historisches Fechten.",
+    identity: "Wir sind ein spezialisierter Verein, der sich ausschließlich dem Langschwert-Traktat von Joachim Meyer (1570) widmet — eine Quelle, gründlich und ehrlich studiert, kein allgemeines historisches Fechten.",
     virtues_title: 'Mut · Stärke · Behendigkeit',
     virtues: {
       courage: { t: 'Mut', d: 'Selbstvertrauen und Zähigkeit, Gefecht für Gefecht erarbeitet. Der Wille, unter Druck zu handeln.' },
@@ -42,7 +42,7 @@ export default {
     title: 'Über den Verein',
     founded: 'Gegründet in Riga, 2022',
     meyer_badge: 'Schule Joachim Meyers',
-    body_single: "Blossfechten Riga ir vēsturisko Eiropas cīņas mākslu (HEMA) klubs, kas dibināts 2022. gadā Rīgā. Mēs esam Fencer’s Guild biedri un strādājam pēc Joahima Meijera 1570. gada traktāta 'Grūndlīche Beschreibung der Freyen Ritterlichen und Adelichen Kunst des Fechtens'. Mūsu galvenais ierocis ir garais zobens, bet apmācība ietver arī cīniņu bez ieročiem (Ringen) un citus ieročus.",
+    body_single: "Blossfechten Riga ist ein Verein für Historische Europäische Kampfkünste, gegründet 2022 in Riga. Wir sind Mitglieder der Fencer's Guild und trainieren nach dem Traktat von Joachim Meyer aus dem Jahr 1570. Unsere Hauptwaffe ist das Langschwert; das Curriculum umfasst zudem Ringen und weitere Waffen.",
     body_1: 'Blossfechten Riga wurde 2022 als Mitgliedsorganisation der internationalen Fencer’s Guild mit Sitz in Tschechien gegründet. Wir studieren das Langschwert nach Joachim Meyers Traktat von 1570; Ringen und weitere Waffen ergänzen den Kern der Kunst.',
     body_2: 'Fechten ist für uns ein Weg der Selbsterkenntnis — Biomechanik, schnelles Entscheiden, Stressbewältigung und Selbstdisziplin, geschmiedet in ehrlichem Training. Drei Pfeiler stehen über allem: Mut, Stärke und Behendigkeit.',
     body_3: 'Mitgliedschaft erfolgt auf Einladung. Besuchen Sie ein Training, lernen Sie den Verein kennen — die nächsten Schritte ergeben sich natürlich. Der vollständige Lehrplan ist in fortschreitende Stufen mit formalen Prüfungen gegliedert.',

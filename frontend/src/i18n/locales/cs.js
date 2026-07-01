@@ -30,7 +30,7 @@ export default {
       progression: { t: "Strukturovaný postup", d: "Čtyři stupně od Žáka k Fechtmistrovi. Dlouhodobé studium, ne fitness." },
       community: { t: "Otevřený cech", d: "Členové Fencer’s Guild. Začátečníci i zkušení šermíři vítáni." },
     },
-    identity: "Jsme specializovaný HEMA klub zaměřený výhradně na traktát Joachima Meyera o dlouhém meči z roku 1570 — jeden pramen, studovaný poctivě a do hloubky, nikoliv obecné historické šermy.",
+    identity: "Jsme specializovaný klub zaměřený výhradně na traktát Joachima Meyera o dlouhém meči z roku 1570 — jeden pramen, studovaný poctivě a do hloubky, nikoliv obecné historické šermy.",
     virtues_title: 'Odvaha · Síla · Hbitost',
     virtues: {
       courage: { t: 'Odvaha', d: 'Sebedůvěra a odolnost budovaná zápas po zápase. Vůle jednat pod tlakem.' },
@@ -42,7 +42,7 @@ export default {
     title: 'O klubu',
     founded: 'Založeno v Rize roku 2022',
     meyer_badge: 'Škola Joachima Meyera',
-    body_single: "Blossfechten Riga ir vēsturisko Eiropas cīņas mākslu (HEMA) klubs, kas dibināts 2022. gadā Rīgā. Mēs esam Fencer’s Guild biedri un strādājam pēc Joahima Meijera 1570. gada traktāta 'Grūndlīche Beschreibung der Freyen Ritterlichen und Adelichen Kunst des Fechtens'. Mūsu galvenais ierocis ir garais zobens, bet apmācība ietver arī cīniņu bez ieročiem (Ringen) un citus ieročus.",
+    body_single: "Blossfechten Riga je klub historických evropských bojových umění, založený v Rize v roce 2022. Jsme členy Fencer's Guild a cvičíme podle traktátu Joachima Meyera z roku 1570. Hlavní zbraní je dlouhý meč; program zahrnuje také zápas (Ringen) a další zbraně.",
     body_1: 'Blossfechten Riga byl založen v roce 2022 jako členská organizace mezinárodní Fencer’s Guild se sídlem v České republice. Studujeme dlouhý meč podle traktátu Joachima Meyera z roku 1570; ringen a další zbraně doplňují jádro umění.',
     body_2: 'Šerm je pro nás cestou sebepoznání — biomechanika, rychlé rozhodování, zvládání stresu a sebekázeň, kované poctivým tréninkem. Nad vším stojí tři pilíře: odvaha, síla a hbitost.',
     body_3: 'Členství je na pozvání. Přijďte na trénink, poznejte klub a další kroky přijdou přirozeně. Plný učební plán je rozdělen do progresivních úrovní s formálními zkouškami.',

@@ -30,7 +30,7 @@ export default {
       progression: { t: "Structured progression", d: "Four stages from Scholar to Fechtmeister. Long-term study, not a fitness class." },
       community: { t: "An open guild", d: "Members of the Fencer’s Guild. Beginners and experienced fencers are welcome." },
     },
-    identity: "We are a specialist HEMA club focused exclusively on the 1570 longsword treatise of Joachim Meyer — one source, studied deeply and honestly, not general historical fencing.",
+    identity: "We are a specialist club focused exclusively on the 1570 longsword treatise of Joachim Meyer — one source, studied deeply and honestly, not general historical fencing.",
     virtues_title: 'Courage · Strength · Agility',
     virtues: {
       courage: { t: 'Courage', d: 'Confidence and resilience built one bout at a time. The will to act under pressure.' },
@@ -42,7 +42,7 @@ export default {
     title: 'About the Club',
     founded: 'Founded in Riga, 2022',
     meyer_badge: 'School of Joachim Meyer',
-    body_single: "Blossfechten Riga ir vēsturisko Eiropas cīņas mākslu (HEMA) klubs, kas dibināts 2022. gadā Rīgā. Mēs esam Fencer's Guild biedri un strādājam pēc Joahima Meijera 1570. gada traktāta 'Grūndlīche Beschreibung der Freyen Ritterlichen und Adelichen Kunst des Fechtens'. Mūsu galvenais ierocis ir garais zobens, bet apmācība ietver arī cīniņu bez ieročiem (Ringen) un citus ieročus.",
+    body_single: "Blossfechten Riga is a Historical European Martial Arts club founded in Riga in 2022. We are members of the Fencer's Guild and train from the 1570 treatise of Joachim Meyer, 'A Thorough Description of the Free, Chivalric, and Noble Art of Fencing'. Our core weapon is the longsword; our curriculum also covers wrestling (Ringen) and additional weapons.",
     body_1: 'Blossfechten Riga was established in 2022 as a member organisation of the international Fencer’s Guild, seated in the Czech Republic. We study the longsword from the 1570 treatise of Joachim Meyer, with ringen and other weapons supporting the core of the art.',
     body_2: 'Sword fighting, for us, is a way of self-knowledge — biomechanics, fast decision-making, stress management, and self-discipline forged through honest training. We hold three pillars above all: courage, strength, and agility.',
     body_3: 'Membership is by invitation. Visit a training, meet the club, and the next steps follow naturally. The full curriculum is divided into progressive levels with formal examinations.',

@@ -1,6 +1,6 @@
 # Blossfechten Riga
 
-Full-stack website for the Blossfechten Riga HEMA club — **Laravel 11 API** + **Vue 3 SPA**, MySQL, Sanctum auth, 5-language i18n (LV / EN / RU / CS / DE).
+Full-stack website for the Blossfechten Riga historical fencing club — **Laravel 11 API** + **Vue 3 SPA**, MySQL, Sanctum auth, 5-language i18n (LV / EN / RU / CS / DE).
 
 ```
 BlossfechtenRiga/

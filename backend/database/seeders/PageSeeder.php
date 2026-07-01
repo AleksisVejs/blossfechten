@@ -20,11 +20,11 @@ class PageSeeder extends Seeder
                     'de' => 'Über den Verein',
                 ],
                 'body' => [
-                    'lv' => "Blossfechten Riga ir vēsturisko Eiropas cīņas mākslu (HEMA) klubs, kas dibināts 2022. gadā Rīgā. Mēs esam Fencer's Guild biedri un strādājam pēc Joahima Meijera 1570. gada traktāta 'Grūndlīche Beschreibung der Freyen Ritterlichen und Adelichen Kunst des Fechtens'. Mūsu galvenais ierocis ir garais zobens, bet apmācība ietver arī cīniņu bez ieročiem (Ringen) un citus ieročus.",
-                    'en' => "Blossfechten Riga is a Historical European Martial Arts (HEMA) club founded in Riga in 2022. We are members of the Fencer's Guild and train from the 1570 treatise of Joachim Meyer, 'A Thorough Description of the Free, Chivalric, and Noble Art of Fencing'. Our core weapon is the longsword; our curriculum also covers wrestling (Ringen) and additional weapons.",
-                    'ru' => "Blossfechten Riga — клуб исторических европейских боевых искусств (HEMA), основанный в Риге в 2022 году. Мы состоим в Гильдии фехтовальщиков и занимаемся по трактату Иоахима Мейера 1570 года. Основное оружие — длинный меч; программа также охватывает борьбу (Ringen) и другое оружие.",
-                    'cs' => "Blossfechten Riga je klub historických evropských bojových umění (HEMA), založený v Rize v roce 2022. Jsme členy Fencer's Guild a cvičíme podle traktátu Joachima Meyera z roku 1570. Hlavní zbraní je dlouhý meč; program zahrnuje také zápas (Ringen) a další zbraně.",
-                    'de' => "Blossfechten Riga ist ein Verein für Historische Europäische Kampfkünste (HEMA), gegründet 2022 in Riga. Wir sind Mitglieder der Fencer's Guild und trainieren nach dem Traktat von Joachim Meyer aus dem Jahr 1570. Unsere Hauptwaffe ist das Langschwert; das Curriculum umfasst zudem Ringen und weitere Waffen.",
+                    'lv' => "Blossfechten Riga ir vēsturisko Eiropas cīņas mākslu klubs, kas dibināts 2022. gadā Rīgā. Mēs esam Fencer's Guild biedri un strādājam pēc Joahima Meijera 1570. gada traktāta 'Grūndlīche Beschreibung der Freyen Ritterlichen und Adelichen Kunst des Fechtens'. Mūsu galvenais ierocis ir garais zobens, bet apmācība ietver arī cīniņu bez ieročiem (Ringen) un citus ieročus.",
+                    'en' => "Blossfechten Riga is a Historical European Martial Arts club founded in Riga in 2022. We are members of the Fencer's Guild and train from the 1570 treatise of Joachim Meyer, 'A Thorough Description of the Free, Chivalric, and Noble Art of Fencing'. Our core weapon is the longsword; our curriculum also covers wrestling (Ringen) and additional weapons.",
+                    'ru' => "Blossfechten Riga — клуб исторических европейских боевых искусств, основанный в Риге в 2022 году. Мы состоим в Гильдии фехтовальщиков и занимаемся по трактату Иоахима Мейера 1570 года. Основное оружие — длинный меч; программа также охватывает борьбу (Ringen) и другое оружие.",
+                    'cs' => "Blossfechten Riga je klub historických evropských bojových umění, založený v Rize v roce 2022. Jsme členy Fencer's Guild a cvičíme podle traktátu Joachima Meyera z roku 1570. Hlavní zbraní je dlouhý meč; program zahrnuje také zápas (Ringen) a další zbraně.",
+                    'de' => "Blossfechten Riga ist ein Verein für Historische Europäische Kampfkünste, gegründet 2022 in Riga. Wir sind Mitglieder der Fencer's Guild und trainieren nach dem Traktat von Joachim Meyer aus dem Jahr 1570. Unsere Hauptwaffe ist das Langschwert; das Curriculum umfasst zudem Ringen und weitere Waffen.",
                 ],
             ],
             [
@@ -173,11 +173,11 @@ class PageSeeder extends Seeder
                     'de' => 'Die freie, ritterliche und adelige Kunst des Fechtens — wiedergeboren in Riga.',
                 ],
                 'body' => [
-                    'lv' => 'Mēs esam specializēts HEMA klubs, kas dziļi pēta tieši Joahima Meijera 1570. gada garā zobena traktātu — nevis vispārēja vēsturiskā cīņas māksla, bet viens avots, pētīts rūpīgi un apzinīgi.',
-                    'en' => 'We are a specialist HEMA club focused exclusively on the 1570 longsword treatise of Joachim Meyer — one source, studied deeply and honestly, not general historical fencing.',
-                    'ru' => 'Мы — специализированный HEMA-клуб, сосредоточенный исключительно на трактате Иоахима Мейера 1570 года о длинном мече. Один источник, изучаемый глубоко и добросовестно — без смешения стилей.',
-                    'cs' => 'Jsme specializovaný HEMA klub zaměřený výhradně na traktát Joachima Meyera o dlouhém meči z roku 1570 — jeden pramen, studovaný poctivě a do hloubky, nikoliv obecné historické šermy.',
-                    'de' => 'Wir sind ein spezialisierter HEMA-Verein, der sich ausschließlich dem Langschwert-Traktat von Joachim Meyer (1570) widmet — eine Quelle, gründlich und ehrlich studiert, kein allgemeines historisches Fechten.',
+                    'lv' => 'Mēs esam specializēts klubs, kas dziļi pēta tieši Joahima Meijera 1570. gada garā zobena traktātu — nevis vispārēja vēsturiskā cīņas māksla, bet viens avots, pētīts rūpīgi un apzinīgi.',
+                    'en' => 'We are a specialist club focused exclusively on the 1570 longsword treatise of Joachim Meyer — one source, studied deeply and honestly, not general historical fencing.',
+                    'ru' => 'Мы — специализированный клуб, сосредоточенный исключительно на трактате Иоахима Мейера 1570 года о длинном мече. Один источник, изучаемый глубоко и добросовестно — без смешения стилей.',
+                    'cs' => 'Jsme specializovaný klub zaměřený výhradně na traktát Joachima Meyera o dlouhém meči z roku 1570 — jeden pramen, studovaný poctivě a do hloubky, nikoliv obecné historické šermy.',
+                    'de' => 'Wir sind ein spezialisierter Verein, der sich ausschließlich dem Langschwert-Traktat von Joachim Meyer (1570) widmet — eine Quelle, gründlich und ehrlich studiert, kein allgemeines historisches Fechten.',
                 ],
             ],
             [

@@ -30,7 +30,7 @@ export default {
       progression: { t: "Strukturēta izaugsme", d: "Četri līmeņi no Skolnieka līdz Fehtmeistaram. Ilgtermiņa studijas, nevis vingrošanas nodarbība." },
       community: { t: "Atvērta ģilde", d: "Fencer’s Guild biedri. Iesācēji un pieredzējuši fehtētāji laipni gaidīti." },
     },
-    identity: "Mēs esam specializēts HEMA klubs, kas dziļi pēta tieši Joahima Meijera 1570. gada garā zobena traktātu — nevis vispārēja vēsturiskā cīņas māksla, bet viens avots, pētīts rūpīgi un apzinīgi.",
+    identity: "Mēs esam specializēts klubs, kas dziļi pēta tieši Joahima Meijera 1570. gada garā zobena traktātu — nevis vispārēja vēsturiskā cīņas māksla, bet viens avots, pētīts rūpīgi un apzinīgi.",
     virtues_title: 'Drosme · Spēks · Veiklība',
     virtues: {
       courage: { t: 'Drosme', d: 'Pārliecība un izturība, ko veido katra cīņa. Griba rīkoties zem spiediena.' },
@@ -42,7 +42,7 @@ export default {
     title: 'Par klubu',
     founded: 'Dibināts Rīgā, 2022. gadā',
     meyer_badge: 'Joahima Meijera skola',
-    body_single: "Blossfechten Riga ir vēsturisko Eiropas cīņas mākslu (HEMA) klubs, kas dibināts 2022. gadā Rīgā. Mēs esam Fencer’s Guild biedri un strādājam pēc Joahima Meijera 1570. gada traktāta 'Grūndlīche Beschreibung der Freyen Ritterlichen und Adelichen Kunst des Fechtens'. Mūsu galvenais ierocis ir garais zobens, bet apmācība ietver arī cīniņu bez ieročiem (Ringen) un citus ieročus.",
+    body_single: "Blossfechten Riga ir vēsturisko Eiropas cīņas mākslu klubs, kas dibināts 2022. gadā Rīgā. Mēs esam Fencer’s Guild biedri un strādājam pēc Joahima Meijera 1570. gada traktāta 'Grūndlīche Beschreibung der Freyen Ritterlichen und Adelichen Kunst des Fechtens'. Mūsu galvenais ierocis ir garais zobens, bet apmācība ietver arī cīniņu bez ieročiem (Ringen) un citus ieročus.",
     body_1: 'Blossfechten Riga tika dibināts 2022. gadā kā starptautiskās Fencer’s Guild (Čehijā) dalīborganizācija. Mēs studējam garo zobenu pēc Joahima Meijera 1570. gada traktāta; ringen un pārējie ieroči atbalsta mākslas kodolu.',
     body_2: 'Paukošana mums ir pašizziņas ceļš — biomehānika, ātra lēmumu pieņemšana, stresa pārvaldīšana un pašdisciplīna, kas tiek kalti godīgā treniņā. Trīs pīlāri ir augstāki par visu: drosme, spēks un veiklība.',
     body_3: 'Dalība ir pēc ielūguma. Atnāciet uz treniņu, iepazīstiet klubu, un nākamie soļi seko dabiski. Pilnā programma ir sadalīta progresīvos līmeņos ar formāliem pārbaudījumiem.',
