@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { trackPageView } from '@/analytics'
 
 const routes = [
   { path: '/', name: 'home', component: () => import('@/pages/Home.vue') },
@@ -42,6 +43,10 @@ router.beforeEach(async (to) => {
   if (to.meta.auth && !auth.isAuthenticated) return { name: 'login', query: { next: to.fullPath } }
   if (to.meta.admin && !auth.isAdmin) return { name: 'home' }
   if (to.meta.guest && auth.isAuthenticated) return { name: 'dashboard' }
+})
+
+router.afterEach((to) => {
+  trackPageView(to.fullPath, document.title)
 })
 
 export default router
