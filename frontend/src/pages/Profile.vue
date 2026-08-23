@@ -19,6 +19,7 @@ const form = ref({
   name: auth.user?.name || '',
   phone: auth.user?.phone || '',
   locale: auth.user?.locale || 'en',
+  notify_new_events: auth.user?.notify_new_events ?? true,
 })
 const deleteDialogOpen = ref(false)
 const deleteErr = ref('')
@@ -35,6 +36,7 @@ watch(
       name: user?.name || '',
       phone: user?.phone || '',
       locale: user?.locale || 'en',
+      notify_new_events: user?.notify_new_events ?? true,
     }
   },
   { immediate: true },
@@ -137,6 +139,22 @@ async function confirmDeleteProfile() {
           </select>
         </div>
       </dl>
+
+      <div class="mt-4 rounded-lg border border-parchment-300/70 bg-parchment-100/70 p-4">
+        <label for="profile-notify" class="flex items-start gap-3 cursor-pointer">
+          <input
+            id="profile-notify"
+            v-model="form.notify_new_events"
+            type="checkbox"
+            class="mt-1"
+          />
+          <span>
+            <span class="block text-xs uppercase tracking-widest text-ink-500">{{ t('profile.notifications') }}</span>
+            <span class="block mt-1 text-ink-900">{{ t('profile.notify_new_events') }}</span>
+            <span class="block mt-1 text-sm text-ink-500">{{ t('profile.notify_new_events_hint') }}</span>
+          </span>
+        </label>
+      </div>
 
       <div class="mt-4 rounded-lg border border-parchment-300/70 bg-parchment-100/70 p-4">
         <dt class="text-xs uppercase tracking-widest text-ink-500">{{ t('profile.role') }}</dt>

@@ -15,6 +15,7 @@ const routes = [
   { path: '/login', name: 'login', component: () => import('@/pages/Login.vue'), meta: { guest: true } },
   { path: '/register', name: 'register', component: () => import('@/pages/Register.vue'), meta: { guest: true } },
   { path: '/verify-email', name: 'verify-email', component: () => import('@/pages/VerifyEmail.vue') },
+  { path: '/unsubscribe', name: 'unsubscribe', component: () => import('@/pages/Unsubscribe.vue') },
   { path: '/forgot-password', name: 'forgot-password', component: () => import('@/pages/ForgotPassword.vue') },
   { path: '/reset-password', name: 'reset-password', component: () => import('@/pages/ResetPassword.vue') },
   { path: '/dashboard', name: 'dashboard', component: () => import('@/pages/Dashboard.vue'), meta: { auth: true } },

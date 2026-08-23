@@ -21,6 +21,7 @@ class TrainingSession extends Model
         'description' => 'array',
         'members_only' => 'boolean',
         'cancelled' => 'boolean',
+        'notified_at' => 'datetime',
     ];
 
     public function registrations(): HasMany
@@ -43,6 +44,28 @@ class TrainingSession extends Model
     public function isFull(): bool
     {
         return $this->confirmedCount() >= $this->capacity;
+    }
+
+    public function wasAnnounced(): bool
+    {
+        return $this->notified_at !== null;
+    }
+
+    /**
+     * A session is only worth announcing while it is still live and upcoming —
+     * never a cancelled one, and never one that has already finished.
+     */
+    public function isAnnounceable(): bool
+    {
+        return ! $this->wasAnnounced()
+            && ! $this->cancelled
+            && $this->starts_at !== null
+            && $this->starts_at->isFuture();
+    }
+
+    public function markAnnounced(): void
+    {
+        $this->forceFill(['notified_at' => now()])->save();
     }
 
     protected function serializeDate(DateTimeInterface $date): string

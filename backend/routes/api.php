@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContentController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\ForumController;
+use App\Http\Controllers\Api\NotificationPreferenceController;
 use App\Http\Controllers\Api\TrainingController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,9 @@ Route::get('/content/members', [ContentController::class, 'members']);
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:5,1');
 Route::get('/trainings', [TrainingController::class, 'index']);
 Route::get('/trainings/{training}', [TrainingController::class, 'show']);
+Route::match(['get', 'post'], '/notifications/unsubscribe/{token}', [NotificationPreferenceController::class, 'unsubscribe'])
+    ->middleware('throttle:20,1')
+    ->name('notifications.unsubscribe');
 Route::get('/forum', [ForumController::class, 'index']);
 Route::get('/forum/{slug}', [ForumController::class, 'show']);
 

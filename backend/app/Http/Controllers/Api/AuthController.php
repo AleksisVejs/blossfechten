@@ -116,6 +116,7 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:120'],
             'phone' => ['nullable', 'string', 'max:32'],
             'locale' => ['required', Rule::in(['lv', 'en', 'ru', 'cs', 'de'])],
+            'notify_new_events' => ['sometimes', 'boolean'],
         ]);
 
         $user->update($data);

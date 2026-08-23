@@ -56,6 +56,8 @@ Seeded accounts:
 - `GET  /api/content/pages/{slug}` — `about`, `meyer`
 - `GET  /api/content/members` — core members
 
+- `GET|POST /api/notifications/unsubscribe/{token}` — one-click opt-out of event announcements (public by design)
+
 **Auth (session cookie, Sanctum SPA)**
 - `POST /api/auth/register` · `POST /api/auth/login` · `POST /api/auth/logout` · `GET /api/auth/me`
 - `POST /api/trainings/{id}/register` — confirmed or auto-waitlist
@@ -143,7 +145,55 @@ await this.fetch()
 
 ---
 
-## 5. Production notes
+## 5. Event announcement emails
+
+When an admin saves a training session with **Notify members by email** ticked, every
+member who opted in gets a one-off announcement in their own language.
+
+- `AnnounceTrainingSession` (queued) fans out to `User::eventSubscribers()` — opted in
+  **and** email-verified — in chunks of 100.
+- The job claims the session with a conditional `whereNull('notified_at')` update, so a
+  retry, a double dispatch, or a later edit can never mail the club twice about the same
+  event. The admin UI disables the checkbox once `notified_at` is set.
+- `NewEventNotification` renders `emails.new-event` (+ plain-text twin) using the
+  recipient's `locale`, falling back to English then Latvian when an admin leaves a
+  language blank.
+- Every message carries `List-Unsubscribe` / `List-Unsubscribe-Post` headers plus a
+  visible unsubscribe link pointing at `/unsubscribe?token=…`. Members can also toggle
+  the preference on `/profile`.
+
+Announcements are sent from the global `MAIL_FROM_ADDRESS`, exactly like the contact and
+verification mail. Keep it on the club domain — DMARC for `blossfechtenriga.com` uses
+strict alignment (`adkim=s; aspf=s`), so a From address on any other domain fails the
+check:
+
+```env
+MAIL_FROM_ADDRESS="hello@blossfechtenriga.com"
+```
+
+### Queue worker (required)
+
+The announcements are queued, and shared cPanel hosting has no long-running worker, so
+the scheduler drains the queue. Add **one** cron entry in cPanel, matching the interval
+and PHP path already used by the other apps on this account:
+
+```
+*/10 * * * * cd /home2/riginspe/blossfechten/backend && /usr/local/bin/php artisan schedule:run >> ~/blossfechten-schedule.log 2>&1
+```
+
+`routes/console.php` schedules `queue:work --queue=mail,default --stop-when-empty
+--max-time=300`, guarded by a 10-minute overlap lock. Announcements therefore go out
+within ten minutes of the admin saving the event. Without this cron, queued mail sits in
+the `jobs` table and is never delivered — the admin UI will still report success, so
+verify after deploying:
+
+```bash
+php artisan queue:work --queue=mail,default --stop-when-empty
+```
+
+---
+
+## 6. Production notes
 
 - Build the frontend with `npm run build` and serve `frontend/dist` behind your reverse proxy.
 - Point `SANCTUM_STATEFUL_DOMAINS` and `SESSION_DOMAIN` to your production host in `backend/.env`.

@@ -8,4 +8,23 @@ return [
         'waitlisted' => 'The training is full; you have been added to the waiting list.',
         'unregistered' => 'Your registration has been cancelled.',
     ],
+    'emails' => [
+        'new_event' => [
+            'subject' => 'New event: :title',
+            'fallback_title' => 'New event',
+            'heading' => 'A new event at Blossfechten Riga',
+            'greeting' => 'Hello, :name!',
+            'intro' => 'A new event has been added to the calendar. Here are the details.',
+            'when' => 'When',
+            'where' => 'Where',
+            'cta' => 'View and sign up',
+            'link_hint' => 'If the button does not open, paste this link into your browser:',
+            'unsubscribe_hint' => 'If you no longer wish to receive announcements about new events,',
+            'unsubscribe' => 'unsubscribe here.',
+        ],
+    ],
+    'notifications' => [
+        'unsubscribed' => 'You will no longer receive emails about new events.',
+        'invalid_unsubscribe_token' => 'This unsubscribe link is not valid.',
+    ],
 ];

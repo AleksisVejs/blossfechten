@@ -121,6 +121,8 @@ function emptyForm() {
     description: { lv: '', en: '', ru: '', cs: '', de: '' },
     capacity: 20,
     cancelled: false,
+    notified_at: null,
+    notify_subscribers: true,
   }
 }
 
@@ -155,6 +157,14 @@ const filtered = computed(() => {
   })
 })
 
+function formatAnnouncedDate(value) {
+  const parsed = parseLocalDateTime(value)
+  return Number.isNaN(parsed.getTime()) ? '' : fmt.value.format(parsed)
+}
+
+const alreadyAnnounced = computed(() => Boolean(form.value.notified_at))
+const announcedOn = computed(() => formatAnnouncedDate(form.value.notified_at))
+
 const registrationsSummary = computed(() => {
   const sessionsWithRegistrations = trainings.value.filter((s) => (s.registrations_count ?? 0) > 0).length
   const totalRegistrations = trainings.value.reduce((sum, s) => sum + (s.registrations_count ?? 0), 0)
@@ -169,6 +179,7 @@ function edit(row) {
     ends_at: formatDateTimeLocal(row.ends_at),
     title: { lv: '', en: '', ru: '', cs: '', de: '', ...(row.title || {}) },
     description: { lv: '', en: '', ru: '', cs: '', de: '', ...(row.description || {}) },
+    notify_subscribers: false,
   }
   syncFormParts()
 }
@@ -188,6 +199,7 @@ async function save() {
       ends_at: buildDateTime('ends_at'),
       members_only: false,
     }
+    delete payload.notified_at
 
     if (!payload.starts_at || !payload.ends_at) {
       throw new Error('invalid-datetime')
@@ -292,6 +304,11 @@ async function viewRegistrations(row) {
             <td class="p-3 whitespace-nowrap">
               {{ formatTrainingDateRange(s) }}
               <span v-if="s.cancelled" class="ml-2 text-[10px] uppercase tracking-widest text-oxblood-500">{{ t('admin.cancelled') }}</span>
+              <span
+                v-else-if="s.notified_at"
+                class="ml-2 text-[10px] uppercase tracking-widest text-gold-600"
+                :title="t('admin.already_notified_hint', { date: formatAnnouncedDate(s.notified_at) })"
+              >{{ t('admin.notified') }}</span>
             </td>
             <td class="p-3">{{ s.focus }}</td>
             <td class="p-3 hidden md:table-cell text-ink-500">{{ s.location }}</td>
@@ -379,6 +396,23 @@ async function viewRegistrations(row) {
             <div class="flex items-center gap-4 mt-4">
               <label class="flex items-center gap-2 font-sans text-sm">
                 <input v-model="form.cancelled" type="checkbox" /> {{ t('admin.cancelled') }}
+              </label>
+            </div>
+
+            <div class="mt-4 border border-parchment-300 bg-parchment-100/60 p-3">
+              <label class="flex items-start gap-2 font-sans text-sm" :class="alreadyAnnounced && 'opacity-60'">
+                <input
+                  v-model="form.notify_subscribers"
+                  type="checkbox"
+                  :disabled="alreadyAnnounced"
+                  class="mt-1"
+                />
+                <span>
+                  {{ t('admin.notify_subscribers') }}
+                  <span class="block text-xs text-ink-500 mt-0.5">
+                    {{ alreadyAnnounced ? t('admin.already_notified_hint', { date: announcedOn }) : t('admin.notify_hint') }}
+                  </span>
+                </span>
               </label>
             </div>
           </div>

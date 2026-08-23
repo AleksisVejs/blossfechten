@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Validator;
 
 Artisan::command('inspire', function () {
@@ -86,3 +87,17 @@ Artisan::command('user:create', function () {
     $this->info("User created successfully with ID {$user->id}.");
     return 0;
 })->purpose('Interactively create an application user');
+
+/*
+ * Shared cPanel hosting has no long-running worker process, so the scheduler
+ * drains the queue instead. The cron on this account fires `schedule:run` every
+ * ten minutes, so announcement mail goes out within that window.
+ *
+ * everyMinute() means "whenever schedule:run fires" — leave it alone if the cron
+ * interval changes. --stop-when-empty exits the moment the queue is drained;
+ * --max-time is only a ceiling, set well inside the gap between cron runs. The
+ * overlap lock expires after 10 minutes so a killed worker cannot wedge it.
+ */
+Schedule::command('queue:work --queue=mail,default --stop-when-empty --max-time=300 --tries=3')
+    ->everyMinute()
+    ->withoutOverlapping(10);
