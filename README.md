@@ -171,6 +171,19 @@ check:
 MAIL_FROM_ADDRESS="hello@blossfechtenriga.com"
 ```
 
+### Trying it without mailing the club
+
+```bash
+php artisan events:test-announcement aleksis.vejs@gmail.com
+php artisan events:test-announcement aleksis.vejs@gmail.com --locale=de   # preview another language
+```
+
+Sends one sample announcement, immediately, to that address only. The sample session is
+never persisted, so nothing appears on the calendar and no real event is marked as
+announced. If the address belongs to a member the mail carries their real unsubscribe
+token — clicking it genuinely opts them out. `--locale` only changes this one preview; it
+does not alter the member's stored language.
+
 ### Queue worker (required)
 
 The announcements are queued, and shared cPanel hosting has no long-running worker, so

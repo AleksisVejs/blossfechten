@@ -24,6 +24,13 @@ class NewEventNotification extends Notification implements ShouldQueue
      */
     private const CONTENT_FALLBACKS = ['en', 'lv', 'ru', 'cs', 'de'];
 
+    /**
+     * If the admin deletes the event before the queue drains, silently drop the
+     * pending mail rather than piling up failed jobs — not sending is exactly
+     * what deleting the event should mean.
+     */
+    public bool $deleteWhenMissingModels = true;
+
     public function __construct(public TrainingSession $session)
     {
         $this->onQueue('mail');
@@ -59,10 +66,14 @@ class NewEventNotification extends Notification implements ShouldQueue
             )
             // One-click unsubscribe. Gmail and Yahoo both weigh this for bulk
             // senders, and it keeps complaints from turning into spam reports.
+            // Skipped when there is no token to unsubscribe (an on-demand test
+            // address): a malformed header is worse than no header at all.
             ->withSymfonyMessage(function (Email $message) use ($unsubscribeUrl) {
-                $headers = $message->getHeaders();
-                $headers->addTextHeader('List-Unsubscribe', '<' . $unsubscribeUrl . '>');
-                $headers->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
+                if (! str_ends_with($unsubscribeUrl, 'token=')) {
+                    $headers = $message->getHeaders();
+                    $headers->addTextHeader('List-Unsubscribe', '<' . $unsubscribeUrl . '>');
+                    $headers->addTextHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
+                }
             });
     }
 
