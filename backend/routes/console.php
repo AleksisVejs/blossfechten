@@ -101,3 +101,13 @@ Artisan::command('user:create', function () {
 Schedule::command('queue:work --queue=mail,default --stop-when-empty --max-time=300 --tries=3')
     ->everyMinute()
     ->withoutOverlapping(10);
+
+/*
+ * Day-before reminders. Checked every fifteen minutes rather than every minute
+ * — the reminder only needs to be roughly a day ahead, and this keeps the
+ * per-minute cron cheap. A session entering its last 24 hours is therefore
+ * reminded within a quarter of an hour of crossing that line.
+ */
+Schedule::command('events:send-reminders')
+    ->everyFifteenMinutes()
+    ->withoutOverlapping(10);

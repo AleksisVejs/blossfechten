@@ -123,6 +123,9 @@ function emptyForm() {
     cancelled: false,
     notified_at: null,
     notify_subscribers: true,
+    send_reminder: true,
+    reminded_at: null,
+    notify_changes: false,
   }
 }
 
@@ -164,6 +167,9 @@ function formatAnnouncedDate(value) {
 
 const alreadyAnnounced = computed(() => Boolean(form.value.notified_at))
 const announcedOn = computed(() => formatAnnouncedDate(form.value.notified_at))
+const alreadyReminded = computed(() => Boolean(form.value.reminded_at))
+const remindedOn = computed(() => formatAnnouncedDate(form.value.reminded_at))
+const isEditing = computed(() => editing.value !== 'new' && editing.value !== null)
 
 const registrationsSummary = computed(() => {
   const sessionsWithRegistrations = trainings.value.filter((s) => (s.registrations_count ?? 0) > 0).length
@@ -180,6 +186,8 @@ function edit(row) {
     title: { lv: '', en: '', ru: '', cs: '', de: '', ...(row.title || {}) },
     description: { lv: '', en: '', ru: '', cs: '', de: '', ...(row.description || {}) },
     notify_subscribers: false,
+    send_reminder: row.send_reminder ?? true,
+    notify_changes: false,
   }
   syncFormParts()
 }
@@ -200,6 +208,10 @@ async function save() {
       members_only: false,
     }
     delete payload.notified_at
+    delete payload.reminded_at
+
+    // Only meaningful when editing something that already exists.
+    if (editing.value === 'new') delete payload.notify_changes
 
     if (!payload.starts_at || !payload.ends_at) {
       throw new Error('invalid-datetime')
@@ -411,6 +423,26 @@ async function viewRegistrations(row) {
                   {{ t('admin.notify_subscribers') }}
                   <span class="block text-xs text-ink-500 mt-0.5">
                     {{ alreadyAnnounced ? t('admin.already_notified_hint', { date: announcedOn }) : t('admin.notify_hint') }}
+                  </span>
+                </span>
+              </label>
+
+              <label class="flex items-start gap-2 font-sans text-sm mt-3">
+                <input v-model="form.send_reminder" type="checkbox" class="mt-1" />
+                <span>
+                  {{ t('admin.send_reminder') }}
+                  <span class="block text-xs text-ink-500 mt-0.5">
+                    {{ alreadyReminded ? t('admin.already_reminded_hint', { date: remindedOn }) : t('admin.send_reminder_hint') }}
+                  </span>
+                </span>
+              </label>
+
+              <label v-if="isEditing" class="flex items-start gap-2 font-sans text-sm mt-3">
+                <input v-model="form.notify_changes" type="checkbox" class="mt-1" />
+                <span>
+                  {{ t('admin.notify_changes') }}
+                  <span class="block text-xs text-ink-500 mt-0.5">
+                    {{ t('admin.notify_changes_hint') }}
                   </span>
                 </span>
               </label>

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,6 +13,7 @@ class TrainingSession extends Model
     protected $fillable = [
         'starts_at', 'ends_at', 'location', 'focus',
         'title', 'description', 'capacity', 'members_only', 'cancelled',
+        'send_reminder',
     ];
 
     protected $casts = [
@@ -22,6 +24,8 @@ class TrainingSession extends Model
         'members_only' => 'boolean',
         'cancelled' => 'boolean',
         'notified_at' => 'datetime',
+        'send_reminder' => 'boolean',
+        'reminded_at' => 'datetime',
     ];
 
     public function registrations(): HasMany
@@ -66,6 +70,32 @@ class TrainingSession extends Model
     public function markAnnounced(): void
     {
         $this->forceFill(['notified_at' => now()])->save();
+    }
+
+    public function wasReminded(): bool
+    {
+        return $this->reminded_at !== null;
+    }
+
+    /**
+     * Sessions whose reminder is due: opted in, not yet reminded, still live,
+     * and starting within the next day.
+     *
+     * The notified_at clause avoids the daft case where an admin creates an
+     * event less than a day before it starts and ticks both boxes — without it
+     * the reminder chases the announcement out the door minutes later.
+     */
+    public function scopeDueForReminder(Builder $query): Builder
+    {
+        return $query->where('send_reminder', true)
+            ->whereNull('reminded_at')
+            ->where('cancelled', false)
+            ->where('starts_at', '>', now())
+            ->where('starts_at', '<=', now()->addDay())
+            ->where(function (Builder $q) {
+                $q->whereNull('notified_at')
+                    ->orWhere('notified_at', '<=', now()->subHour());
+            });
     }
 
     protected function serializeDate(DateTimeInterface $date): string

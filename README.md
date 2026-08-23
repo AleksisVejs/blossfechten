@@ -171,18 +171,56 @@ check:
 MAIL_FROM_ADDRESS="hello@blossfechtenriga.com"
 ```
 
+### Reminders and change notices
+
+Two further mails hang off the same machinery, each with its own toggle in the admin form:
+
+**Day-before reminder.** `send_reminder` is a column on the session, ticked by default.
+`events:send-reminders` runs every fifteen minutes from the scheduler and queues a
+reminder once a session comes within 24 hours of starting. Only members holding a
+*confirmed* seat are mailed — a waitlisted member has nothing to turn up for. `reminded_at`
+records the send, so it goes out exactly once.
+
+Two wrinkles worth knowing:
+
+- A session announced within the last hour is skipped, so an event created the day before
+  it runs does not fire an announcement and a reminder minutes apart.
+- Moving an already-reminded session back beyond the 24-hour window clears `reminded_at`,
+  so members get a fresh reminder for the new date rather than silence.
+
+**Change notice.** `notify_changes` is a per-request flag, not a column — it is unticked
+every time the form opens, so it only ever fires when the admin deliberately asks. It mails
+everyone holding a seat *or* a waitlist place, and only when something worth reading
+changed: time, location, title, description, or cancellation. Editing capacity alone sends
+nothing. Cancelling gets its own subject line, a banner, and no call to action; putting a
+cancelled session back on gets the opposite banner.
+
+Both are transactional — they follow from the member's own registration rather than the
+announcement subscription — so they carry no unsubscribe link, ignore the `notify_new_events`
+opt-out, and omit the `List-Unsubscribe` headers. The way out of a reminder is to give up
+the seat.
+
 ### Trying it without mailing the club
 
 ```bash
 php artisan events:test-announcement aleksis.vejs@gmail.com
+php artisan events:test-announcement aleksis.vejs@gmail.com --type=reminder
+php artisan events:test-announcement aleksis.vejs@gmail.com --type=changed
+php artisan events:test-announcement aleksis.vejs@gmail.com --type=cancelled
 php artisan events:test-announcement aleksis.vejs@gmail.com --locale=de   # preview another language
 ```
 
-Sends one sample announcement, immediately, to that address only. The sample session is
-never persisted, so nothing appears on the calendar and no real event is marked as
-announced. If the address belongs to a member the mail carries their real unsubscribe
-token — clicking it genuinely opts them out. `--locale` only changes this one preview; it
-does not alter the member's stored language.
+Sends one sample mail, immediately, to that address only. The sample session is never
+persisted, so nothing appears on the calendar and no real event is marked as announced or
+reminded. On the announcement type, if the address belongs to a member the mail carries
+their real unsubscribe token — clicking it genuinely opts them out. `--locale` only changes
+this one preview; it does not alter the member's stored language.
+
+To check what the scheduler would pick up without queueing anything:
+
+```bash
+php artisan events:send-reminders --pretend
+```
 
 ### Queue worker (required)
 
@@ -194,8 +232,9 @@ and PHP path already used by the other apps on this account:
 */10 * * * * cd /home2/riginspe/blossfechten/backend && /usr/local/bin/php artisan schedule:run >> ~/blossfechten-schedule.log 2>&1
 ```
 
-`routes/console.php` schedules `queue:work --queue=mail,default --stop-when-empty
---max-time=300`, guarded by a 10-minute overlap lock. Announcements therefore go out
+`routes/console.php` schedules two things: `queue:work --queue=mail,default
+--stop-when-empty --max-time=300` on every run, guarded by a 10-minute overlap lock, and
+`events:send-reminders` every fifteen minutes. Announcements therefore go out
 within ten minutes of the admin saving the event. Without this cron, queued mail sits in
 the `jobs` table and is never delivered — the admin UI will still report success, so
 verify after deploying:
