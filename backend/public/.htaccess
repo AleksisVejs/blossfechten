@@ -31,4 +31,14 @@
 
 <IfModule mod_headers.c>
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+    # This host serves the API, not pages for people. Google had indexed it and
+    # was ranking a contentless page against the club's own brand term, so every
+    # response here is marked noindex.
+    #
+    # Note the companion robots.txt deliberately still allows crawling: a
+    # Disallow would stop Google fetching these URLs at all, which means it
+    # never sees this header and the old entries linger in the index instead of
+    # being dropped.
+    Header always set X-Robots-Tag "noindex, nofollow"
 </IfModule>

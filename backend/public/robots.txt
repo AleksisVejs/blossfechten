@@ -1,2 +1,9 @@
+# api.blossfechtenriga.com serves the API, and nothing here belongs in search.
+#
+# Crawling is deliberately left open so Google can fetch these URLs, read the
+# "X-Robots-Tag: noindex" header set in .htaccess, and drop what it has already
+# indexed. Adding "Disallow: /" would block the fetch, hide that header, and
+# leave the stale entries sitting in the index. Revisit only once Search Console
+# reports nothing indexed on this host.
 User-agent: *
 Disallow:
