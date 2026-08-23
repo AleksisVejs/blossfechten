@@ -41,22 +41,30 @@ php artisan migrate --seed       # creates schema and seeds members, pages, trai
 php artisan serve                # http://localhost:8000
 ```
 
-Seeded accounts:
+Seeded accounts — **local development only**. The deploy runs `migrate --force`
+and never `db:seed`, so these have never existed in production:
 
 | Role   | Email                       | Password       |
 |--------|-----------------------------|----------------|
 | admin  | admin@blossfechten.lv       | `ChangeMe!2026`|
 | member | member@blossfechten.lv      | `member123`    |
 
-Both are seeded **email-verified**. That matters: notification fan-out skips
-unverified addresses, so an unverified admin silently receives nothing. Accounts
-made with `php artisan user:create` are verified for the same reason — there is
-no verification mail on that path to click.
+Both are seeded **email-verified**, as are accounts made with
+`php artisan user:create` — there is no verification mail on either path to
+click, and the notification fan-out skips unverified addresses, so an
+unverified admin silently receives nothing.
 
-If you have an account from before this was fixed, verify it once:
+That last point is worth checking on any real deployment, because it is easy to
+miss: an account created by `user:create` before this was fixed, or inserted
+straight into the database, is unverified and gets no event mail. Accounts that
+went through the public registration form and clicked the link are fine.
 
 ```bash
-php artisan user:verify admin@blossfechten.lv
+# Which accounts, if any, are affected:
+php artisan user:list
+
+# Fix one:
+php artisan user:verify someone@example.com
 ```
 
 ### API surface

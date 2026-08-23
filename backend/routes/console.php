@@ -93,6 +93,41 @@ Artisan::command('user:create', function () {
     return 0;
 })->purpose('Interactively create an application user');
 
+Artisan::command('user:list {--unverified : Only accounts that never confirmed their address}', function () {
+    $users = User::query()
+        ->when($this->option('unverified'), fn($query) => $query->whereNull('email_verified_at'))
+        ->orderByDesc('role')
+        ->orderBy('name')
+        ->get();
+
+    if ($users->isEmpty()) {
+        $this->info($this->option('unverified') ? 'Every account is verified.' : 'No accounts yet.');
+        return 0;
+    }
+
+    $this->table(
+        ['ID', 'Name', 'Email', 'Role', 'Locale', 'Email confirmed'],
+        $users->map(fn(User $user) => [
+            $user->id,
+            $user->name,
+            $user->email,
+            $user->role,
+            $user->locale,
+            // The column that decides whether this account hears from us at all.
+            $user->email_verified_at?->format('Y-m-d') ?? 'NO — receives no event mail',
+        ])->all()
+    );
+
+    $unverified = $users->whereNull('email_verified_at');
+    if ($unverified->isNotEmpty()) {
+        $this->newLine();
+        $this->warn($unverified->count() . ' account(s) never confirmed an address. Fix one with:');
+        $this->line('  php artisan user:verify ' . $unverified->first()->email);
+    }
+
+    return 0;
+})->purpose('List accounts and show which ones never confirmed their email');
+
 Artisan::command('user:verify {email}', function (string $email) {
     $user = User::where('email', strtolower(trim($email)))->first();
 
