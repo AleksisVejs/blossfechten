@@ -10,6 +10,9 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        // Seeded accounts are marked verified: nobody is going to click a link
+        // in a mailbox that does not exist, and an account left unverified is
+        // one the notification fan-out silently skips.
         User::updateOrCreate(
             ['email' => 'admin@blossfechten.lv'],
             [
@@ -18,6 +21,7 @@ class UserSeeder extends Seeder
                 'role' => 'admin',
                 'locale' => 'lv',
                 'rank' => 'Fechtmeister',
+                'email_verified_at' => now(),
             ]
         );
 
@@ -29,6 +33,7 @@ class UserSeeder extends Seeder
                 'role' => 'member',
                 'locale' => 'en',
                 'rank' => 'Scholar',
+                'email_verified_at' => now(),
             ]
         );
     }

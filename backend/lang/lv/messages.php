@@ -6,7 +6,12 @@ return [
         'already_started' => 'Reģistrācija slēgta — treniņš jau ir sācies.',
         'registered' => 'Jūs esat reģistrēts.',
         'waitlisted' => 'Treniņš ir pilns; jūs esat pievienots gaidīšanas sarakstam.',
+        'promoted' => 'Atbrīvojusies vieta — jūsu pieteikums tagad ir apstiprināts.',
         'unregistered' => 'Jūsu reģistrācija ir atcelta.',
+    ],
+    'auth' => [
+        'email_taken' => 'Šī e-pasta adrese jau ir reģistrēta. Piesakieties vai atjaunojiet paroli, ja esat to aizmirsis.',
+        'verification_sent' => 'Ja šī adrese ir reģistrēta un vēl nav apstiprināta, jauna apstiprinājuma vēstule jau ir ceļā.',
     ],
     'emails' => [
         'new_event' => [
@@ -32,6 +37,17 @@ return [
             'where' => 'Kur',
             'cta' => 'Skatīt savus pieteikumus',
             'why' => 'Šo e-pastu saņemat, jo esat pieteicies šim treniņam. Ja nevarat ierasties, lūdzu, atsauciet savu pieteikumu mājaslapā.',
+        ],
+        'promoted' => [
+            'subject' => 'Atbrīvojusies vieta: :title',
+            'fallback_title' => 'Treniņš',
+            'heading' => 'Jums ir vieta',
+            'greeting' => 'Sveiki, :name!',
+            'intro' => 'Ir atbrīvojusies vieta, un jūs bijāt nākamais gaidīšanas sarakstā, tāpēc jūsu pieteikums tagad ir apstiprināts. Tiekamies treniņā!',
+            'when' => 'Kad',
+            'where' => 'Kur',
+            'cta' => 'Skatīt savus pieteikumus',
+            'why' => 'Šo e-pastu saņemat, jo bijāt šī treniņa gaidīšanas sarakstā. Ja tomēr nevarat ierasties, lūdzu, atsauciet savu pieteikumu mājaslapā, lai vieta tiktu nākamajam gaidītājam.',
         ],
         'changed' => [
             'subject' => 'Izmaiņas: :title',

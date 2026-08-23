@@ -1,0 +1,44 @@
+# Uploaded media lives here. Nothing in this tree may ever be executed — the
+# upload endpoints already derive the stored extension from the sniffed MIME
+# type, and this is the second lock on the same door.
+#
+# Every directive is guarded by <IfModule>. An unrecognised directive in an
+# .htaccess is a 500 for the whole directory, which here would mean every
+# member photo and forum image on the site going dark — a worse outcome than
+# the belt-and-braces it is buying.
+
+Options -ExecCGI -Indexes
+
+# mod_php, whichever generation the host is running.
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# CGI/FastCGI and LiteSpeed ignore php_flag, so drop the handlers as well.
+<IfModule mod_mime.c>
+    RemoveHandler .php .phtml .php3 .php4 .php5 .php6 .php7 .php8 .phps .phar .cgi .pl .py .shtml
+    RemoveType .php .phtml .php3 .php4 .php5 .php6 .php7 .php8 .phps .phar .shtml
+</IfModule>
+
+# And refuse to serve them at all, executed or not.
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.(?:php[0-9]?|phtml|phps|phar|cgi|pl|py|shtml|htaccess|htpasswd)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+
+# Apache 2.2 equivalent, for a host that predates mod_authz_core.
+<IfModule !mod_authz_core.c>
+    <IfModule mod_authz_host.c>
+        <FilesMatch "\.(?:php[0-9]?|phtml|phps|phar|cgi|pl|py|shtml|htaccess|htpasswd)$">
+            Order allow,deny
+            Deny from all
+        </FilesMatch>
+    </IfModule>
+</IfModule>

@@ -29,32 +29,16 @@ class AuthController extends Controller
             'phone' => ['nullable', 'string', 'max:32'],
         ]);
 
-        $existing = User::where('email', $data['email'])->first();
-        if ($existing) {
-            // If the email exists but is not verified yet, allow re-registration by resending verification.
-            if ($existing->hasVerifiedEmail()) {
-                throw ValidationException::withMessages([
-                    'email' => ['Email already used.'],
-                ]);
-            }
-
-            $existing->forceFill([
-                'name' => $data['name'],
-                // Update password so the user can choose a new one while still unverified.
-                'password' => Hash::make($data['password']),
-                'locale' => $data['locale'] ?? $existing->locale ?? 'en',
-                'phone' => $data['phone'] ?? $existing->phone ?? null,
-            ])->save();
-
-            $existing->sendEmailVerificationNotification();
-
-            Auth::login($existing);
-            $request->session()->regenerate();
-
-            return response()->json([
-                'user' => $existing,
-                'message' => 'Email already registered but not verified yet. Verification email resent.',
-            ], 201);
+        // Registration never touches an account that already exists — not even an
+        // unverified one. Overwriting the password of a pending registration and
+        // logging the caller in would hand any existing account, including an
+        // unverified admin, to whoever knows the address. Someone who never got
+        // their verification mail goes through resendVerificationFor() instead,
+        // which only ever mails the address itself.
+        if (User::where('email', $data['email'])->exists()) {
+            throw ValidationException::withMessages([
+                'email' => [__('messages.auth.email_taken')],
+            ]);
         }
 
         $user = User::create([
@@ -228,6 +212,28 @@ class AuthController extends Controller
         }
         $user->sendEmailVerificationNotification();
         return response()->json(['message' => 'Verification email sent.']);
+    }
+
+    /**
+     * Re-send a verification mail to an address that registered but never
+     * confirmed. Public, because the whole point is that the owner cannot log
+     * in yet — so it must give nothing away and change nothing: it never
+     * authenticates the caller, never touches the password, and answers
+     * identically whether or not the address is on file.
+     */
+    public function resendVerificationFor(Request $request)
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
+        $user = User::where('email', $data['email'])->first();
+
+        if ($user && ! $user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+        }
+
+        return response()->json(['message' => __('messages.auth.verification_sent')]);
     }
 
     public function forgotPassword(Request $request)

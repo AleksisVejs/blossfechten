@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\TrainingSession;
 use App\Models\User;
 use App\Notifications\EventChangedNotification;
+use App\Notifications\EventPromotedNotification;
 use App\Notifications\EventReminderNotification;
 use App\Notifications\NewEventNotification;
 use Illuminate\Console\Command;
@@ -13,11 +14,11 @@ use Illuminate\Support\Facades\Notification;
 
 class SendTestAnnouncement extends Command
 {
-    private const TYPES = ['announcement', 'reminder', 'changed', 'cancelled'];
+    private const TYPES = ['announcement', 'reminder', 'promoted', 'changed', 'cancelled'];
 
     protected $signature = 'events:test-announcement
                             {email : Where to send the sample mail}
-                            {--type=announcement : announcement, reminder, changed or cancelled}
+                            {--type=announcement : announcement, reminder, promoted, changed or cancelled}
                             {--locale= : Preview a specific language instead of the member\'s own}';
 
     protected $description = 'Send a sample event mail to one address, without touching the calendar or the member list';
@@ -72,6 +73,7 @@ class SendTestAnnouncement extends Command
     {
         return match ($type) {
             'reminder' => new EventReminderNotification($session),
+            'promoted' => new EventPromotedNotification($session),
             'changed' => new EventChangedNotification($session, $this->sampleChanges()),
             'cancelled' => new EventChangedNotification($session, [['field' => 'cancelled']]),
             default => new NewEventNotification($session),

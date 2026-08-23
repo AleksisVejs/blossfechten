@@ -77,6 +77,8 @@ export default {
     login_to_register: 'Zum Anmelden einloggen',
     full: 'Ausgebucht',
     waitlist: 'Warteliste',
+    seat_confirmed: 'Ihr Platz ist bestätigt',
+    on_waitlist: 'Sie stehen auf der Warteliste',
     seats_left: 'Freie Plätze: {n}',
     cancelled: 'Abgesagt',
     members_only: 'Nur Mitglieder',
@@ -308,5 +310,11 @@ export default {
     resubscribe_hint: 'Meinung geändert? Sie können die Benachrichtigungen in Ihrem Profil wieder einschalten.',
     to_profile: 'Zum Profil',
     to_home: 'Zur Startseite',
+  },
+  cookies: {
+    title: 'Cookies',
+    body: 'Wir würden gerne Google Analytics verwenden, um zu sehen, welche Seiten tatsächlich gelesen werden. Dabei werden Cookies gesetzt, die Ihren Browser identifizieren können. Ohne Ihre Zustimmung wird nichts geladen, und die Website funktioniert in beiden Fällen genau gleich.',
+    accept: 'Akzeptieren',
+    decline: 'Ablehnen',
   },
 }

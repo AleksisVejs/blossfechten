@@ -83,10 +83,68 @@ Artisan::command('user:create', function () {
         'locale' => $locale,
     ]);
 
+    // Whoever ran this command vouched for the address, and there is no
+    // verification mail on this path to click. Leaving it unverified would
+    // quietly exclude the account from every notification fan-out.
+    $user->forceFill(['email_verified_at' => now()])->save();
+
     $this->newLine();
     $this->info("User created successfully with ID {$user->id}.");
     return 0;
 })->purpose('Interactively create an application user');
+
+Artisan::command('user:list {--unverified : Only accounts that never confirmed their address}', function () {
+    $users = User::query()
+        ->when($this->option('unverified'), fn($query) => $query->whereNull('email_verified_at'))
+        ->orderByDesc('role')
+        ->orderBy('name')
+        ->get();
+
+    if ($users->isEmpty()) {
+        $this->info($this->option('unverified') ? 'Every account is verified.' : 'No accounts yet.');
+        return 0;
+    }
+
+    $this->table(
+        ['ID', 'Name', 'Email', 'Role', 'Locale', 'Email confirmed'],
+        $users->map(fn(User $user) => [
+            $user->id,
+            $user->name,
+            $user->email,
+            $user->role,
+            $user->locale,
+            // The column that decides whether this account hears from us at all.
+            $user->email_verified_at?->format('Y-m-d') ?? 'NO — receives no event mail',
+        ])->all()
+    );
+
+    $unverified = $users->whereNull('email_verified_at');
+    if ($unverified->isNotEmpty()) {
+        $this->newLine();
+        $this->warn($unverified->count() . ' account(s) never confirmed an address. Fix one with:');
+        $this->line('  php artisan user:verify ' . $unverified->first()->email);
+    }
+
+    return 0;
+})->purpose('List accounts and show which ones never confirmed their email');
+
+Artisan::command('user:verify {email}', function (string $email) {
+    $user = User::where('email', strtolower(trim($email)))->first();
+
+    if (! $user) {
+        $this->error("No user with the address {$email}.");
+        return 1;
+    }
+
+    if ($user->hasVerifiedEmail()) {
+        $this->info("{$user->email} is already verified.");
+        return 0;
+    }
+
+    $user->markEmailAsVerified();
+    $this->info("Marked {$user->email} as verified.");
+    return 0;
+})->purpose('Mark an account email as verified without sending a verification mail');
 
 /*
  * Shared cPanel hosting has no long-running worker process, so the scheduler

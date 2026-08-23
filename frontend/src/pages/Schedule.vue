@@ -88,8 +88,10 @@ onMounted(() => {
 
 async function onRegister(s) {
   try {
-    await store.register(s.id)
-    message.value = t('schedule.register') + ' ✓'
+    const result = await store.register(s.id)
+    // Say which of the two things actually happened — a seat, or a place in
+    // the queue. Guessing "Registered ✓" reads as a seat either way.
+    message.value = result?.message || t('schedule.register') + ' ✓'
   } catch (e) { message.value = e.response?.data?.message || t('common.error') }
 }
 async function onUnregister(s) {

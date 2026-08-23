@@ -77,6 +77,8 @@ export default {
     login_to_register: 'Log in to register',
     full: 'Full',
     waitlist: 'Waitlist',
+    seat_confirmed: 'Your seat is confirmed',
+    on_waitlist: 'You are on the waiting list',
     seats_left: 'Seats left: {n}',
     cancelled: 'Cancelled',
     members_only: 'Members only',
@@ -346,5 +348,11 @@ export default {
     resubscribe_hint: 'Changed your mind? You can turn notifications back on in your profile.',
     to_profile: 'Go to profile',
     to_home: 'Go to homepage',
+  },
+  cookies: {
+    title: 'Cookies',
+    body: 'We would like to use Google Analytics to see which pages people actually read. It sets cookies that can identify your browser. Nothing is loaded unless you agree, and the site works exactly the same either way.',
+    accept: 'Accept',
+    decline: 'Decline',
   },
 }

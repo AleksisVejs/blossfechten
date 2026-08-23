@@ -5,19 +5,20 @@ import { computed } from 'vue'
 import NavBar from '@/components/NavBar.vue'
 import SiteFooter from '@/components/SiteFooter.vue'
 import Toast from '@/components/Toast.vue'
-import { SUPPORTED_LOCALES } from '@/i18n'
+import CookieConsent from '@/components/CookieConsent.vue'
+import { SITE_URL } from '@/lib/site'
 
 const route = useRoute()
-const BASE_URL = 'https://blossfechten.lv'
 
+// A self-referencing canonical, and nothing else. There used to be an hreflang
+// alternate per locale here, but every one of them pointed at this same URL:
+// language is chosen client-side and never appears in the path, so there are no
+// per-language URLs to advertise. Declaring five alternates for one URL tells a
+// crawler nothing it can act on — the canonical is the honest signal.
 useHead({
-  link: computed(() =>
-    SUPPORTED_LOCALES.map(l => ({
-      rel: 'alternate',
-      hreflang: l.code,
-      href: `${BASE_URL}${route.path}`,
-    })).concat({ rel: 'alternate', hreflang: 'x-default', href: `${BASE_URL}${route.path}` })
-  ),
+  link: computed(() => [
+    { rel: 'canonical', href: `${SITE_URL}${route.path}` },
+  ]),
 })
 </script>
 
@@ -33,6 +34,7 @@ useHead({
     </main>
     <SiteFooter />
     <Toast />
+    <CookieConsent />
   </div>
 </template>
 

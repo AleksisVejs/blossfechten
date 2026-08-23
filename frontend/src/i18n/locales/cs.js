@@ -77,6 +77,8 @@ export default {
     login_to_register: 'Přihlaste se pro registraci',
     full: 'Plno',
     waitlist: 'Čekací listina',
+    seat_confirmed: 'Vaše místo je potvrzeno',
+    on_waitlist: 'Jste na čekací listině',
     seats_left: 'Volná místa: {n}',
     cancelled: 'Zrušeno',
     members_only: 'Pouze pro členy',
@@ -308,5 +310,11 @@ export default {
     resubscribe_hint: 'Rozmysleli jste si to? Oznámení lze znovu zapnout ve vašem profilu.',
     to_profile: 'Na profil',
     to_home: 'Na hlavní stránku',
+  },
+  cookies: {
+    title: 'Soubory cookie',
+    body: 'Rádi bychom používali Google Analytics, abychom viděli, které stránky lidé skutečně čtou. Nastavuje soubory cookie, které mohou identifikovat váš prohlížeč. Bez vašeho souhlasu se nic nenačte a web funguje v obou případech stejně.',
+    accept: 'Přijmout',
+    decline: 'Odmítnout',
   },
 }

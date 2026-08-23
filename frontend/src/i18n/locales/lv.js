@@ -77,6 +77,8 @@ export default {
     login_to_register: 'Ieejiet, lai reģistrētos',
     full: 'Pilns',
     waitlist: 'Gaidīšanas saraksts',
+    seat_confirmed: 'Jūsu vieta ir apstiprināta',
+    on_waitlist: 'Jūs esat gaidīšanas sarakstā',
     seats_left: 'Atlikušās vietas: {n}',
     cancelled: 'Atcelts',
     members_only: 'Tikai biedriem',
@@ -346,5 +348,11 @@ export default {
     resubscribe_hint: 'Ja pārdomājat, paziņojumus varat atkal ieslēgt sava profila sadaļā.',
     to_profile: 'Uz profilu',
     to_home: 'Uz sākumlapu',
+  },
+  cookies: {
+    title: 'Sīkdatnes',
+    body: 'Mēs vēlētos izmantot Google Analytics, lai redzētu, kuras lapas cilvēki patiešām lasa. Tas izmanto sīkdatnes, kas var identificēt jūsu pārlūku. Nekas netiek ielādēts bez jūsu piekrišanas, un vietne darbojas tieši tāpat abos gadījumos.',
+    accept: 'Piekrītu',
+    decline: 'Nepiekrītu',
   },
 }

@@ -41,6 +41,10 @@ const when = computed(() => sameDay.value
   ? `${dateTimeFmt.format(start.value)}-${timeFmt.format(end.value)}`
   : `${dateTimeFmt.format(start.value)} - ${dateTimeFmt.format(end.value)}`
 )
+
+// Holding a place and holding a seat are different things, and a member who is
+// only on the waiting list must not be left thinking they can turn up.
+const onWaitlist = computed(() => props.session.registration_status === 'waitlist')
 </script>
 
 <template>
@@ -62,6 +66,20 @@ const when = computed(() => sameDay.value
         <circle cx="12" cy="10" r="3" />
       </svg>
       <span>{{ session.location }}</span>
+    </p>
+
+    <p
+      v-if="session.is_registered && !session.cancelled"
+      class="text-xs uppercase tracking-widest flex items-center gap-1.5"
+      :class="onWaitlist ? 'text-oxblood-500' : 'text-gold-500'"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path v-if="onWaitlist" d="M12 6v6l4 2" />
+        <circle v-if="onWaitlist" cx="12" cy="12" r="9" />
+        <path v-else d="M20 6 9 17l-5-5" />
+      </svg>
+      <span>{{ onWaitlist ? t('schedule.on_waitlist') : t('schedule.seat_confirmed') }}</span>
     </p>
 
     <div class="pt-2 flex gap-2">
