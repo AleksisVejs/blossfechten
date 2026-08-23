@@ -1,10 +1,10 @@
 # Blossfechten Riga
 
-Full-stack website for the Blossfechten Riga historical fencing club — **Laravel 11 API** + **Vue 3 SPA**, MySQL, Sanctum auth, 5-language i18n (LV / EN / RU / CS / DE).
+Full-stack website for the Blossfechten Riga historical fencing club — **Laravel 13 API** + **Vue 3 SPA**, MySQL, Sanctum auth, 5-language i18n (LV / EN / RU / CS / DE).
 
 ```
 BlossfechtenRiga/
-├── backend/          # Laravel 11 API
+├── backend/          # Laravel 13 API
 └── frontend/         # Vue 3 + Vite SPA
 ```
 
@@ -48,11 +48,22 @@ Seeded accounts:
 | admin  | admin@blossfechten.lv       | `ChangeMe!2026`|
 | member | member@blossfechten.lv      | `member123`    |
 
+Both are seeded **email-verified**. That matters: notification fan-out skips
+unverified addresses, so an unverified admin silently receives nothing. Accounts
+made with `php artisan user:create` are verified for the same reason — there is
+no verification mail on that path to click.
+
+If you have an account from before this was fixed, verify it once:
+
+```bash
+php artisan user:verify admin@blossfechten.lv
+```
+
 ### API surface
 
 **Public**
-- `GET  /api/trainings` — upcoming sessions (also reports `is_registered` for the current user)
-- `GET  /api/trainings/{id}` — single session
+- `GET  /api/trainings` — upcoming sessions (also reports `is_registered` and `registration_status` for the current user)
+- `GET  /api/trainings/{id}` — single session, with `confirmed_count`. Deliberately carries no registration rows: this route is public and those rows hold member names, ranks and their free-text notes. Admins read the attendee list from `/api/admin/trainings/{id}/registrations`.
 - `GET  /api/content/pages/{slug}` — `about`, `meyer`
 - `GET  /api/content/members` — core members
 
@@ -60,9 +71,22 @@ Seeded accounts:
 
 **Auth (session cookie, Sanctum SPA)**
 - `POST /api/auth/register` · `POST /api/auth/login` · `POST /api/auth/logout` · `GET /api/auth/me`
+- `POST /api/auth/email/verify/resend` — public; re-sends verification to an address that registered but never confirmed
 - `POST /api/trainings/{id}/register` — confirmed or auto-waitlist
-- `DELETE /api/trainings/{id}/register`
+- `DELETE /api/trainings/{id}/register` — releases the seat and promotes the next member waiting
 - `GET  /api/me/registrations`
+
+Registration refuses any address already on file, verified or not, and never
+logs the caller into an existing account. Someone who never received their
+verification mail uses the resend endpoint above, which authenticates nobody and
+answers identically whether or not the address exists.
+
+Login, registration and password reset are rate limited to 5 requests a minute
+per IP; the endpoints that send mail to an arbitrary address are held to 3. The
+limiters are named (`auth`, `auth-mail`) and defined in `AppServiceProvider` —
+they key on the client address rather than the session, because Laravel's stock
+`throttle:n,m` keys on the authenticated user id, which a successful
+registration changes on every request.
 
 **Admin** (role = admin)
 - `GET|POST|PUT|DELETE /api/admin/trainings[/{id}]`
@@ -125,23 +149,56 @@ Stack:
 **Backend** — `TrainingController@register` (backend/app/Http/Controllers/Api/TrainingController.php):
 
 ```php
-$status = $training->confirmedCount() >= $training->capacity
-    ? 'waitlist' : 'confirmed';
+$locked = TrainingSession::whereKey($training->id)->lockForUpdate()->firstOrFail();
+
+$taken = $locked->registrations()
+    ->where('status', 'confirmed')
+    ->where('user_id', '!=', $user->id)
+    ->count();
 
 Registration::updateOrCreate(
-    ['user_id' => $user->id, 'training_session_id' => $training->id],
-    ['status' => $status, 'note' => $request->input('note')]
+    ['user_id' => $user->id, 'training_session_id' => $locked->id],
+    [
+        'status' => $taken >= $locked->capacity ? 'waitlist' : 'confirmed',
+        'note' => $request->input('note'),
+    ]
 );
 ```
+
+The read and the write sit inside a transaction with the session row locked, so
+two people clicking Register at the same moment cannot both be given the last
+seat. A member re-posting a registration to change their note is excluded from
+the seat count, so it cannot demote them to the waitlist of a session they are
+already confirmed for.
 
 **Frontend** — `useTrainingsStore.register` (frontend/src/stores/trainings.js):
 
 ```js
-await api.post(`/api/trainings/${id}/register`, { note })
+const { data } = await api.post(`/api/trainings/${id}/register`, { note })
 await this.fetch()
+return data          // carries the localised "seat" vs "waitlist" message
 ```
 
-**UI** — `TrainingCard.vue` shows the "Register" button when authenticated and the seat is open, the "Waitlist" button when full, or a "Log in to register" link otherwise.
+**UI** — `TrainingCard.vue` shows the "Register" button when authenticated and the seat is open, the "Waitlist" button when full, or a "Log in to register" link otherwise. Once registered it also states which of the two the member actually holds — a confirmed seat, or a place in the queue.
+
+### The waiting list
+
+`GET /api/trainings` reports `registration_status` (`confirmed` / `waitlist` /
+`null`) alongside `is_registered`, because the two are not the same thing and a
+member who only holds a place must not turn up expecting to train.
+
+Seats are handed on automatically. `TrainingSession::promoteFromWaitlist()`
+fills every free seat from the waiting list oldest-first, and is called whenever
+seats open:
+
+- when a member gives up a seat (`DELETE /api/trainings/{id}/register`)
+- when an admin raises the capacity of a session
+
+Both callers hold a row lock while they do it, so concurrent releases cannot
+promote past the capacity. Cancelled sessions promote nobody.
+
+Anyone who moves up is emailed — see **A place has come free** below. A seat
+nobody was told about is a seat nobody turns up for.
 
 ---
 
@@ -171,9 +228,11 @@ check:
 MAIL_FROM_ADDRESS="hello@blossfechtenriga.com"
 ```
 
-### Reminders and change notices
+### Reminders, change notices and waitlist promotions
 
-Two further mails hang off the same machinery, each with its own toggle in the admin form:
+Three further mails hang off the same machinery. The first two have their own toggle in
+the admin form; the third fires on its own, because it reports something that already
+happened rather than something the admin chose to send:
 
 **Day-before reminder.** `send_reminder` is a column on the session, ticked by default.
 `events:send-reminders` runs every fifteen minutes from the scheduler and queues a
@@ -195,7 +254,22 @@ changed: time, location, title, description, or cancellation. Editing capacity a
 nothing. Cancelling gets its own subject line, a banner, and no call to action; putting a
 cancelled session back on gets the opposite banner.
 
-Both are transactional — they follow from the member's own registration rather than the
+**A place has come free.** When a seat is released — a member cancels, or an admin raises
+the capacity — `TrainingSession::promoteFromWaitlist()` moves people up and
+`NotifyPromotedFromWaitlist` mails the ones who moved. It is dispatched *after* the
+promoting transaction commits, never inside it: a rolled back promotion that had already
+queued mail would tell a member they hold a seat that does not exist.
+
+The job carries registration ids rather than user ids, because the same member may be
+waiting on several sessions and only the row that moved is worth mailing about. It
+re-checks before sending, exactly as the reminder does — between the promotion and the
+queue draining, the session may have been cancelled or the seat handed straight back, and
+"you have a seat" arriving after either is worse than silence.
+
+There is no admin toggle for this one. It is the only mail a waitlisted member genuinely
+cannot do without, and a promotion nobody is told about produces an empty seat.
+
+All three are transactional — they follow from the member's own registration rather than the
 announcement subscription — so they carry no unsubscribe link, ignore the `notify_new_events`
 opt-out, and omit the `List-Unsubscribe` headers. The way out of a reminder is to give up
 the seat.
@@ -205,6 +279,7 @@ the seat.
 ```bash
 php artisan events:test-announcement aleksis.vejs@gmail.com
 php artisan events:test-announcement aleksis.vejs@gmail.com --type=reminder
+php artisan events:test-announcement aleksis.vejs@gmail.com --type=promoted
 php artisan events:test-announcement aleksis.vejs@gmail.com --type=changed
 php artisan events:test-announcement aleksis.vejs@gmail.com --type=cancelled
 php artisan events:test-announcement aleksis.vejs@gmail.com --locale=de   # preview another language
@@ -245,7 +320,33 @@ php artisan queue:work --queue=mail,default --stop-when-empty
 
 ---
 
-## 6. Production notes
+## 6. Analytics and cookie consent
+
+Google Analytics is **not** loaded until the visitor accepts it. `src/analytics.js`
+keeps the choice in `localStorage` under `cookie-consent` and only injects the
+gtag script on `granted`; `CookieConsent.vue` is the banner. Declining is exactly
+as easy as accepting and is first in DOM order.
+
+Two consequences worth knowing:
+
+- With no `VITE_GA_MEASUREMENT_ID` set — which is every `npm run dev` — there is
+  nothing to consent to, so the banner does not appear at all. To see it locally,
+  put a placeholder id in `frontend/.env.local`.
+- Page views that happen before a choice is made are never replayed. Accepting
+  counts the page the visitor is on and nothing before it.
+
+## 7. Uploaded media
+
+Admin uploads land in `backend/public/img/` and are served from the API origin.
+The stored filename takes its extension from the **sniffed MIME type**, never
+from the uploaded filename — `image` validation passes on content, so a genuine
+GIF called `x.php` would otherwise be written into a web-served directory as
+`<uuid>.php`. `backend/public/img/.htaccess` is the second lock on that door:
+it disables the PHP engine, drops the script handlers, and refuses to serve
+executable extensions at all. SVG is rejected because it is an executable
+document in a browser and this origin shares the session cookie domain.
+
+## 8. Production notes
 
 - Build the frontend with `npm run build` and serve `frontend/dist` behind your reverse proxy.
 - Point `SANCTUM_STATEFUL_DOMAINS` and `SESSION_DOMAIN` to your production host in `backend/.env`.

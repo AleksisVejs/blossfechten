@@ -83,10 +83,33 @@ Artisan::command('user:create', function () {
         'locale' => $locale,
     ]);
 
+    // Whoever ran this command vouched for the address, and there is no
+    // verification mail on this path to click. Leaving it unverified would
+    // quietly exclude the account from every notification fan-out.
+    $user->forceFill(['email_verified_at' => now()])->save();
+
     $this->newLine();
     $this->info("User created successfully with ID {$user->id}.");
     return 0;
 })->purpose('Interactively create an application user');
+
+Artisan::command('user:verify {email}', function (string $email) {
+    $user = User::where('email', strtolower(trim($email)))->first();
+
+    if (! $user) {
+        $this->error("No user with the address {$email}.");
+        return 1;
+    }
+
+    if ($user->hasVerifiedEmail()) {
+        $this->info("{$user->email} is already verified.");
+        return 0;
+    }
+
+    $user->markEmailAsVerified();
+    $this->info("Marked {$user->email} as verified.");
+    return 0;
+})->purpose('Mark an account email as verified without sending a verification mail');
 
 /*
  * Shared cPanel hosting has no long-running worker process, so the scheduler

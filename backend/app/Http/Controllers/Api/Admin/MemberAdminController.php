@@ -52,7 +52,7 @@ class MemberAdminController extends Controller
     public function uploadPhoto(Request $request)
     {
         $data = $request->validate([
-            'photo' => ['required', 'file', 'image', 'max:5120'], // 5MB
+            'photo' => ['required', 'file', 'image', 'mimes:jpg,jpeg,png,gif,webp', 'max:5120'], // 5MB
         ]);
 
         $file = $data['photo'];
@@ -62,7 +62,7 @@ class MemberAdminController extends Controller
             File::makeDirectory($targetDir, 0755, true);
         }
 
-        $filename = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+        $filename = Str::uuid()->toString() . '.' . $file->extension();
         $file->move($targetDir, $filename);
 
         return response()->json([

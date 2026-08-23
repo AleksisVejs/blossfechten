@@ -6,7 +6,12 @@ return [
         'already_started' => 'Registration is closed — this training has already started.',
         'registered' => 'You are registered.',
         'waitlisted' => 'The training is full; you have been added to the waiting list.',
+        'promoted' => 'A place has come free — you now hold a confirmed seat.',
         'unregistered' => 'Your registration has been cancelled.',
+    ],
+    'auth' => [
+        'email_taken' => 'That email address is already registered. Log in, or reset your password if you have forgotten it.',
+        'verification_sent' => 'If that address is registered and not yet confirmed, a new verification email is on its way.',
     ],
     'emails' => [
         'new_event' => [
@@ -32,6 +37,17 @@ return [
             'where' => 'Where',
             'cta' => 'View your registrations',
             'why' => 'You are receiving this because you registered for this session. If you cannot make it, please cancel your registration on the website.',
+        ],
+        'promoted' => [
+            'subject' => 'A place has come free: :title',
+            'fallback_title' => 'Training',
+            'heading' => 'You have a seat',
+            'greeting' => 'Hello, :name!',
+            'intro' => 'A place has come free and you were next on the waiting list, so your registration is now confirmed. We will see you there.',
+            'when' => 'When',
+            'where' => 'Where',
+            'cta' => 'View your registrations',
+            'why' => 'You are receiving this because you were on the waiting list for this session. If you can no longer make it, please cancel your registration on the website so the seat can go to the next member waiting.',
         ],
         'changed' => [
             'subject' => 'Changed: :title',

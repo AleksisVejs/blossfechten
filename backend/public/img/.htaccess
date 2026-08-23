@@ -1,0 +1,25 @@
+# Uploaded media lives here. Nothing in this tree may ever be executed — the
+# upload endpoints already derive the stored extension from the sniffed MIME
+# type, and this is the second lock on the same door.
+
+Options -ExecCGI -Indexes
+
+# mod_php, whichever generation the host is running.
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# CGI/FastCGI and LiteSpeed ignore php_flag, so drop the handlers as well.
+RemoveHandler .php .phtml .php3 .php4 .php5 .php6 .php7 .php8 .phps .phar .cgi .pl .py .shtml
+RemoveType .php .phtml .php3 .php4 .php5 .php6 .php7 .php8 .phps .phar .shtml
+
+# And refuse to serve them at all, executed or not.
+<FilesMatch "\.(?:php[0-9]?|phtml|phps|phar|cgi|pl|py|shtml|htaccess|htpasswd)$">
+    Require all denied
+</FilesMatch>

@@ -23,8 +23,11 @@ export const useTrainingsStore = defineStore('trainings', {
       saveCachedApi('my-registrations', data.data)
     },
     async register(id, note = null) {
-      await api.post(`/api/trainings/${id}/register`, { note })
+      // The response says whether this got a seat or a place in the queue —
+      // already translated by the API into the caller's locale.
+      const { data } = await api.post(`/api/trainings/${id}/register`, { note })
       await this.fetch()
+      return data
     },
     async unregister(id) {
       await api.delete(`/api/trainings/${id}/register`)

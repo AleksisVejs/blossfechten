@@ -8,6 +8,7 @@ import YouTubeGrid from '@/components/YouTubeGrid.vue'
 import EditablePageText from '@/components/EditablePageText.vue'
 import EditableTextPlaceholder from '@/components/EditableTextPlaceholder.vue'
 import { useEditablePages } from '@/composables/useEditablePages'
+import { SITE_URL } from '@/lib/site'
 
 const { t, locale } = useI18n()
 const pillars = ['tradition', 'progression', 'community']
@@ -45,7 +46,7 @@ const clubSchema = {
   '@type': 'SportsClub',
   name: 'Blossfechten Riga',
   description: 'Historical European Martial Arts club in Riga practising Joachim Meyer\'s 1570 longsword treatise.',
-  url: 'https://blossfechten.lv',
+  url: SITE_URL,
   foundingDate: '2022',
   address: {
     '@type': 'PostalAddress',

@@ -6,7 +6,12 @@ return [
         'already_started' => 'Anmeldung geschlossen — das Training hat bereits begonnen.',
         'registered' => 'Sie sind angemeldet.',
         'waitlisted' => 'Das Training ist voll; Sie stehen auf der Warteliste.',
+        'promoted' => 'Ein Platz ist frei geworden — Ihre Anmeldung ist jetzt bestätigt.',
         'unregistered' => 'Ihre Anmeldung wurde storniert.',
+    ],
+    'auth' => [
+        'email_taken' => 'Diese E-Mail-Adresse ist bereits registriert. Melden Sie sich an oder setzen Sie Ihr Passwort zurück, falls Sie es vergessen haben.',
+        'verification_sent' => 'Falls diese Adresse registriert und noch nicht bestätigt ist, ist eine neue Bestätigungs-E-Mail unterwegs.',
     ],
     'emails' => [
         'new_event' => [
@@ -32,6 +37,17 @@ return [
             'where' => 'Wo',
             'cta' => 'Deine Anmeldungen ansehen',
             'why' => 'Du erhältst diese E-Mail, weil du dich für dieses Training angemeldet hast. Falls du nicht kommen kannst, storniere deine Anmeldung bitte auf der Website.',
+        ],
+        'promoted' => [
+            'subject' => 'Ein Platz ist frei geworden: :title',
+            'fallback_title' => 'Training',
+            'heading' => 'Sie haben einen Platz',
+            'greeting' => 'Hallo, :name!',
+            'intro' => 'Ein Platz ist frei geworden und Sie waren als Nächstes auf der Warteliste, daher ist Ihre Anmeldung jetzt bestätigt. Wir sehen uns beim Training.',
+            'when' => 'Wann',
+            'where' => 'Wo',
+            'cta' => 'Meine Anmeldungen ansehen',
+            'why' => 'Sie erhalten diese E-Mail, weil Sie auf der Warteliste für dieses Training standen. Falls Sie doch nicht kommen können, stornieren Sie Ihre Anmeldung bitte auf der Website, damit der Platz an das nächste wartende Mitglied gehen kann.',
         ],
         'changed' => [
             'subject' => 'Änderung: :title',

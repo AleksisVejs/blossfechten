@@ -81,7 +81,7 @@ class ForumPostAdminController extends Controller
     public function uploadCover(Request $request)
     {
         $data = $request->validate([
-            'cover' => ['required', 'file', 'image', 'max:5120'], // 5MB
+            'cover' => ['required', 'file', 'image', 'mimes:jpg,jpeg,png,gif,webp', 'max:5120'], // 5MB
         ]);
 
         $file = $data['cover'];
@@ -91,7 +91,7 @@ class ForumPostAdminController extends Controller
             File::makeDirectory($targetDir, 0755, true);
         }
 
-        $filename = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+        $filename = Str::uuid()->toString() . '.' . $file->extension();
         $file->move($targetDir, $filename);
 
         return response()->json([
@@ -113,7 +113,7 @@ class ForumPostAdminController extends Controller
 
         $validator = validator(
             ['image' => $file],
-            ['image' => ['file', 'image', 'max:10240']], // 10MB
+            ['image' => ['file', 'image', 'mimes:jpg,jpeg,png,gif,webp', 'max:10240']], // 10MB
             ['image.max' => 'Image is too large. Maximum allowed size is 10MB.']
         );
 
@@ -130,7 +130,7 @@ class ForumPostAdminController extends Controller
             File::makeDirectory($targetDir, 0755, true);
         }
 
-        $filename = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+        $filename = Str::uuid()->toString() . '.' . $file->extension();
         $file->move($targetDir, $filename);
 
         return response()->json([

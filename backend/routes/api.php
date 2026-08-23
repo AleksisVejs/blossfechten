@@ -17,11 +17,17 @@ Route::get('/health', fn() => ['ok' => true]);
 
 // Auth (session-based SPA auth needs web middleware)
 Route::middleware('web')->group(function () {
-    Route::post('/auth/register', [AuthController::class, 'register']);
-    Route::post('/auth/login', [AuthController::class, 'login']);
+    // `auth` / `auth-mail` are defined in AppServiceProvider and keyed on the
+    // client address. Laravel's `api` group carries no limiter of its own, so
+    // without these, login is an open door for password guessing at wire speed.
+    Route::post('/auth/register', [AuthController::class, 'register'])->middleware('throttle:auth');
+    Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:auth');
 
-    Route::post('/auth/password/forgot', [AuthController::class, 'forgotPassword'])->middleware('throttle:6,1');
-    Route::post('/auth/password/reset', [AuthController::class, 'resetPassword'])->middleware('throttle:6,1');
+    Route::post('/auth/email/verify/resend', [AuthController::class, 'resendVerificationFor'])
+        ->middleware('throttle:auth-mail');
+
+    Route::post('/auth/password/forgot', [AuthController::class, 'forgotPassword'])->middleware('throttle:auth-mail');
+    Route::post('/auth/password/reset', [AuthController::class, 'resetPassword'])->middleware('throttle:auth');
 
     // Some browsers / security intermediaries may re-fetch signed verification URLs
     // using a different HTTP method. Accept POST in addition to GET to avoid 405.

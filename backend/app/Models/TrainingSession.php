@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class TrainingSession extends Model
 {
@@ -48,6 +49,37 @@ class TrainingSession extends Model
     public function isFull(): bool
     {
         return $this->confirmedCount() >= $this->capacity;
+    }
+
+    /**
+     * Hand every free seat to the members who have been waiting longest.
+     *
+     * Callers must hold a lock on this row (see TrainingController::unregister)
+     * — the free-seat count is read and acted on separately, so two concurrent
+     * releases would otherwise promote past the capacity.
+     *
+     * @return \Illuminate\Support\Collection<int, Registration> promoted rows, oldest first
+     */
+    public function promoteFromWaitlist(): Collection
+    {
+        $free = $this->capacity - $this->confirmedCount();
+
+        if ($free <= 0) {
+            return collect();
+        }
+
+        $promoted = $this->registrations()
+            ->where('status', 'waitlist')
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->limit($free)
+            ->get();
+
+        foreach ($promoted as $registration) {
+            $registration->update(['status' => 'confirmed']);
+        }
+
+        return $promoted;
     }
 
     public function wasAnnounced(): bool

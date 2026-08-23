@@ -6,7 +6,12 @@ return [
         'already_started' => 'Registrace je uzavřena — trénink již začal.',
         'registered' => 'Jste zaregistrován/a.',
         'waitlisted' => 'Trénink je plný; byl/a jste přidán/a na čekací listinu.',
+        'promoted' => 'Uvolnilo se místo — vaše registrace je nyní potvrzena.',
         'unregistered' => 'Vaše registrace byla zrušena.',
+    ],
+    'auth' => [
+        'email_taken' => 'Tato e-mailová adresa je již zaregistrována. Přihlaste se, nebo si obnovte heslo, pokud jste ho zapomněli.',
+        'verification_sent' => 'Pokud je tato adresa zaregistrována a dosud nepotvrzena, nový ověřovací e-mail je na cestě.',
     ],
     'emails' => [
         'new_event' => [
@@ -32,6 +37,17 @@ return [
             'where' => 'Kde',
             'cta' => 'Zobrazit své přihlášky',
             'why' => 'Tento e-mail dostáváte, protože jste se přihlásili na tento trénink. Pokud nemůžete přijít, zrušte prosím přihlášku na webu.',
+        ],
+        'promoted' => [
+            'subject' => 'Uvolnilo se místo: :title',
+            'fallback_title' => 'Trénink',
+            'heading' => 'Máte místo',
+            'greeting' => 'Dobrý den, :name!',
+            'intro' => 'Uvolnilo se místo a vy jste byl/a další na čekací listině, takže vaše registrace je nyní potvrzena. Těšíme se na vás.',
+            'when' => 'Kdy',
+            'where' => 'Kde',
+            'cta' => 'Zobrazit moje registrace',
+            'why' => 'Tento e-mail dostáváte, protože jste byl/a na čekací listině na tento trénink. Pokud přece jen nemůžete přijít, zrušte prosím svou registraci na webu, aby místo mohlo připadnout dalšímu čekajícímu.',
         ],
         'changed' => [
             'subject' => 'Změna: :title',

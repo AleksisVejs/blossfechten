@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\AnnounceTrainingSession;
+use App\Jobs\NotifyPromotedFromWaitlist;
 use App\Jobs\NotifyTrainingSessionChanged;
 use App\Models\TrainingSession;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TrainingAdminController extends Controller
 {
@@ -41,10 +43,33 @@ class TrainingAdminController extends Controller
         $changes = $this->diff($before, $training);
 
         $this->rearmReminderIfMoved($training, $changes);
+        $this->fillSeatsFromWaitlist($training);
         $this->announceIfRequested($request, $training);
         $this->notifyChangesIfRequested($request, $training, $changes);
 
         return response()->json(['data' => $training->fresh()]);
+    }
+
+    /**
+     * Raising the capacity opens seats just as surely as someone cancelling,
+     * so the waiting list is drained here too. A no-op when nothing is free.
+     */
+    private function fillSeatsFromWaitlist(TrainingSession $training): void
+    {
+        if ($training->cancelled) {
+            return;
+        }
+
+        $promoted = DB::transaction(fn() => TrainingSession::whereKey($training->id)
+            ->lockForUpdate()
+            ->firstOrFail()
+            ->promoteFromWaitlist());
+
+        // After the commit, so a rolled back promotion cannot leave a member
+        // holding an email about a seat they never got.
+        if ($promoted->isNotEmpty()) {
+            NotifyPromotedFromWaitlist::dispatch($training->id, $promoted->pluck('id')->all());
+        }
     }
 
     /**
