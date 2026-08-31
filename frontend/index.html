@@ -6,6 +6,21 @@
     <link rel="icon" type="image/png" href="/img/logo.png" />
     <meta name="description" content="Blossfechten Riga — Historical European Martial Arts club in Riga, training from the treatise of Joachim Meyer." />
     <title>Blossfechten Riga — Historical Fencing Club</title>
+
+    <!-- Social crawlers don't run JS, so the per-page og:title tags set via
+    useHead never reach them — this static set is what actually renders when
+    a link is shared, on every page, until per-route SSR exists. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://blossfechtenriga.com/" />
+    <meta property="og:title" content="Blossfechten Riga — Historical Fencing Club" />
+    <meta property="og:description" content="Historical European Martial Arts club in Riga, training from the treatise of Joachim Meyer." />
+    <meta property="og:image" content="https://blossfechtenriga.com/img/og-share.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Blossfechten Riga — Historical Fencing Club" />
+    <meta name="twitter:description" content="Historical European Martial Arts club in Riga, training from the treatise of Joachim Meyer." />
+    <meta name="twitter:image" content="https://blossfechtenriga.com/img/og-share.jpg" />
   </head>
   <body>
     <div id="app"></div>
