@@ -6,6 +6,7 @@ import api from '@/lib/api'
 import EditablePageText from '@/components/EditablePageText.vue'
 import EditableTextPlaceholder from '@/components/EditableTextPlaceholder.vue'
 import { useEditablePages } from '@/composables/useEditablePages'
+import { CLUB_ADDRESS_LINE } from '@/lib/site'
 
 const { t, locale } = useI18n()
 
@@ -17,7 +18,7 @@ onMounted(async () => {
 })
 const phoneNumber = '+371 27442755'
 const emailAddress = 'viitinsh@gmail.com'
-const trainingAddress = 'Ādmiņu iela 4, Rīga, LV-1009'
+const trainingAddress = CLUB_ADDRESS_LINE
 const mapsQuery = 'https://www.google.com/maps?q=%C4%80dmi%C5%86u+iela+4%2C+Latgales+priek%C5%A1pils%C4%93ta%2C+R%C4%ABga%2C+LV-1009%2C+Latvia'
 const socialLinks = [
   { name: 'Facebook', href: 'https://www.facebook.com/BlossfechtenRiga/' },

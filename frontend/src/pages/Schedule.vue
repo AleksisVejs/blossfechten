@@ -12,6 +12,8 @@ import EditableTextPlaceholder from '@/components/EditableTextPlaceholder.vue'
 import { useEditablePages } from '@/composables/useEditablePages'
 import { loadCachedApi, saveCachedApi } from '@/lib/pageCache'
 import api from '@/lib/api'
+import { SITE_URL, CLUB_VENUE, EVENT_IMAGES, ORGANIZATION_SCHEMA } from '@/lib/site'
+import { toRigaIsoString } from '@/lib/datetime'
 
 const { t, locale } = useI18n()
 const store = useTrainingsStore()
@@ -61,20 +63,69 @@ async function fetchSlots() {
   }
 }
 
+// Sessions carry a free-text location. Only the ones left at the club's own
+// hall may claim its street address — anywhere else we know the label and
+// nothing more, and inventing an address is worse than omitting one.
+const DEFAULT_VENUE_LABELS = ['', 'riga', 'rīga', 'blossfechten riga']
+
+function placeFor(session) {
+  const label = (session.location || '').trim()
+  const atClub = DEFAULT_VENUE_LABELS.includes(label.toLowerCase())
+
+  return {
+    '@type': 'Place',
+    name: label || 'Blossfechten Riga',
+    // Away sessions get the label the admin typed and nothing more. Filling in
+    // "Rīga" for a hall in Sigulda is a plausible-sounding lie.
+    address: atClub ? { '@type': 'PostalAddress', ...CLUB_VENUE } : label,
+  }
+}
+
+// Registering costs nothing on the site — a seat is booked, not bought — and
+// the page itself only ever quotes a price to say the first session is free.
+// If the club ever charges through the site, this is the one place to change.
+const OFFER_PRICE = '0'
+const OFFER_CURRENCY = 'EUR'
+
+function offerFor(session) {
+  const seatsLeft = Math.max(0, (session.capacity ?? 0) - (session.confirmed_count ?? 0))
+  const availability = session.cancelled
+    ? 'https://schema.org/SoldOut'
+    : seatsLeft > 0
+      ? 'https://schema.org/InStock'
+      : 'https://schema.org/SoldOut'
+
+  return {
+    '@type': 'Offer',
+    url: `${SITE_URL}/schedule`,
+    price: OFFER_PRICE,
+    priceCurrency: OFFER_CURRENCY,
+    availability,
+    // Registration opens as soon as the session is published, so the row's own
+    // creation time is the honest answer.
+    validFrom: toRigaIsoString(session.created_at || session.starts_at),
+  }
+}
+
 const eventsSchema = computed(() => ({
   '@context': 'https://schema.org',
   '@graph': store.list.map(s => ({
     '@type': 'Event',
+    '@id': `${SITE_URL}/schedule#training-${s.id}`,
+    url: `${SITE_URL}/schedule`,
     name: s.title?.[locale.value] || s.title?.en || s.focus || 'Blossfechten Riga Training',
-    startDate: s.starts_at,
-    endDate: s.ends_at,
-    location: {
-      '@type': 'Place',
-      name: s.location || 'Riga',
-      address: { '@type': 'PostalAddress', addressLocality: 'Riga', addressCountry: 'LV' },
-    },
-    organizer: { '@type': 'Organization', name: 'Blossfechten Riga' },
+    description: s.description?.[locale.value] || s.description?.en
+      || `${t('home.hero_sub')} ${t('schedule.first_training_free')}`,
+    image: EVENT_IMAGES,
+    startDate: toRigaIsoString(s.starts_at),
+    endDate: toRigaIsoString(s.ends_at),
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     eventStatus: s.cancelled ? 'https://schema.org/EventCancelled' : 'https://schema.org/EventScheduled',
+    location: placeFor(s),
+    organizer: ORGANIZATION_SCHEMA,
+    // The club runs its own sessions, so it is both host and performer.
+    performer: ORGANIZATION_SCHEMA,
+    offers: offerFor(s),
   })),
 }))
 
